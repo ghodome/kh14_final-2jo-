@@ -20,5 +20,6 @@ public class MemberDao {
 		return sqlSession.selectOne("member.find", memberId);
 		
 		
+		
 	}
 }
