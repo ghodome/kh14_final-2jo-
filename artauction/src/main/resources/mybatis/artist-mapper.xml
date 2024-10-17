@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DTD 선언-->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="artist">
+	<select id="selectList" resultType="ArtistDto">
+		select * from artist
+		order by artist_no asc
+	</select>
+</mapper>
