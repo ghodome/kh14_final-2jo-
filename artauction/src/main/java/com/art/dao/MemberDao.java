@@ -18,5 +18,6 @@ public class MemberDao {
 
 	public MemberDto selectOne(String memberId) {
 		return sqlSession.selectOne("member.find", memberId);
+		
 	}
 }
