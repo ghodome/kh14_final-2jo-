@@ -23,4 +23,8 @@ public class NoticeDao {
 	public List<NoticeDto> selectList() {
 		return sqlSession.selectList("notice.list");
 	}
+	//상세
+	public NoticeDto selectOne(int noticeNo) {
+		return sqlSession.selectOne("notice.detail", noticeNo);
+	}
 }
