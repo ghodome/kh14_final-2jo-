@@ -18,4 +18,10 @@ public class ArtistDao {
 		return sqlSession.selectList("artist.selectList");
 				
 	}
+	public int sequence() {
+		return sqlSession.selectOne("artist.sequence");
+	}
+	public void regist(ArtistDto artistDto) {
+		sqlSession.insert("artist.regist",artistDto);
+	}
 }
