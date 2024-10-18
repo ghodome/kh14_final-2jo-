@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DTD 선언-->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="work">
+	<insert id="insert">
+		insert into work (
+			work_no, work_title, work_description,
+			work_materials, work_size, work_category
+		)
+		values (
+			work_seq.nextval, #{workTitle}, #{workDescription},
+			#{workMaterials}, #{workSize}, #{workCategory}
+		)
+	</insert>
+	<select id="list" resultType="WorkDto">
+		select * from work order by work_no asc;
+	</select>
+	
+	
+</mapper>
