@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0
+//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="faq">
+
+	<!-- 목록 -->
+	<select id="list" resultType="NoticeDto">
+		select * from notice order by
+		notice_no asc
+	</select>
+
+	<!-- 등록 -->
+	<insert id="registration">
+		insert into faq(
+		faq_no, faq_type, faq_content
+		)values(
+		#{faqNo}, #{faqType}, #{faqContent}
+		)
+	</insert>
+	
+	<!-- 삭제 -->
+	<delete id="remove">
+	delete faq where faq_no = #{faqNo}
+	</delete>
+
+</mapper>

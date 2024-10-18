@@ -1,6 +1,8 @@
 package com.art.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,4 +25,22 @@ public class NoticeDao {
 	public List<NoticeDto> selectList() {
 		return sqlSession.selectList("notice.list");
 	}
+	//상세
+	public NoticeDto selectOne(int noticeNo) {
+		return sqlSession.selectOne("notice.detail", noticeNo);
+	}
+	
+	//검색
+	public List<NoticeDto> selectList(String column, String keyword) {
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("column", column); 
+	    params.put("keyword", keyword);
+	    return sqlSession.selectList("notice.search", params);
+	}
+	//삭제
+	public boolean delete(int noticeNo) {
+		int result = sqlSession.delete("notice.remove", noticeNo);
+		return result > 0;
+	}
+
 }
