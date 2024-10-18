@@ -23,8 +23,8 @@ public class SwaggerConfig {
 //		info.setDescription("React에서 이용하기 위해 만든 백엔드 문서");
 		
 		// builder 패턴을 사용한 객체 생성
-		Info info = new Info().version("v0.0.1").title("내가 만든 REST API")
-				.description("React에서 이용하기 위해 만든 백엔드 문서");
+		Info info = new Info().version("v0.0.1").title("Art Auction REST API")
+				.description("KH14 FINAL PROJECT");
 		
 /*
 		(+추가)
