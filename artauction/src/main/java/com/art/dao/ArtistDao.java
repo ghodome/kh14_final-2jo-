@@ -23,7 +23,10 @@ public class ArtistDao {
 	public void regist(ArtistDto artistDto) {
 		sqlSession.insert("artist.regist",artistDto);
 	}
-	public void update(ArtistDto artistDto) {
-		sqlSession.update("artist.update",artistDto);
+	public boolean update(ArtistDto artistDto) {
+		return sqlSession.update("artist.update",artistDto)>0;
+	}
+	public boolean delete(int artistNo) {
+		return sqlSession.delete("artist.delete",artistNo)>0;
 	}
 }
