@@ -9,4 +9,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from artist
 		order by artist_no asc
 	</select>
+	<select id="sequence" resultType="int">
+		select artist_seq.nextval from dual
+	</select>
+	<insert id="regist">
+		insert into artist(
+			artist_no, artist_name, artist_description, artist_history,
+			artist_birth, artist_death
+		) values(
+			#{artistNo},#{artistName},#{artistDescription},
+			#{artistHistory},#{artistBirth},#{artistDeath}
+		)
+	</insert>
 </mapper>
