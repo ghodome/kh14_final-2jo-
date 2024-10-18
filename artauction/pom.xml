@@ -108,6 +108,7 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+
 		<!--rest api를 문서화해주는 도구-->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -120,6 +121,7 @@
 		    <artifactId>jsoup</artifactId>
 		    <version>1.18.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>

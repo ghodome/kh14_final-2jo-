@@ -5,11 +5,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.MemberDao;
 import com.art.dao.MemberTokenDao;
 import com.art.dto.MemberDto;
+import com.art.service.MemberService;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.MemberLoginRequestVO;
@@ -29,7 +31,8 @@ public class MemberRestController {
 	private TokenService tokenService;
 	
 	@Autowired
-	private MemberTokenDao memberTokenDao;
+	private MemberService memberService;
+	
 	
 	@PostMapping("/join")
 	public void insert(@RequestBody MemberDto memberDto) {
@@ -54,5 +57,15 @@ public class MemberRestController {
 			response.setAccessToken(tokenService.createAccessToken(claimVO));//액세스토큰
 			response.setRefreshToken(tokenService.createRefreshToken(claimVO));//리프레시토큰
 			return response;	
+	}
+	@PostMapping("/findPw")
+	public String findPw(@RequestBody MemberDto memberDto) {
+		memberService.findPw(memberDto.getMemberId(), memberDto.getMemberEmail());
+		return "비밀번호 재설정 이메일이 전송돼었습니다";
+	}
+	@PostMapping("/changePw")
+	public String changePw(@RequestBody MemberDto memberDto, @RequestParam String token) {
+	    boolean success = memberService.resetPassword(memberDto.getMemberId(), memberDto.getMemberEmail(), token);
+	    return success ? "비밀번호가 성공적으로 재설정되었습니다." : "비밀번호 재설정에 실패했습니다.";
 	}
 }

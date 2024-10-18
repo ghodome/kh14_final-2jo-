@@ -19,5 +19,21 @@
 	<select id="find" resultType="MemberDto">
 		select * from member where member_id = #{memberId}
 	</select>
+	<insert id="save">
+	 insert into member (member_id, member_pw, member_email)
+        values (#{memberId}, #{memberPw}, #{memberEmail})
+	</insert>
+	 <select id="findByToken" resultType="MemberTokenDto">
+        select * from member_token WHERE token_value = #{tokenValue}
+    </select>
+     <insert id="saveToken">
+        INSERT INTO member_token (token_no, token_target, token_value)
+VALUES (member_token_seq.NEXTVAL, #{tokenTarget}, #{tokenValue})
+
+    </insert>
+        <delete id="deleteToken">
+        delete from member_token WHERE token_value = #{tokenValue}
+    </delete>
+    
 	
 </mapper>
