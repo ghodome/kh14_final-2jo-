@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +38,12 @@ public class ArtistRestController {
 		artistDao.regist(artistDto);
 	}
 	@PatchMapping("/")
-	public void update(@RequestBody ArtistDto artistDto) {
-		artistDao.update(artistDto);
+	public String update(@RequestBody ArtistDto artistDto) {
+		return artistDao.update(artistDto)?"성공":"실패";
+		
+	}
+	@DeleteMapping("/{artistNo}")
+	public void delete(@PathVariable int artistNo) {
+		artistDao.delete(artistNo);
 	}
 }

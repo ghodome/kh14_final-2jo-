@@ -24,12 +24,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="update">
 		update artist 
 		<set>
-			<if test="artistName!=null">artist_name = #{artistName}</if>
-			<if test="artistDescription!=null">artist_description = #{artistDescription}</if>
-			<if test="artistHistory!=null">artist_history = #{artistHistory}</if>
-			<if test="artistBirth!=null">artist_birth = #{artistBirth}</if>
-			<if test="artistDeath!=null">artist_death = #{artistDeath}</if>
+			<if test="artistName!=null">artist_name = #{artistName},</if>
+			<if test="artistDescription!=null">artist_description = #{artistDescription},</if>
+			<if test="artistHistory!=null">artist_history = #{artistHistory},</if>
+			<if test="artistBirth!=null">artist_birth = #{artistBirth},</if>
+			<if test="artistDeath!=null">artist_death = #{artistDeath},</if>
 		</set>
 		where artist_no = #{artistNo}
 	</update>
+	<delete id="delete">
+		delete artist
+		where artist_no=#{artistNo}
+	</delete>
 </mapper>
