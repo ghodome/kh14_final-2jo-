@@ -19,8 +19,6 @@ import com.art.dao.AttachmentDao;
 import com.art.dto.AttachmentDto;
 import com.art.error.TargetNotFoundException;
 
-import jakarta.annotation.PostConstruct;
-
 //첨부파일서비스
 @Service
 public class AttachmentService {
@@ -31,11 +29,6 @@ public class AttachmentService {
 	
 	private File dir;
 	
-	@PostConstruct//객체 생성 및 등록 후 딱 한번만 실행되는 메소드(초기세팅)
-	public void init() {
-		dir = new File(properties.getPath());
-		dir.mkdirs();
-	}
 	
 	@Autowired
 	private AttachmentDao attachmentDao;
