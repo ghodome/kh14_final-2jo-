@@ -45,5 +45,14 @@ public class NoticeRestController {
 //		if(noticeDto == null) throw new TargetNotFoundException();
 //		return noticeDto;//나중에 바꿀꺼
 	}
+//	검색
+	@GetMapping("/column/{column}/keyword/{keyword}")
+	public List<NoticeDto> search(
+			@PathVariable String column,
+			@PathVariable String keyword
+			){
+		List<NoticeDto> list = noticeDao.selectList(column, keyword);
+		return noticeDao.selectList(column, keyword);
+	}
 
 }
