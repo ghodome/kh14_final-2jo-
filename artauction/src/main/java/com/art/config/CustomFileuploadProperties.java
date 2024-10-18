@@ -11,4 +11,5 @@ import lombok.Data;
 @ConfigurationProperties(prefix= "custom.fileupload")
 public class CustomFileuploadProperties {
 	private String path;
+	
 }
