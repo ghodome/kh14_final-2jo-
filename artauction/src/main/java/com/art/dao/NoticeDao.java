@@ -37,5 +37,10 @@ public class NoticeDao {
 	    params.put("keyword", keyword);
 	    return sqlSession.selectList("notice.search", params);
 	}
+	//삭제
+	public boolean delete(int noticeNo) {
+		int result = sqlSession.delete("notice.remove", noticeNo);
+		return result > 0;
+	}
 
 }

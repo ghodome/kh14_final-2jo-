@@ -45,4 +45,9 @@
 	order by ${column} asc
 	]]>
 	</select>
+	
+	<!-- 삭제 -->
+	<delete id="remove">
+	delete notice where notice_no = #{noticeNo}
+	</delete>
 </mapper>
