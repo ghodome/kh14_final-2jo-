@@ -15,4 +15,11 @@ public class MemberDao {
 	public void insert(MemberDto dto) {
 		sqlSession.insert("member.insert", dto);
 	}
+
+	public MemberDto selectOne(String memberId) {
+		return sqlSession.selectOne("member.find", memberId);
+		
+		
+		
+	}
 }

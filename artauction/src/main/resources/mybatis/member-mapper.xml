@@ -16,4 +16,8 @@
 			#{memberAddress1}, #{memberAddress2}
 		)
 	</insert>
+	<select id="find" resultType="MemberDto">
+		select * from member where member_id = #{memberId}
+	</select>
+	
 </mapper>
