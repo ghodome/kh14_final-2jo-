@@ -16,6 +16,23 @@
 			#{memberAddress1}, #{memberAddress2}
 		)
 	</insert>
+	<update id="update">
+	update member
+	set
+	member_pw = #{memberPw},
+	member_name = #{memberName},
+	member_email = #{memberEmail},
+	member_contact = #{memberContact},
+	member_post = #{memberPost},
+	member_address1 = #{memberAddress1},
+	member_address2 = #{memberAddress2}
+	where
+	member_id = #{memberId}
+	</update>
+	<delete id="delete">
+		delete member where member_id = #{memberId}
+		asc
+	</delete>
 	<select id="find" resultType="MemberDto">
 		select * from member where member_id = #{memberId}
 	</select>
