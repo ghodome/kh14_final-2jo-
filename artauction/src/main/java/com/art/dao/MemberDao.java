@@ -15,11 +15,16 @@ public class MemberDao {
 	public void insert(MemberDto dto) {
 		sqlSession.insert("member.insert", dto);
 	}
+	public boolean update(MemberDto dto) {
+		return sqlSession.update("member.update", dto) > 0;
+	}
+	public boolean delete(String memberId) {
+		return sqlSession.delete("member.delete", memberId) > 0;
+	}
 
 	public MemberDto selectOne(String memberId) {
 		return sqlSession.selectOne("member.find", memberId);
 		
-		
-		
 	}
+
 }
