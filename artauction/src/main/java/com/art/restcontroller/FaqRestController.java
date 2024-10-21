@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.FaqDao;
 import com.art.dto.FaqDto;
-
+import com.art.dto.NoticeDto;
 
 @CrossOrigin
 @RestController
@@ -35,11 +35,17 @@ public class FaqRestController {
 	public void insert(@RequestBody FaqDto faqDto) {
 		faqDao.insert(faqDto);
 	}
-	
-	//삭제
+
+	// 삭제
 	@DeleteMapping("/{faqNo}")
 	public void delete(@PathVariable int faqNo) {
 		faqDao.delete(faqNo);
 	}
-	//수정
+
+	// 검색
+	@GetMapping("/column/{column}/keyword/{keyword}")
+	public List<FaqDto> search(@PathVariable String column, @PathVariable String keyword) {
+		return faqDao.selectList(column, keyword);
+	}
+	// 수정
 }
