@@ -28,4 +28,8 @@ public class workDao {
 		sqlSession.insert("work.insert",workArtistVO);
 	}
 	
+	public boolean delete(int workNo) {
+		return sqlSession.delete("work.delete", workNo)>0;
+	}
+	
 }

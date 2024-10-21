@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,13 +24,20 @@ public class WorkRestController {
 	@Autowired
 	private workDao workDao;
 	
+	@PostMapping("/")
+	public void insert(@RequestBody WorkArtistVO workArtistVO) {
+		workDao.insert(workArtistVO);
+	}
+	
 	@GetMapping("/")
 	public List<WorkArtistVO> list() {
 		return workDao.selectList();
 	}
 	
-	@PostMapping("/")
-	public void insert(@RequestBody WorkArtistVO workArtistVO) {
-		workDao.insert(workArtistVO);
+	@DeleteMapping("/{workNo}")
+	public void delete(@PathVariable int workNo) {
+		workDao.delete(workNo);
 	}
+
+	
 }

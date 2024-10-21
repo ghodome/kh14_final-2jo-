@@ -18,9 +18,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{workMaterials}, #{workSize}, #{workCategory}
 		)
 	</insert>
-	<select id="list" resultType="WorkDto">
-		select * from work order by work_no asc
+	<select id="list" resultType="WorkArtistVO">
+		select * from work W left outer join artist A on W.artist_no = A.artist_no
 	</select>
+	
+	<delete id="delete">
+		delete work where work_no = #{workNo}
+	</delete>
 	
 	
 </mapper>
