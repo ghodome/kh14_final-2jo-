@@ -6,9 +6,10 @@
 <mapper namespace="faq">
 
 	<!-- 목록 -->
-	<select id="list" resultType="NoticeDto">
-		select * from notice order by
-		notice_no asc
+	<select id="list" resultType="FaqDto">
+		select * from faq order by
+		faq_no
+		asc
 	</select>
 
 	<!-- 등록 -->
@@ -19,10 +20,19 @@
 		#{faqNo}, #{faqType}, #{faqContent}
 		)
 	</insert>
-	
+
 	<!-- 삭제 -->
 	<delete id="remove">
-	delete faq where faq_no = #{faqNo}
+		delete faq where faq_no = #{faqNo}
 	</delete>
+
+	<!-- 검색 -->
+	<select id="search" resultType="FaqDto">
+	<![CDATA[
+	select * from faq
+	where instr(${column}, #{keyword})>0
+	order by ${column} asc
+	]]>
+	</select>
 
 </mapper>
