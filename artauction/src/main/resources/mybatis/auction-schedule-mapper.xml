@@ -23,7 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{auctionScheduleTitle}, 
 			#{auctionScheduleStartDate}, 
 			#{auctionScheduleEndDate}, 
-			#{auctionScheduleState},
+			#{auctionScheduleState}
+		)
 	</insert>
 	
 	<!-- 수정 -->
