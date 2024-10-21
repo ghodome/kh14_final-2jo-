@@ -17,21 +17,21 @@
 		)
 	</insert>
 	<update id="update">
-	update member
-	set
-	member_pw = #{memberPw},
-	member_name = #{memberName},
-	member_email = #{memberEmail},
-	member_contact = #{memberContact},
-	member_post = #{memberPost},
-	member_address1 = #{memberAddress1},
-	member_address2 = #{memberAddress2}
-	where
-	member_id = #{memberId}
-	</update>
+    UPDATE member
+    <set>
+        <if test="memberPw != null">member_pw=#{memberPw},</if>
+        <if test="memberName != null">member_name=#{memberName},</if>
+        <if test="memberEmail != null">member_email=#{memberEmail},</if>
+        <if test="memberContact != null">member_contact=#{memberContact},</if>
+        <if test="memberPost != null">member_post=#{memberPost},</if>
+        <if test="memberAddress1 != null">member_address1=#{memberAddress1},</if>
+        <if test="memberAddress2 != null">member_address2=#{memberAddress2}</if>
+    </set>
+    WHERE member_id = #{memberId}
+</update>
+
 	<delete id="delete">
 		delete member where member_id = #{memberId}
-		asc
 	</delete>
 	<select id="find" resultType="MemberDto">
 		select * from member where member_id = #{memberId}
