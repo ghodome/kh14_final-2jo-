@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.workDao;
 import com.art.dto.WorkDto;
-import com.art.vo.WorkaArtistVO;
+import com.art.vo.WorkArtistVO;
 
 @CrossOrigin
 @RestController
@@ -23,12 +23,12 @@ public class WorkRestController {
 	private workDao workDao;
 	
 	@GetMapping("/")
-	public List<WorkDto> list() {
+	public List<WorkArtistVO> list() {
 		return workDao.selectList();
 	}
 	
 	@PostMapping("/")
-	public void insert(@RequestBody WorkaArtistVO workArtistVO) {
+	public void insert(@RequestBody WorkArtistVO workArtistVO) {
 		workDao.insert(workArtistVO);
 	}
 }
