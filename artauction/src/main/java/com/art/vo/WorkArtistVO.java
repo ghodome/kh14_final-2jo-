@@ -3,7 +3,7 @@ package com.art.vo;
 import lombok.Data;
 
 @Data
-public class WorkaArtistVO {
+public class WorkArtistVO {
 	private int workNo;
 	private int artistNo;
 	private String workTitle;
@@ -11,5 +11,5 @@ public class WorkaArtistVO {
 	private String workMaterials;
 	private String workSize;
 	private String workCategory;
-	
+	private String artistName;
 }

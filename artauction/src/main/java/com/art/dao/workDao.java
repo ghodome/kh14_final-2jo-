@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.art.dto.WorkDto;
-import com.art.vo.WorkaArtistVO;
+import com.art.vo.WorkArtistVO;
 
 @Repository
 public class workDao {
@@ -15,16 +15,17 @@ public class workDao {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	public List<WorkDto> selectList() {
+	public int sequence() {
+		return sqlSession.selectOne("work.sequence");
+	}
+	
+	public List<WorkArtistVO> selectList() {
 		return sqlSession.selectList("work.list");
 	}
 	
-	public void insert(WorkaArtistVO workArtistVO) {
+	public void insert(WorkArtistVO workArtistVO) {
 		
 		sqlSession.insert("work.insert",workArtistVO);
-	}
-	public int sequence() {
-		return sqlSession.selectOne("work.sequence");
 	}
 	
 }
