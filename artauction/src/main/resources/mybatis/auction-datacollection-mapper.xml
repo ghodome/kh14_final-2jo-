@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="auctionData">
+	<select id="list" resultType="AuctionDataCollectionDto">
+	SELECT 
+    a.auction_no, 
+    a.auction_low_price, 
+    a.auction_high_price, 
+    a.auction_end_date, 
+    a.auction_state,
+    w.work_no, 
+    w.work_title, 
+    w.work_size, 
+    w.work_category, 
+    ar.artist_no, 
+    ar.artist_name
+FROM 
+    auction a
+JOIN 
+    work w ON a.work_no = w.work_no
+JOIN 
+    artist ar ON w.artist_no = ar.artist_no
+WHERE 
+	a.auction_schedule_no=#{auctionScheduleNo}    
+	</select>
+</mapper>
