@@ -11,4 +11,5 @@ public class AuctionScheduleDto {
 	private Timestamp auctionScheduleStartDate;
 	private Timestamp auctionScheduleEndDate;
 	private String auctionScheduleState;
+	private String auctionScheduleNotice;
 }
