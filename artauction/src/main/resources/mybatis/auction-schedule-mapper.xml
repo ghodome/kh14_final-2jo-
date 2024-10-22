@@ -16,14 +16,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_schedule_title, 
 			auction_schedule_start_date, 
 			auction_schedule_end_date, 
-			auction_schedule_state
+			auction_schedule_state, 
+			auction_schedule_notice
 		)
 		values(
 			#{auctionScheduleNo}, 
 			#{auctionScheduleTitle}, 
 			#{auctionScheduleStartDate}, 
 			#{auctionScheduleEndDate}, 
-			#{auctionScheduleState}
+			#{auctionScheduleState}, 
+			#{auctionScheduleNotice}
 		)
 	</insert>
 	
@@ -34,7 +36,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_schedule_title = #{auctionScheduleTitle},
 			auction_schedule_start_date = #{auctionScheduleStartDate},
 			auction_schedule_end_date = #{auctionScheduleEndDate},
-			auction_schedule_state = #{auctionScheduleState}
+			auction_schedule_state = #{auctionScheduleState},
+			auction_schedule_notice = #{auctionScheduleNotice}
 		where
 			auction_schedule_no = #{auctionScheduleNo}
 	</update>
