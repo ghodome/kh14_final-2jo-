@@ -32,6 +32,11 @@ public class AuctionScheduleDao {
 		return sqlSession.selectOne("auctionSchedule.detail", auctionScheduleNo);
 	}
 	
+	//일정수정
+	public boolean update(AuctionScheduleDto auctionScheduleDto) {
+		return sqlSession.update("auctionSchedule.update", auctionScheduleDto) > 0;
+	}
+	
 	//일정삭제
 	public boolean delete(int auctionScheduleNo) {
 		return sqlSession.delete("auctionSchedule", auctionScheduleNo) > 0;
