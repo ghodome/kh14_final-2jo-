@@ -24,7 +24,9 @@ public class MemberDao {
 
 	public MemberDto selectOne(String memberId) {
 		return sqlSession.selectOne("member.find", memberId);
-		
+	}
+	public boolean pointUpdate(MemberDto dto) {
+		return sqlSession.update("member.pointUpdate",dto)>0;
 	}
 
 }

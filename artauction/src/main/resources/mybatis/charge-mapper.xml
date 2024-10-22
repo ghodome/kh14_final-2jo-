@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <!-- (주의) 결제와 결제상세를 같은 곳에서 처리 -->
+  <mapper namespace="charge">
+  	
+  	<!-- 등록 -->
+	<select id="chargeSequence" resultType="int">
+		select charge_seq.nextval from dual
+	</select>  	
+  	<select id="chargeDetailSequence" resultType="int">
+  		select charge_detail_seq.nextval from dual
+  	</select>
+  	<insert id="chargeInsert">
+  		insert into charge(
+  			charge_no,charge_tid,charge_name,
+			charge_total,charge_remain,member_id
+  		) values(
+  			#{chargeNo},#{chargeTid},#{chargeName},
+			#{chargeTotal},#{chargeRemain},#{memberId}
+  		)
+  	</insert>
+  	<insert id="chargeDetailInsert">
+  		insert into charge_detail(
+  			charge_detail_no, charge_detail_name,charge_detail_price,
+			charge_detail_qty,charge_detail_item,charge_detail_origin,
+			charge_detail_status
+  		) values(
+  			#{chargeDetailNo},#{chargeDetailName},#{chargeDetailPrice},
+  			#{chargeDetailQty},#{chargeDetailItem},#{chargeDetailOrigin},
+  			'승인'
+  		)
+  	</insert>
+  	<select id="list" resultType="chargeDto">
+  		select * from charge where member_id=#{memberId} order by charge_no desc
+  	</select>
+  	<select id="find" resultType="chargeDto">
+  		select * from charge where charge_no = #{chargeNo} 
+  	</select> 
+  	<select id="findDetail" resultType="chargeDetailDto">
+  		select * from charge_detail where charge_detail_origin = #{chargeNo} order by charge_detail_no asc
+  	</select>
+  	<!-- 
+  		mybatis 에서 특정 목적에 맞는 데이터를 수동으로 조회
+  		 -계층형 조회에서 많이 사용
+  		 -resultMap을 이용해서 내가 직접 정의한 형태를 알려줘야 한다
+  		 -mybatis 는 뎁스1까지만 자동매핑이 가능
+  	 -->
+  	 <!-- type 은 실제 자료형, id 는 매퍼 내에서 부를 별칭 -->
+  	 <resultMap type="chargeTotalVO" id="chargeTotalVO">
+  	 	<!-- 필드가 객체라면 association 을 사용 -->
+  	 	<association property="chargeDto">
+  	 		<!-- result 의 column 은 DB의 컬럼명, property 는 클래스 필드명 -->
+  	 		<result column="charge_no" property="chargeNo"/>
+  	 		<result column="charge_name" property="chargeName"/>
+  	 		<result column="charge_total" property="chargeTotal"/>
+  	 		<result column="charge_tid" property="chargeTid"/>
+  	 		<result column="charge_remain" property="chargeRemain"/>
+  	 		<result column="charge_time" property="chargeTime" javaType="java.sql.Date"/>
+  	 		<result column="member_id" property="memberId"/>
+  	 	</association>
+  	 	<!-- 필드가 컬렉션이라면 collection 을 사용
+  	 	 - javaType : 자료형
+  	 	 - ofType : 내부 데이터의 자료형
+		 - select : 데이터를 채우기 위해 실행할 구문  	 	 
+  	 	 -->
+  	 	<collection property="chargeDetailList" 
+  	 	javaType="java.util.List" ofType="chargeDetailDto"
+  	 	select="findDetail" column="charge_no" >
+  	 		<result column="charge_detail_no" property="chargeDetailNo"/>
+  	 		<result column="charge_detail_name" property="chargeDetailName"/>
+  	 		<result column="charge_detail_price" property="chargeDetailPrice"/>
+  	 		<result column="charge_detail_qty" property="chargeDetailQty"/>
+  	 		<result column="charge_detail_item" property="chargeDetailItem"/>
+  	 		<result column="charge_detail_origin" property="chargeDetailOrigin"/>
+  	 		<result column="charge_detail_status" property="chargeDetailStatus"/>
+  	 	</collection>
+  	 </resultMap>
+  	 <!-- 내가 만든 resultMap 을 이용해서 조회하고 싶다면 select 에 resultMap 을 작성 -->
+  	 <select id="findTotal" resultMap="chargeTotalVO">
+  	 	select * from charge where member_id=#{memberId} order by charge_no desc
+  	 </select>
+  	 <!-- 결제 전체/부분 취소 -->
+  	 <!-- 해당 결제 건 전체를 취소한다는건 대표 정보 및 상세정보를 수정한다는 뜻 -->
+  	 <update id="cancelAll">
+  	 	update charge set charge_remain = 0 where charge_no=#{chargeNo}
+  	 </update>
+  	 <update id="cancelAllItem">
+  	 	update charge_detail set charge_detail_status = '취소' where charge_detail_origin=#{chargeNo}
+  	 </update>
+  	 
+  	 <!-- 결제 상세 항목 한개를 취소하더라도 전체 정보의 잔여 금액을 차단해야 함 -->
+  	 <update id="cancelItem">
+  	 	update charge_detail set charge_detail_status ='취소' where charge_detail_no =#{chargeDetailNo}
+  	 </update>
+	 <update id="decreaseItemRemain">
+	 	update charge set charge_remain = charge_remain - #{money} where charge_no = #{chargeNo}
+	 </update>
+	 
+	 <select id="selectDetailOne" resultType="chargeDetailDto">
+	 	select * from charge_detail where charge_detail_no=#{chargeDetailNo}
+	 </select>
+  </mapper>
