@@ -32,8 +32,4 @@ public class workDao {
 		return sqlSession.delete("work.delete", workNo)>0;
 	}
 	
-	public boolean update(WorkArtistVO workArtistVO) {
-		return sqlSession.update("work.update", workArtistVO) > 0;
-	}
-	
 }

@@ -39,7 +39,7 @@ public class AuctionScheduleDao {
 	
 	//일정삭제
 	public boolean delete(int auctionScheduleNo) {
-		return sqlSession.delete("auctionSchedule.delete", auctionScheduleNo) > 0;
+		return sqlSession.delete("auctionSchedule", auctionScheduleNo) > 0;
 	}
 	
 	
