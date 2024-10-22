@@ -52,21 +52,29 @@ public class MemberRestController {
 	public MemberLoginResponseVO login(
 			@RequestBody MemberLoginRequestVO vo) {
 		MemberDto memberDto = memberDao.selectOne(vo.getMemberId());
+		if(memberDto == null) {
+			throw new TargetNotFoundException("아이디 없음");
+		}
 		
-//		boolean isValid = vo.getMemberPw().equals(memberDto.getMemberPw());
+		
+		boolean isValid = vo.getMemberPw().equals(memberDto.getMemberPw());
 //		boolean isValid = encoder.matches(vo.getMemberPw(), memberDto.memberPw());
 		
-		
+		if(isValid) {			
 			MemberLoginResponseVO response = new MemberLoginResponseVO();
 			//아이디, 등급, 액세스토큰
 			response.setMemberId(memberDto.getMemberId());//아이디
-			response.setMemberLevel(memberDto.getMemberRank());//등급
+			response.setMemberRank(memberDto.getMemberRank());//등급
 			MemberClaimVO claimVO = new MemberClaimVO();
 			claimVO.setMemberId(memberDto.getMemberId());
 			claimVO.setMemberRank(memberDto.getMemberRank());
 			response.setAccessToken(tokenService.createAccessToken(claimVO));//액세스토큰
 			response.setRefreshToken(tokenService.createRefreshToken(claimVO));//리프레시토큰
 			return response;	
+		}
+		else {
+			throw new TargetNotFoundException("비밀번호 불일치");
+		}
 	}
 	@GetMapping("/detail/{memberId}")
 	public MemberDto detail(@PathVariable String memberId) {
@@ -108,12 +116,13 @@ public class MemberRestController {
 	@PostMapping("/refresh")
 	public MemberLoginResponseVO refresh(
 			@RequestHeader("Authorization") String refreshToken) {
+		//[1] refreshToken이 없거나 Bearer로 시작하지 않으면 안됨
 		if(refreshToken == null) 
 			throw new TargetNotFoundException("토큰 없음");
 		if(tokenService.isBearerToken(refreshToken) == false)
 			throw new TargetNotFoundException("Bearer 토큰 아님");
 		
-		
+		//[2] 토큰에서 정보를 추출
 		MemberClaimVO claimVO = 
 				tokenService.check(tokenService.removeBearer(refreshToken));
 		if(claimVO.getMemberId() == null)
@@ -121,29 +130,29 @@ public class MemberRestController {
 		if(claimVO.getMemberRank() == null)
 			throw new TargetNotFoundException("등급 없음");
 		
-		
+		//[3] 토큰 발급 내역을 조회
 		MemberTokenDto memberTokenDto = new MemberTokenDto();
 		memberTokenDto.setTokenTarget(claimVO.getMemberId());
 		memberTokenDto.setTokenValue(tokenService.removeBearer(refreshToken));
 		MemberTokenDto resultDto = memberTokenDao.selectOne(memberTokenDto);
-		if(resultDto == null)
+		if(resultDto == null)//발급내역이 없음 
 			throw new TargetNotFoundException("발급 내역이 없음");
 		
-		
+		//[4] 기존의 리프시 토큰 삭제
 		memberTokenDao.delete(memberTokenDto);
 		
-		
+		//[5] 로그인 정보 재발급
 		MemberLoginResponseVO response = new MemberLoginResponseVO();
 		response.setMemberId(claimVO.getMemberId());
-		response.setMemberLevel(claimVO.getMemberRank());
-		response.setAccessToken(tokenService.createAccessToken(claimVO));
-		response.setRefreshToken(tokenService.createRefreshToken(claimVO));
+		response.setMemberRank(claimVO.getMemberRank());
+		response.setAccessToken(tokenService.createAccessToken(claimVO));//재발급
+		response.setRefreshToken(tokenService.createRefreshToken(claimVO));//재발급
 		return response;
 	}
 	
 	@GetMapping("/find")
 	public MemberDto find(@RequestHeader("Authorization") String accessToken) {
-		if(tokenService.isBearerToken(accessToken) == false)
+		if(tokenService.isBearerToken(accessToken) == false) 
 			throw new TargetNotFoundException("유효하지 않은 토큰");
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(accessToken));
 		
@@ -151,7 +160,7 @@ public class MemberRestController {
 		if(memberDto == null)
 			throw new TargetNotFoundException("존재하지 않는 회원");
 		
-		memberDto.setMemberPw(null);
+		memberDto.setMemberPw(null);//비밀번호 제거
 		
 		return memberDto;
 	}
