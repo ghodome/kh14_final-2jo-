@@ -4,24 +4,51 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="auction">
+	<select id="sequence" resultType="int">
+		select auction_seq.nextval from dual
+	</select>
 	<insert id="add">
 	insert into auction(
-		auction_low_price,auction_high_price,
-		auction_start_date,auction_end_date,
-		auction_state
+		auction_no,
+		auction_schedule_no,
+		work_no,
+		auction_lot,
+		auction_low_price,
+		auction_high_price,
+		auction_state,
+		auction_consigner,
+		auction_consignment_fee
 	)
 	values(
-		#{auctionLowPrice},#{auctionHighPrice},
-		#{auctionStartDate},#{auctionEndDate},
-		#{auctionState}
+		#{auctionNo},
+		#{auctionScheduleNo},
+		#{workNo},
+		#{auctionLot},
+		#{auctionLowPrice},
+		#{auctionHighPrice},
+		#{auctionState},
+		#{auctionConsigner},
+		#{auctionConsignmentFee}
 	)
 	</insert>
 
 	<update id="update">
-		update auction set 
-		auction_low_price=#{auctionLowPrice}, auction_high_price=#{auctionHighPrice},
-		auction_start_date=#{auctionStartDate},auction_end_date=#{auctionEndDate},
-		auction_state=#{auctionState} where auction_no=#{auctionNo}
+		update auction 
+		<set>
+			<if test="auctionScheduleNo!=null">auction_schedule_no=#{auctionScheduleNo},</if>
+			<if test="workNo!=null">work_no=#{workNo},</if>
+			<if test="auctionSuccessBidder!=null">auction_success_bidder=#{auctionSuccessBidder},</if>
+			<if test="auctionLot!=null">auction_lot=#{auctionLot},</if>
+			<if test="auctionLowPrice!=null">auction_low_price=#{auctionLowPrice},</if>
+			<if test="auctionHighPrice!=null">auction_high_price=#{auctionHighPrice},</if>
+			<if test="auctionStartDate!=null">auction_start_date=#{auctionStartDate},</if>
+			<if test="auctionEndDate!=null">auction_end_date=#{auctionEndDate},</if>
+			<if test="auctionState!=null">auction_state=#{auctionState},</if>
+			<if test="auctionConsigner!=null">auction_consigner=#{auctionConsigner},</if>
+			<if test="auctionConsignmentFee!=null">auction_consignment_fee=#{auctionConsignmentFee},</if>
+			<if test="auctionNetProceeds!=null">auction_net_proceeds=#{auctionNetProceeds},</if>
+		</set>
+		where auction_no=#{auctionNo}
 	</update>
 	
 	<select id="list" resultType="auctionDto">

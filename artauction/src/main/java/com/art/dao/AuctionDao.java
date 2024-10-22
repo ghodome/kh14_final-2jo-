@@ -35,5 +35,8 @@ public class AuctionDao {
 	};
 	public List<AuctionDataCollectionDto> selectDataCollectionList(int auctionScheduleNo){
 		return sqlSession.selectList("auctionData.list",auctionScheduleNo);
+	};
+	public int sequence() {
+		return sqlSession.selectOne("auction.sequence");
 	}
 }
