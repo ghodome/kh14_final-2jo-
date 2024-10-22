@@ -20,11 +20,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 	<select id="list" resultType="WorkArtistVO">
 		select * from work W left outer join artist A on W.artist_no = A.artist_no
+		order by W.work_no asc
 	</select>
 	
 	<delete id="delete">
 		delete work where work_no = #{workNo}
 	</delete>
+	
+	<update id="update">
+    update work 
+    <set>
+        <if test="workTitle != null">work_title = #{workTitle},</if>
+        <if test="artistNo != null">artist_no = #{artistNo},</if>
+        <if test="workDescription != null">work_description = #{workDescription},</if>
+        <if test="workMaterials != null">work_materials = #{workMaterials},</if>
+        <if test="workSize != null">work_size = #{workSize},</if>
+        <if test="workCategory != null">work_category = #{workCategory}</if>
+    </set>
+    where work_no = #{workNo}
+</update>
 	
 	
 </mapper>
