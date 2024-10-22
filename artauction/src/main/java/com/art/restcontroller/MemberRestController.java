@@ -1,6 +1,13 @@
 package com.art.restcontroller;
 
+
+
+import java.io.Console;
+import java.net.URISyntaxException;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,19 +20,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.art.dao.ChargeDao;
 import com.art.dao.MemberDao;
 import com.art.dao.MemberTokenDao;
+import com.art.dto.ChargeDto;
 import com.art.dto.MemberDto;
 import com.art.dto.MemberTokenDto;
 import com.art.error.TargetNotFoundException;
+import com.art.service.KakaoPayService;
 import com.art.service.MemberService;
 import com.art.service.TokenService;
+import com.art.vo.MemberApproveRequestVO;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.MemberLoginRequestVO;
 import com.art.vo.MemberLoginResponseVO;
+import com.art.vo.MemberPurchaseRequestVO;
+import com.art.vo.pay.KakaoPayApproveRequestVO;
+import com.art.vo.pay.KakaoPayApproveResponseVO;
+import com.art.vo.pay.KakaoPayReadyRequestVO;
+import com.art.vo.pay.KakaoPayReadyResponseVO;
+
+import lombok.extern.slf4j.Slf4j;
 
 
-
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/member")
@@ -42,8 +60,11 @@ public class MemberRestController {
 	
 	@Autowired
 	private MemberTokenDao memberTokenDao;
+	@Autowired
+	private ChargeDao chargeDao;
 	
-	
+	@Autowired
+	private KakaoPayService kakaoPayService;
 	@PostMapping("/join")
 	public void insert(@RequestBody MemberDto memberDto) {
 		memberDao.insert(memberDto);
@@ -155,4 +176,69 @@ public class MemberRestController {
 		
 		return memberDto;
 	}
+	//충전
+		@PostMapping("/charge/purchase")
+		public KakaoPayReadyResponseVO purchase(
+				@RequestBody MemberPurchaseRequestVO request
+//				,@RequestHeader("Authorization")String token 토큰생기면 이거 다시 바꿔야됨
+				) throws URISyntaxException {
+			//카카오페이에 보낼 최종 결제 정보를 생성
+			//결제 준비 요청을 보내고
+			//사용자에게 필요한 정보를 전달
+			MemberClaimVO claimVO = tokenService.check("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MzIyNjI0ODAsImlzcyI6IktIYWNhZGVteSIsImlhdCI6MTcyOTU4NDA4MCwibWVtYmVySWQiOiJ0ZXN0dXNlcjEiLCJtZW1iZXJSYW5rIjoi7ZqM7JuQIn0.1xsMvbxvjMMSLq239HtLBBj3CIxmi-J-MLtQ0obkEm0");
+			
+			KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
+			requestVO.setPartnerOrderId(UUID.randomUUID().toString());
+			requestVO.setPartnerUserId(claimVO.getMemberId());
+			requestVO.setItemName("K옥션 포인트 충전");
+			requestVO.setTotalAmount(request.getTotalAmount());
+			requestVO.setApprovalUrl(request.getApprovalUrl());
+			requestVO.setCancelUrl(request.getCancelUrl());
+			requestVO.setFailUrl(request.getFailUrl());
+			KakaoPayReadyResponseVO responseVO = kakaoPayService.ready(requestVO);
+			
+			log.info("리스폰스브이오 : {}",responseVO);
+			return responseVO;
+		}
+		@Transactional
+		@PostMapping("/charge/approve")
+		public KakaoPayApproveResponseVO approve(
+//				@RequestHeader("Authorization")String token,
+				@RequestBody MemberApproveRequestVO request) throws URISyntaxException {
+			KakaoPayApproveRequestVO requestVO = new KakaoPayApproveRequestVO();
+			MemberClaimVO claimVO = tokenService.check("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MzIyNjI0ODAsImlzcyI6IktIYWNhZGVteSIsImlhdCI6MTcyOTU4NDA4MCwibWVtYmVySWQiOiJ0ZXN0dXNlcjEiLCJtZW1iZXJSYW5rIjoi7ZqM7JuQIn0.1xsMvbxvjMMSLq239HtLBBj3CIxmi-J-MLtQ0obkEm0");
+			requestVO.setPartnerOrderId(request.getPartnerOrderId());
+			requestVO.setPartnerUserId(claimVO.getMemberId());
+			requestVO.setTid(request.getTid());
+			requestVO.setPgToken(request.getPgToken());
+			KakaoPayApproveResponseVO responseVO = kakaoPayService.approve(requestVO);
+			//최종 결제가 완료된 시점에 DB에 결제에 대한 기록을 남긴다
+			
+			//[1] 대표 정보 등록
+			int chargeSeq = chargeDao.chargeSequence();
+			ChargeDto chargeDto = new ChargeDto();
+			chargeDto.setChargeNo(chargeSeq);//결제번호
+			chargeDto.setChargeTid(responseVO.getTid());//거래번호
+			chargeDto.setChargeName(responseVO.getItemName());//거래상품명
+			chargeDto.setChargeTotal(responseVO.getAmount().getTotal());//거래금액
+			chargeDto.setChargeRemain(chargeDto.getChargeTotal());//취소가능금액
+			chargeDto.setMemberId(claimVO.getMemberId());//구매자ID
+			chargeDao.chargeInsert(chargeDto);
+			MemberDto memberDto = memberDao.selectOne(chargeDto.getMemberId());
+			memberDto.setMemberPoint(memberDto.getMemberPoint()+chargeDto.getChargeTotal());
+			memberDao.pointUpdate(memberDto);
+//				BookDto bookDto = bookDao.selectOne(qtyVO.getBookId());
+//				if(bookDto==null)throw new TargetNotFoundException("존재하지 않는 도서");
+//				int paymentDetailSql = paymentDao.paymentDetailSequence();
+//				PaymentDetailDto paymentDetailDto =new PaymentDetailDto();
+//				paymentDetailDto.setPaymentDetailNo(paymentDetailSql);//번호 설정
+//				paymentDetailDto.setPaymentDetailName(bookDto.getBookTitle());//상품명
+//				paymentDetailDto.setPaymentDetailPrice(bookDto.getBookPrice());//상품판매
+//				paymentDetailDto.setPaymentDetailItem(bookDto.getBookId());//상품번호
+//				paymentDetailDto.setPaymentDetailQty(qtyVO.getQty());//구매수량
+//				paymentDetailDto.setPaymentDetailOrigin(paymentSeq);//결제대표번호
+//				paymentDao.paymentDetailInsert(paymentDetailDto);
+			
+			return responseVO;
+		}
 }
