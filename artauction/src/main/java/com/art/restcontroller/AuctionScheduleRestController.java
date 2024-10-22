@@ -28,6 +28,8 @@ public class AuctionScheduleRestController {
 	//등록
 	@PostMapping("/")
 	public void insert(@RequestBody AuctionScheduleDto auctionScheduleDto) {
+		int auctionScheduleNo=auctionScheduleDao.sequence();
+		auctionScheduleDto.setAuctionScheduleNo(auctionScheduleNo);
 		auctionScheduleDao.insert(auctionScheduleDto);
 	}
 	
@@ -64,6 +66,5 @@ public class AuctionScheduleRestController {
 			throw new TargetNotFoundException();
 		}
 	}
-	
 
 }
