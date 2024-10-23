@@ -181,7 +181,7 @@ public class MemberRestController {
 		//회원 본인의 정보를 반환하는 기능
 		//- 아이디를 변경할 수 없도록 Authorization 헤더에서 정보를 읽어 조회한 뒤 반환
 		@GetMapping("/find")
-		public MemberDto find(@RequestHeader("Authorization") String accessToken) {
+		public MemberDto find(@RequestHeader(value = "Authorization", required = false) String accessToken) {
 			if(tokenService.isBearerToken(accessToken) == false) 
 				throw new TargetNotFoundException("유효하지 않은 토큰");
 			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(accessToken));
@@ -193,6 +193,7 @@ public class MemberRestController {
 			memberDto.setMemberPw(null);//비밀번호 제거
 			
 			return memberDto;
+		}
 	//충전
 		@PostMapping("/charge/purchase")
 		public KakaoPayReadyResponseVO purchase(
