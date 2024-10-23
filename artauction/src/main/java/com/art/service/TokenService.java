@@ -22,7 +22,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class TokenService {
 	
-	public static final String BEARER_PREFIX = "Bearer ";
+public static final String BEARER_PREFIX = "Bearer ";
 	
 	@Autowired
 	private TokenProperties tokenProperties;
