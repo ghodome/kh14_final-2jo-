@@ -113,7 +113,7 @@ public class MemberRestController {
 			throw new TargetNotFoundException("비밀번호 불일치");
 		}
 	}
-	@GetMapping("/detail/{memberId}")
+	@GetMapping("/{memberId}")
 	public MemberDto detail(@PathVariable String memberId) {
 		MemberDto memberDto = memberDao.selectOne(memberId);
 		if(memberDto == null) {
