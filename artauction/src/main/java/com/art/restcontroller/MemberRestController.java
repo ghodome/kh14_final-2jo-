@@ -193,6 +193,7 @@ public class MemberRestController {
 			memberDto.setMemberPw(null);//비밀번호 제거
 			
 			return memberDto;
+		}
 	//충전
 		@PostMapping("/charge/purchase")
 		public KakaoPayReadyResponseVO purchase(
