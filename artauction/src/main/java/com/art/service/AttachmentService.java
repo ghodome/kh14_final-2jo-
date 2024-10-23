@@ -28,7 +28,9 @@ public class AttachmentService {
 	//목표 : application.properties에 작성된 설정을 불러와 업로드 폴더로 지정
 	@Autowired
 	private CustomFileuploadProperties properties;
+	
 	private File dir;
+	
 	@PostConstruct//객체 생성 및 등록 후 딱 한번만 실행되는 메소드(초기세팅)
 	public void init() {
 		dir = new File(properties.getPath());
@@ -63,6 +65,7 @@ public class AttachmentService {
 		}
 		
 		//실물 파일 삭제
+		File dir = new File("/D:/upload/kh14fb");
 		File target = new File(dir, String.valueOf(attachmentNo));
 		target.delete();
 		

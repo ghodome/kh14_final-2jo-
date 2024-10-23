@@ -28,17 +28,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</delete>
 	
 	<update id="update">
-    update work 
-    <set>
-        <if test="workTitle != null">work_title = #{workTitle},</if>
-        <if test="artistNo != null">artist_no = #{artistNo},</if>
-        <if test="workDescription != null">work_description = #{workDescription},</if>
-        <if test="workMaterials != null">work_materials = #{workMaterials},</if>
-        <if test="workSize != null">work_size = #{workSize},</if>
-        <if test="workCategory != null">work_category = #{workCategory}</if>
-    </set>
-    where work_no = #{workNo}
-</update>
+    	update work 
+	    <set>
+	        <if test="workTitle != null">work_title = #{workTitle},</if>
+	        <if test="artistNo != null">artist_no = #{artistNo},</if>
+	        <if test="workDescription != null">work_description = #{workDescription},</if>
+	        <if test="workMaterials != null">work_materials = #{workMaterials},</if>
+	        <if test="workSize != null">work_size = #{workSize},</if>
+	        <if test="workCategory != null">work_category = #{workCategory}</if>
+	    </set>
+	    where work_no = #{workNo}
+	</update>
 	
+	<insert id="connect">
+		insert into work_image(
+			attachment, work
+		) values (
+			#{attachment}, #{work}
+		)
+	</insert>
+		
 	
 </mapper>
