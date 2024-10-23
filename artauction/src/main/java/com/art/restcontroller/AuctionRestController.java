@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.art.dao.AuctionDao;
 import com.art.dto.AuctionDataCollectionDto;
 import com.art.dto.AuctionDto;
+import com.art.vo.AuctionLotVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,6 +55,19 @@ public class AuctionRestController {
 	public List<AuctionDataCollectionDto> collectionList(@PathVariable int auctionScheduleNo ) {
 		return auctionDao.selectDataCollectionList(auctionScheduleNo);
 		
+	}
+	@GetMapping("/auctionList/{auctionScheduleNo}")
+	public List<AuctionLotVO> auctionListWithJoin(@PathVariable int auctionScheduleNo){
+		return auctionDao.selectAuctionListWithJoin(auctionScheduleNo);
+		
+	}
+	@GetMapping("/cancelPresent/{auctionNo}")
+	public void cancelPresent(@PathVariable int auctionNo) {
+		auctionDao.cancelPresent(auctionNo);
+	}
+	@GetMapping("/uncancelPresent/{auctionNo}")
+	public void uncancelPresent(@PathVariable int auctionNo) {
+		auctionDao.uncancelPresent(auctionNo);
 	}
 	
 }

@@ -17,18 +17,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		auction_high_price,
 		auction_state,
 		auction_consigner,
-		auction_consignment_fee
+		auction_consignment_fee,
+		auction_start_price,
 	)
 	values(
 		#{auctionNo},
 		#{auctionScheduleNo},
 		#{workNo},
-		#{auctionLot},
+		<if test="auctionLot==null">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
+		<if test="auctionLot!=null">#{auctionLot},</if>
 		#{auctionLowPrice},
 		#{auctionHighPrice},
 		#{auctionState},
 		#{auctionConsigner},
-		#{auctionConsignmentFee}
+		#{auctionConsignmentFee},
+		#{auctionStartPrice}
 	)
 	</insert>
 
@@ -51,16 +54,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where auction_no=#{auctionNo}
 	</update>
 	
-	<select id="list" resultType="auctionDto">
+	<select id="list" resultType="AuctionDto">
 		select * from auction order by auction_no asc
 	</select>
-	<select id="detail" resultType="auctionDto">
+	<select id="detail" resultType="AuctionDto">
 		select * from auction where auction_no=#{auctionNo}
 	</select>
 	<delete id="delete">
 		delete auction where auction_no=#{auctionNo}
 	</delete>
-	<select id="sceduleList" resultType="auctionDto">
+	<select id="sceduleList" resultType="AuctionDto">
 		select * from auction where auction_schedule_no = #{auctionScheduleNo} order by auction_no asc
 	</select>
+	<select id="scheduleListOrderByLot" resultType="AuctionLotVO">
+		SELECT 
+			A.AUCTION_NO,A.AUCTION_LOT,A.AUCTION_STATE,W.work_title,W.WORK_MATERIALS ,W.WORK_CATEGORY 
+		FROM 
+			work W
+		INNER JOIN 
+			auction A 
+		ON 
+			W.work_no = A.work_no
+		WHERE A.AUCTION_SCHEDULE_NO = ${auctionScheduleNo}
+		order by A.AUCTION_NO asc
+	</select>
+	<update id="cancelPresent">
+		update auction set auction_state='출품취소' where auction_no = #{auctionNo}
+	</update>
+	<update id="uncancelPresent">
+		update auction set auction_state='예정경매' where auction_no = #{auctionNo}
+	</update>
+
 </mapper>
