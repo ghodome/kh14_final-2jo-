@@ -32,6 +32,8 @@ import com.art.service.MemberService;
 import com.art.service.TokenService;
 import com.art.vo.MemberApproveRequestVO;
 import com.art.vo.MemberClaimVO;
+import com.art.vo.MemberComplexRequestVO;
+import com.art.vo.MemberComplexResponseVO;
 import com.art.vo.MemberLoginRequestVO;
 import com.art.vo.MemberLoginResponseVO;
 import com.art.vo.MemberPurchaseRequestVO;
@@ -69,6 +71,20 @@ public class MemberRestController {
 	public void insert(@RequestBody MemberDto memberDto) {
 		memberDao.insert(memberDto);
 	}
+	@PostMapping("search")
+	public MemberComplexResponseVO search(
+			@RequestBody MemberComplexRequestVO vo) {
+		int count = memberDao.searchCount(vo);
+		boolean last = vo.getEndRow() == null || count <= vo.getEndRow();
+		
+		MemberComplexResponseVO response = new MemberComplexResponseVO();
+		response.setMemberList(memberDao.search(vo));
+		response.setCount(count);
+		response.setLast(last);
+		return response;
+	}
+	
+	
 	@PostMapping("/login")
 	public MemberLoginResponseVO login(
 			@RequestBody MemberLoginRequestVO vo) {
