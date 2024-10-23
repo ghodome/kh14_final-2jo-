@@ -23,7 +23,9 @@ public class MemberTokenDao {
 	public boolean delete(MemberTokenDto memberTokenDto) {
 		return sqlSession.delete("memberToken.delete", memberTokenDto) > 0;
 	}
+
 	public int clear() {
 		return sqlSession.delete("memberToken.clear");
 	}
+	
 }

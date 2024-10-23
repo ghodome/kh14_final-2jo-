@@ -28,9 +28,11 @@
 			and 
 			token_value = #{tokenValue} 
 	</delete>
+	
 	<delete id="clear">
 		<![CDATA[
 		delete member_token where token_time <= sysdate-1
 		]]>
 	</delete>
+	
 </mapper>
