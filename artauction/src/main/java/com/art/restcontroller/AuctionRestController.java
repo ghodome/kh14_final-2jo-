@@ -36,7 +36,7 @@ public class AuctionRestController {
 	public void add(@RequestBody AuctionDto auctionDto) {
 		auctionDto.setAuctionNo(auctionDao.sequence());
 		auctionDto.setAuctionState("예정경매");
-//		log.info("auctionDto={}",auctionDto);
+		log.info("auctionLot={}",auctionDto.getAuctionLot());
 		auctionDao.insert(auctionDto);
 	}
 	@PatchMapping("/")
@@ -54,7 +54,6 @@ public class AuctionRestController {
 	@GetMapping("/{auctionScheduleNo}")
 	public List<AuctionDataCollectionDto> collectionList(@PathVariable int auctionScheduleNo ) {
 		return auctionDao.selectDataCollectionList(auctionScheduleNo);
-		
 	}
 	@GetMapping("/auctionList/{auctionScheduleNo}")
 	public List<AuctionLotVO> auctionListWithJoin(@PathVariable int auctionScheduleNo){

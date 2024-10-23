@@ -18,14 +18,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		auction_state,
 		auction_consigner,
 		auction_consignment_fee,
-		auction_start_price,
+		auction_start_price
 	)
 	values(
 		#{auctionNo},
 		#{auctionScheduleNo},
 		#{workNo},
-		<if test="auctionLot==null">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
-		<if test="auctionLot!=null">#{auctionLot},</if>
+		<if test="auctionLot == null or auctionLot == ''">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
+		<if test="auctionLot != null and auctionLot != ''">#{auctionLot},</if>
 		#{auctionLowPrice},
 		#{auctionHighPrice},
 		#{auctionState},
