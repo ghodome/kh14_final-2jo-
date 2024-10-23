@@ -51,6 +51,8 @@ VALUES (member_token_seq.NEXTVAL, #{tokenTarget}, #{tokenValue})
         <delete id="deleteToken">
         delete from member_token WHERE token_value = #{tokenValue}
     </delete>
-    
+    <update id="pointUpdate">
+    	update member set member_point=#{memberPoint} where member_id=#{memberId}
+    </update>
 	
 </mapper>
