@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class WebSocketController {
-	//토크
+	
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 	
@@ -48,8 +48,11 @@ public class WebSocketController {
 		AuctionContentVO contentVO=new AuctionContentVO();
 		String filterStr = request.getContent();
 		
-		
 		contentVO.setContent(filterStr);
+		contentVO.setBidNo(0);
+		contentVO.setBidPrice(0);
+		contentVO.setBidTime(timeService.getTime());
+		contentVO.setMemberId(claimVO.getMemberId());
 		
 		if(request.getContent().contains("bid")) {
 			WebsocketBidResponseVO response = new WebsocketBidResponseVO();
@@ -57,7 +60,7 @@ public class WebSocketController {
 			response.setContent(contentVO);
 			response.setSenderMemberId(claimVO.getMemberId());
 			response.setSenderMemberRank(claimVO.getMemberRank());
-			response.setTime(timeService.getTime());
+			response.setTime(contentVO.getBidTime());
 			messagingTemplate.convertAndSend("/auction/everyone",response);
 			messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 		}
@@ -66,7 +69,7 @@ public class WebSocketController {
 			response.setContent(contentVO);
 			response.setSenderMemberId(claimVO.getMemberId());
 			response.setSenderMemberRank(claimVO.getMemberRank());
-			response.setTime(timeService.getTime());
+			response.setTime(contentVO.getBidTime());
 			messagingTemplate.convertAndSend("/auction/everyone",response);
 			messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 			
