@@ -22,7 +22,7 @@ public class ExceptionAdvice {
 		return ResponseEntity.internalServerError().body("server error");// 500 서버에러
 	}
 	@ExceptionHandler(ExpiredJwtException.class)
-	public ResponseEntity<String> errorTokenExpired(Exception e){
+	public ResponseEntity<String> errorTokenExpire(Exception e){
 		e.printStackTrace();
 		return ResponseEntity.status(404).body("token expired");
 	}

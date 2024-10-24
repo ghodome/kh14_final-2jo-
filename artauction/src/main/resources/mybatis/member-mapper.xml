@@ -6,51 +6,291 @@
 <mapper namespace="member">
 	<insert id="insert">
 		INSERT INTO member (
-			member_id, member_pw, member_name,
-			member_email, member_contact, member_post, 
-			member_address1, member_address2
-			
+		member_id, member_pw,
+		member_name,
+		member_email, member_contact, member_post,
+		member_address1, member_address2
+
 		) VALUES (
-			#{memberId}, #{memberPw}, #{memberName}, 
-			#{memberEmail}, #{memberContact}, #{memberPost},
-			#{memberAddress1}, #{memberAddress2}
+		#{memberId}, #{memberPw},
+		#{memberName},
+		#{memberEmail}, #{memberContact}, #{memberPost},
+		#{memberAddress1}, #{memberAddress2}
 		)
 	</insert>
 	<update id="update">
-    UPDATE member
-    <set>
-        <if test="memberPw != null">member_pw=#{memberPw},</if>
-        <if test="memberName != null">member_name=#{memberName},</if>
-        <if test="memberEmail != null">member_email=#{memberEmail},</if>
-        <if test="memberContact != null">member_contact=#{memberContact},</if>
-        <if test="memberPost != null">member_post=#{memberPost},</if>
-        <if test="memberAddress1 != null">member_address1=#{memberAddress1},</if>
-        <if test="memberAddress2 != null">member_address2=#{memberAddress2}</if>
-    </set>
-    WHERE member_id = #{memberId}
-</update>
+		UPDATE member
+		<set>
+			<if test="memberPw != null">member_pw=#{memberPw},</if>
+			<if test="memberName != null">member_name=#{memberName},</if>
+			<if test="memberEmail != null">member_email=#{memberEmail},</if>
+			<if test="memberContact != null">member_contact=#{memberContact},</if>
+			<if test="memberPost != null">member_post=#{memberPost},</if>
+			<if test="memberAddress1 != null">member_address1=#{memberAddress1},</if>
+			<if test="memberAddress2 != null">member_address2=#{memberAddress2}</if>
+
+		</set>
+		WHERE member_id = #{memberId}
+	</update>
 
 	<delete id="delete">
 		delete member where member_id = #{memberId}
 	</delete>
+
+	<select id="search" resultType="MemberDto">
+
+		<include refid="top-n-header" />
+
+
+		select * from member
+
+		<where>
+			<if test="basicKeyword != null">
+				AND
+				<choose>
+					<when test="searchColumn == 'member_id'">
+						member_id LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_name'">
+						member_name LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_email'">
+						member_email LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+				</choose>
+			</if>
+
+
+			<if test="memberId != null">
+				and member_id like #{memberId} || '%'
+			</if>
+			<if test="memberName != null">
+				and instr(member_name, #{memberName}) > 0
+			</if>
+			<if test="memberContact != null">
+				and instr(member_contact, #{memberContact}) > 0
+			</if>
+			<if test="memberEmail != null">
+				and instr(member_email, #{memberEmail}) > 0
+			</if>
+
+			<choose>
+				<when test="minMemberPoint != null and maxMemberPoint != null">
+					and member_point between #{minMemberPoint} and
+					#{maxMemberPoint}
+				</when>
+				<when test="minMemberPoint != null">
+			<![CDATA[
+			and member_point >= #{minMemberPoint}
+			]]>
+				</when>
+				<when test="maxMemberPoint != null">
+			<![CDATA[
+			and member_point <= #{maxMemberPoint}
+			]]>
+				</when>
+			</choose>
+
+			<choose>
+				<when
+					test="beginMemberJoinDate != null and endMemberJoinDate != null">
+					and (
+					member_join_date between
+					to_date(#{beginMemberJoinDate} ||
+					' '
+					|| '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+					and
+					to_date(#{endMemberJoinDate} || ' ' || '23:59:59', 'YYYY-MM-DD
+					HH24:MI:SS')
+					)
+				</when>
+				<when test="beginMemberJoinDate != null">
+			<![CDATA[
+			and member_join_date >= 
+			to_date(#{beginMemberJoinDate} || ' ' || '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			]]>
+				</when>
+				<when test="endMemberJoinDate != null">
+			<![CDATA[
+			and member_join_date <=
+			to_date(#{endMemberJoinDate} || ' ' || '23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+			]]>
+				</when>
+			</choose>
+			<if test="memberRankList != null and memberRankList.size() > 0">
+				and member_rank in
+				<foreach item="memberRank" collection="memberRankList"
+					open="(" separator="," close=")">
+					#{memberRank}
+				</foreach>
+			</if>
+
+			<if test="memberAddress != null">
+				and (
+				instr(member_post, #{memberAddress}) > 0
+				or
+				instr(member_address1,
+				#{memberAddress}) > 0
+				or
+				instr(member_address2,
+				#{memberAddress}) > 0
+				)
+			</if>
+		</where>
+		<choose>
+			<when test="orderList != null and orderList.size() > 0">
+				order by
+				<foreach item="orderItem" collection="orderList"
+					separator=",">
+					${orderItem}
+				</foreach>
+			</when>
+			<otherwise>
+				order by member_id asc
+			</otherwise>
+		</choose>
+
+		<include refid="top-n-footer" />
+
+	</select>
+
+	<sql id="top-n-header">
+		<if test="beginRow != null and endRow != null">
+			select * from (
+			select rownum rn, TMP.* from (
+		</if>
+	</sql>
+
+	<sql id="top-n-footer">
+		<if test="beginRow != null and endRow != null">
+			) TMP
+			)
+			where rn between #{beginRow} and #{endRow}
+		</if>
+	</sql>
+
+
+	<select id="searchCount" resultType="int">
+		select count(*) from member
+
+		<where>
+			<if test="basicKeyword != null">
+				AND
+				<choose>
+					<when test="searchColumn == 'member_id'">
+						member_id LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_name'">
+						member_name LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_email'">
+						member_email LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+				</choose>
+			</if>
+
+			<if test="memberId != null">
+				and member_id like #{memberId} || '%'
+			</if>
+			<if test="memberName != null">
+				and instr(member_name, #{memberName}) > 0
+			</if>
+			<if test="memberContact != null">
+				and instr(member_contact, #{memberContact}) > 0
+			</if>
+			<if test="memberEmail != null">
+				and instr(member_email, #{memberEmail}) > 0
+			</if>
+
+			<choose>
+				<when test="minMemberPoint != null and maxMemberPoint != null">
+					and member_point between #{minMemberPoint} and
+					#{maxMemberPoint}
+				</when>
+				<when test="minMemberPoint != null">
+			<![CDATA[
+			and member_point >= #{minMemberPoint}
+			]]>
+				</when>
+				<when test="maxMemberPoint != null">
+			<![CDATA[
+			and member_point <= #{maxMemberPoint}
+			]]>
+				</when>
+			</choose>
+			<choose>
+				<when
+					test="beginMemberJoinDate != null and endMemberJoinDate != null">
+					and (
+					member_join_date between
+					to_date(#{beginMemberJoinDate} ||
+					' '
+					|| '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+					and
+					to_date(#{endMemberJoinDate} || ' ' || '23:59:59', 'YYYY-MM-DD
+					HH24:MI:SS')
+					)
+				</when>
+				<when test="beginMemberJoinDate != null">
+			<![CDATA[
+			and member_join_date >= 
+			to_date(#{beginMemberJoinDate} || ' ' || '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			]]>
+				</when>
+				<when test="endMemberJoinDate != null">
+			<![CDATA[
+			and member_join_date <=
+			to_date(#{endMemberJoinDate} || ' ' || '23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+			]]>
+				</when>
+			</choose>
+			<if test="memberRankList != null and memberRankList.size() > 0">
+				and member_rank in
+				<foreach item="memberRank" collection="memberRankList"
+					open="(" separator="," close=")">
+					#{memberRank}
+				</foreach>
+			</if>
+			<if test="memberAddress != null">
+				and (
+				instr(member_post, #{memberAddress}) > 0
+				or
+				instr(member_address1,
+				#{memberAddress}) > 0
+				or
+				instr(member_address2, #{memberAddress}) > 0
+				)
+			</if>
+		</where>
+	</select>
+
 	<select id="find" resultType="MemberDto">
-		select * from member where member_id = #{memberId}
+		select * from member where
+		member_id = #{memberId}
 	</select>
 	<insert id="save">
-	 insert into member (member_id, member_pw, member_email)
-        values (#{memberId}, #{memberPw}, #{memberEmail})
+		insert into member (member_id, member_pw,
+		member_email)
+		values (#{memberId}, #{memberPw}, #{memberEmail})
 	</insert>
-	 <select id="findByToken" resultType="MemberTokenDto">
-        select * from member_token WHERE token_value = #{tokenValue}
-    </select>
-     <insert id="saveToken">
-        INSERT INTO member_token (token_no, token_target, token_value)
-VALUES (member_token_seq.NEXTVAL, #{tokenTarget}, #{tokenValue})
+	<select id="findByToken" resultType="MemberTokenDto">
+		select * from member_token
+		WHERE token_value = #{tokenValue}
+	</select>
+	<insert id="saveToken">
+		INSERT INTO member_token (token_no, token_target,
+		token_value)
+		VALUES (member_token_seq.NEXTVAL, #{tokenTarget},
+		#{tokenValue})
 
-    </insert>
-        <delete id="deleteToken">
-        delete from member_token WHERE token_value = #{tokenValue}
-    </delete>
-    
-	
+	</insert>
+	<delete id="deleteToken">
+		delete from member_token WHERE token_value =
+		#{tokenValue}
+	</delete>
+	<update id="pointUpdate">
+		update member set member_point=#{memberPoint} where
+		member_id=#{memberId}
+	</update>
+
 </mapper>
