@@ -28,7 +28,7 @@
 			<if test="memberPost != null">member_post=#{memberPost},</if>
 			<if test="memberAddress1 != null">member_address1=#{memberAddress1},</if>
 			<if test="memberAddress2 != null">member_address2=#{memberAddress2}</if>
-			
+
 		</set>
 		WHERE member_id = #{memberId}
 	</update>
@@ -38,13 +38,29 @@
 	</delete>
 
 	<select id="search" resultType="MemberDto">
-		
+
 		<include refid="top-n-header" />
-	
+
 
 		select * from member
 
 		<where>
+			<if test="basicKeyword != null">
+				AND
+				<choose>
+					<when test="searchColumn == 'member_id'">
+						member_id LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_name'">
+						member_name LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_email'">
+						member_email LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+				</choose>
+			</if>
+
+
 			<if test="memberId != null">
 				and member_id like #{memberId} || '%'
 			</if>
@@ -80,7 +96,8 @@
 					test="beginMemberJoinDate != null and endMemberJoinDate != null">
 					and (
 					member_join_date between
-					to_date(#{beginMemberJoinDate} || ' '
+					to_date(#{beginMemberJoinDate} ||
+					' '
 					|| '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 					and
 					to_date(#{endMemberJoinDate} || ' ' || '23:59:59', 'YYYY-MM-DD
@@ -132,31 +149,46 @@
 				order by member_id asc
 			</otherwise>
 		</choose>
-		
-		 <include refid="top-n-footer"/>
-		 
+
+		<include refid="top-n-footer" />
+
 	</select>
 
 	<sql id="top-n-header">
-    <if test="beginRow != null and endRow != null">
-        select * from (
-        select rownum rn, TMP.* from (
-    </if>
-</sql>
+		<if test="beginRow != null and endRow != null">
+			select * from (
+			select rownum rn, TMP.* from (
+		</if>
+	</sql>
 
 	<sql id="top-n-footer">
-    <if test="beginRow != null and endRow != null">
-        ) TMP
-        )
-        where rn between #{beginRow} and #{endRow}
-    </if>
-</sql>
+		<if test="beginRow != null and endRow != null">
+			) TMP
+			)
+			where rn between #{beginRow} and #{endRow}
+		</if>
+	</sql>
 
 
 	<select id="searchCount" resultType="int">
 		select count(*) from member
 
 		<where>
+			<if test="basicKeyword != null">
+				AND
+				<choose>
+					<when test="searchColumn == 'member_id'">
+						member_id LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_name'">
+						member_name LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+					<when test="searchColumn == 'member_email'">
+						member_email LIKE CONCAT(#{basicKeyword}, '%')
+					</when>
+				</choose>
+			</if>
+
 			<if test="memberId != null">
 				and member_id like #{memberId} || '%'
 			</if>
@@ -191,7 +223,8 @@
 					test="beginMemberJoinDate != null and endMemberJoinDate != null">
 					and (
 					member_join_date between
-					to_date(#{beginMemberJoinDate} || ' '
+					to_date(#{beginMemberJoinDate} ||
+					' '
 					|| '00:00:00', 'YYYY-MM-DD HH24:MI:SS')
 					and
 					to_date(#{endMemberJoinDate} || ' ' || '23:59:59', 'YYYY-MM-DD
@@ -219,13 +252,14 @@
 				</foreach>
 			</if>
 			<if test="memberAddress != null">
-			and (
+				and (
 				instr(member_post, #{memberAddress}) > 0
 				or
-				instr(member_address1, #{memberAddress}) > 0
+				instr(member_address1,
+				#{memberAddress}) > 0
 				or
 				instr(member_address2, #{memberAddress}) > 0
-			)
+				)
 			</if>
 		</where>
 	</select>
