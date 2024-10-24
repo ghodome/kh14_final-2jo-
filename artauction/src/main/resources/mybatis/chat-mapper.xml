@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0 //EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chat">
+	<!-- 목록 -->
+	<select id="list" resultType="ChatDto">
+		select * from chat order by
+		chat_no asc
+	</select>
+	
+		<!-- 등록 -->
+	<insert id="send">
+		insert into chat
+		(
+		chat_no, chat_sender,
+		chat_receiver, chat_room_no,
+		chat_content, chat_time,
+		)
+		values
+		(
+		#{chatNo}, #{chatSender},
+		#{chatReceiver}, #{chatRoomNo},
+		#{chatContent}, #{chatTime},
+		)
+	</insert>
+</mapper>
