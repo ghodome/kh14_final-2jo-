@@ -27,6 +27,8 @@ public class MemberComplexRequestVO {
 	@JsonDeserialize(using = JsonEmptyStringToNullDeserializer.class)
 	private String beginMemberJoinDate, endMemberJoinDate;
 //	@JsonDeserialize(using = JsonEmptyStringToNullDeserializer.class)
+	private String basicKeyword; 
+	private String SearchColumn;
 	private Integer beginRow, endRow;
 	private List<String> memberRankList;
 	private List<String> orderList;

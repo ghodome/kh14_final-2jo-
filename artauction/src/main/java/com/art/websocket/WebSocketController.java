@@ -33,7 +33,7 @@ public class WebSocketController {
 		//헤더 추출
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 		String accessToken = accessor.getFirstNativeHeader("accessToken");
-//		String refreshToken = accessor.getFirstNativeHeader("refreshToken");
+//		String refreshToken1 = accessor.getFirstNativeHeader("refreshToken1");
 //		log.info("accessToken={}", accessToken);
 //		String accessToken = message.getHeaders().get("accessToken", String.class);
 //		log.info("headers = {}" ,message.getHeaders());
