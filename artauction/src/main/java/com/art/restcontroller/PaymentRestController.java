@@ -1,11 +1,13 @@
 package com.art.restcontroller;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.PaymentDao;
+import com.art.dto.PaymentDetailDto;
 import com.art.dto.PaymentDto;
 import com.art.error.TargetNotFoundException;
 import com.art.service.KakaoPayService;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.PaymentApproveRequestVO;
+import com.art.vo.PaymentMemberVO;
 import com.art.vo.PaymentPurchaseRequestVO;
 import com.art.vo.pay.KakaoPayApproveRequestVO;
 import com.art.vo.pay.KakaoPayApproveResponseVO;
@@ -45,12 +49,12 @@ public class PaymentRestController {
 		@PostMapping("/purchase")
 		public KakaoPayReadyResponseVO purchase(
 				@RequestBody PaymentPurchaseRequestVO request
-//				,@RequestHeader("Authorization")String token
+				,@RequestHeader("Authorization")String token
 				) throws URISyntaxException {
 			//카카오페이에 보낼 최종 결제 정보를 생성
 			//결제 준비 요청을 보내고
 			//사용자에게 필요한 정보를 전달
-			MemberClaimVO claimVO = tokenService.check("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MzIyNjI0ODAsImlzcyI6IktIYWNhZGVteSIsImlhdCI6MTcyOTU4NDA4MCwibWVtYmVySWQiOiJ0ZXN0dXNlcjEiLCJtZW1iZXJSYW5rIjoi7ZqM7JuQIn0.1xsMvbxvjMMSLq239HtLBBj3CIxmi-J-MLtQ0obkEm0");
+			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 			int total = (int) (request.getTotalAmount() * 0.7);
 			KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
 			requestVO.setPartnerOrderId(UUID.randomUUID().toString());
@@ -67,11 +71,10 @@ public class PaymentRestController {
 		@Transactional
 		@PostMapping("/approve")
 		public KakaoPayApproveResponseVO approve(
-//				@RequestHeader("Authorization")String token,
+				@RequestHeader("Authorization")String token,
 				@RequestBody PaymentApproveRequestVO request) throws URISyntaxException {
 			KakaoPayApproveRequestVO requestVO = new KakaoPayApproveRequestVO();
-//			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
-			MemberClaimVO claimVO = tokenService.check("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MzIyNjI0ODAsImlzcyI6IktIYWNhZGVteSIsImlhdCI6MTcyOTU4NDA4MCwibWVtYmVySWQiOiJ0ZXN0dXNlcjEiLCJtZW1iZXJSYW5rIjoi7ZqM7JuQIn0.1xsMvbxvjMMSLq239HtLBBj3CIxmi-J-MLtQ0obkEm0");
+			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 			requestVO.setPartnerOrderId(request.getPartnerOrderId());
 			requestVO.setPartnerUserId(claimVO.getMemberId());
 			requestVO.setTid(request.getTid());
@@ -90,20 +93,27 @@ public class PaymentRestController {
 			paymentDto.setMemberId(claimVO.getMemberId());//구매자ID
 			paymentDao.paymentInsert(paymentDto);
 			//[2] 결제 상세 정보 등록
-//			for(BookQtyVO qtyVO : request.getBookList()) {
+
 //				BookDto bookDto = bookDao.selectOne(qtyVO.getBookId());
 //				if(bookDto==null)throw new TargetNotFoundException("존재하지 않는 도서");
-//				int paymentDetailSql = paymentDao.paymentDetailSequence();
-//				PaymentDetailDto paymentDetailDto =new PaymentDetailDto();
-//				paymentDetailDto.setPaymentDetailNo(paymentDetailSql);//번호 설정
+				int paymentDetailSql = paymentDao.paymentDetailSequence();
+				PaymentDetailDto paymentDetailDto =new PaymentDetailDto();
+				paymentDetailDto.setPaymentDetailNo(paymentDetailSql);//번호 설정
 //				paymentDetailDto.setPaymentDetailName(bookDto.getBookTitle());//상품명
+				paymentDetailDto.setPaymentDetailName("모나리자");//상품명
 //				paymentDetailDto.setPaymentDetailPrice(bookDto.getBookPrice());//상품판매
+				paymentDetailDto.setPaymentDetailPrice(1000000);//상품판매
 //				paymentDetailDto.setPaymentDetailItem(bookDto.getBookId());//상품번호
-//				paymentDetailDto.setPaymentDetailQty(qtyVO.getQty());//구매수량
-//				paymentDetailDto.setPaymentDetailOrigin(paymentSeq);//결제대표번호
-//				paymentDao.paymentDetailInsert(paymentDetailDto);
-//			}
+				paymentDetailDto.setPaymentDetailItem(1);//상품번호
+				paymentDetailDto.setPaymentDetailQty(1);//구매수량
+				paymentDetailDto.setPaymentDetailOrigin(paymentSeq);//결제대표번호
+				paymentDao.paymentDetailInsert(paymentDetailDto);
 			return responseVO;
+		}
+		@GetMapping("/rank")
+		public List<PaymentMemberVO> buyRank(){
+			List<PaymentMemberVO> list =paymentDao.selectRankList();
+			return list;
 		}
 		
 }

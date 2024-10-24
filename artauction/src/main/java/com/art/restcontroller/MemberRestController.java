@@ -198,13 +198,12 @@ public class MemberRestController {
 		@PostMapping("/charge/purchase")
 		public KakaoPayReadyResponseVO purchase(
 				@RequestBody MemberPurchaseRequestVO request
-//				,@RequestHeader("Authorization")String token 토큰생기면 이거 다시 바꿔야됨
+				,@RequestHeader("Authorization")String token
 				) throws URISyntaxException {
 			//카카오페이에 보낼 최종 결제 정보를 생성
 			//결제 준비 요청을 보내고
 			//사용자에게 필요한 정보를 전달
-			MemberClaimVO claimVO = tokenService.check("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MzIyNjI0ODAsImlzcyI6IktIYWNhZGVteSIsImlhdCI6MTcyOTU4NDA4MCwibWVtYmVySWQiOiJ0ZXN0dXNlcjEiLCJtZW1iZXJSYW5rIjoi7ZqM7JuQIn0.1xsMvbxvjMMSLq239HtLBBj3CIxmi-J-MLtQ0obkEm0");
-			
+			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 			KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
 			requestVO.setPartnerOrderId(UUID.randomUUID().toString());
 			requestVO.setPartnerUserId(claimVO.getMemberId());
@@ -221,10 +220,10 @@ public class MemberRestController {
 		@Transactional
 		@PostMapping("/charge/approve")
 		public KakaoPayApproveResponseVO approve(
-//				@RequestHeader("Authorization")String token,
+				@RequestHeader("Authorization")String token,
 				@RequestBody MemberApproveRequestVO request) throws URISyntaxException {
 			KakaoPayApproveRequestVO requestVO = new KakaoPayApproveRequestVO();
-			MemberClaimVO claimVO = tokenService.check("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MzIyNjI0ODAsImlzcyI6IktIYWNhZGVteSIsImlhdCI6MTcyOTU4NDA4MCwibWVtYmVySWQiOiJ0ZXN0dXNlcjEiLCJtZW1iZXJSYW5rIjoi7ZqM7JuQIn0.1xsMvbxvjMMSLq239HtLBBj3CIxmi-J-MLtQ0obkEm0");
+			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 			requestVO.setPartnerOrderId(request.getPartnerOrderId());
 			requestVO.setPartnerUserId(claimVO.getMemberId());
 			requestVO.setTid(request.getTid());
