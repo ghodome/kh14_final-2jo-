@@ -1,25 +1,24 @@
 package com.art.websocket;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import java.time.LocalDateTime;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+
 import com.art.service.TimeService;
 import com.art.service.TokenService;
 import com.art.vo.AuctionContentVO;
 import com.art.vo.MemberClaimVO;
+import com.art.vo.WebSocketSaveVO;
+import com.art.vo.WebSocketSendVO;
 import com.art.vo.WebsocketBidResponseVO;
 import com.art.vo.WebsocketDealResponseVO;
 import com.art.vo.WebsocketRequestVO;
-import com.art.service.TokenService;
-import com.art.vo.MemberClaimVO;
-import com.art.vo.WebSocketSaveVO;
-import com.art.vo.WebSocketSendVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,6 +71,7 @@ public class WebSocketController {
 			messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 			
 		}
+	}
 		
 
 	@MessageMapping("/chat")
