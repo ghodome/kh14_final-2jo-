@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.art.dto.AuctionDataCollectionDto;
 import com.art.dto.AuctionDto;
+import com.art.vo.AuctionLotDetailVO;
 import com.art.vo.AuctionLotVO;
 
 @Repository
@@ -49,5 +50,8 @@ public class AuctionDao {
 	public void uncancelPresent(int auctionNo) {
 		sqlSession.update("auction.uncancelPresent",auctionNo);
 		
+	}
+	public AuctionLotDetailVO selectAuctionWithWork(int auctionNo) {
+		return sqlSession.selectOne("auction.selectAuctionWithWork",auctionNo);
 	}
 }

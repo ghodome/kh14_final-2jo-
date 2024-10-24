@@ -84,5 +84,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="uncancelPresent">
 		update auction set auction_state='예정경매' where auction_no = #{auctionNo}
 	</update>
+	<select id="selectAuctionWithWork" resultType="AuctionLotDetailVO">
+		select 
+			* 
+		from
+			work W 
+		inner join auction AU 
+		on W.work_no = AU.work_no 
+		inner join artist AR 
+		on W.artist_no = AR.artist_no 
+		where AU.AUCTION_NO =#{auctionNo}
+	</select>
 
 </mapper>
