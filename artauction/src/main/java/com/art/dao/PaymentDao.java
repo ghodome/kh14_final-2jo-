@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.art.dto.PaymentDetailDto;
 import com.art.dto.PaymentDto;
+import com.art.vo.PaymentMemberVO;
 import com.art.vo.PaymentTotalVO;
 
 
@@ -58,5 +59,8 @@ public class PaymentDao {
 	}
 	public PaymentDetailDto selectDetailOne(int paymentDetailNo) {
 		return sqlSession.selectOne("payment.selectDetailOne",paymentDetailNo);
+	}
+	public List<PaymentMemberVO> selectRankList(){
+		return sqlSession.selectList("payment.rankList");
 	}
 }

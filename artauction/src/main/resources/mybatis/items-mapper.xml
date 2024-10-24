@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="items">
+ 	<insert id="insert">
+ 	insert into items(
+ 		item_id,item_name,is_win,
+ 		item_value,chance
+ 	) 
+ 	values(
+ 		items_seq.nextval,#{itemName},#{isWin},
+ 		#{itemValue},#{chance}
+ 	)
+ 	</insert>
+ 	<insert id="insertWithSequence">
+ 	insert into items(
+ 		item_id,item_name,is_win,
+ 		item_value,chance
+ 	) 
+ 	values(
+ 		#{insertId},#{itemName},#{isWin},
+ 		#{itemValue},#{chance}
+ 	)
+ 	</insert>
+ 	<update id="update">
+ 		update items set item_name=#{itemName},is_win=#{isWin},
+ 		item_value=#{itemValue},chance=#{chance}
+ 		where item_id=#{itemId}
+ 	</update>
+ 	<select id="list" resultType="itemsDto">
+ 		select * from items
+ 	</select>
+ 	<select id="rarityList" resultType="itemsDto">
+ 		select * from items order by item_value desc
+ 	</select>
+ 	<delete id="delete">
+ 		delete items where item_id=#{itemId}
+ 	</delete>
+ 	<select id="itemSequence" resultType="int">
+		select items_seq.nextval from dual
+	</select>  	
+ </mapper>

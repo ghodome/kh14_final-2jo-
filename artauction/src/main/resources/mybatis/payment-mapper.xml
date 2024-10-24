@@ -101,4 +101,17 @@
 	 <select id="selectDetailOne" resultType="paymentDetailDto">
 	 	select * from payment_detail where payment_detail_no=#{paymentDetailNo}
 	 </select>
+	 	<select id="rankList" resultType="PaymentMemberVO">
+    SELECT *
+    FROM (
+        SELECT pd.payment_detail_no, pd.payment_detail_name, pd.payment_detail_price, p.member_id
+        FROM payment_detail pd
+        JOIN payment p ON pd.payment_detail_origin = p.payment_no
+        ORDER BY pd.payment_detail_price DESC
+    )
+    WHERE ROWNUM
+    <![CDATA[
+     <= 10
+     ]]>
+	</select>
   </mapper>
