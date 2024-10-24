@@ -1,6 +1,8 @@
 package com.art.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,15 @@ public class AuctionScheduleDao {
 		return sqlSession.delete("auctionSchedule.delete", auctionScheduleNo) > 0;
 	}
 	
+	
+	//이미지 연결기능
+	public void connect(int auctionScheduleNo, int attachmentNo) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("auctionScheduleNo", auctionScheduleNo);
+		params.put("attachmentNo", attachmentNo);
+		sqlSession.insert("auctionSchedule.connect", params);
+	}
+
 	
 	
 	

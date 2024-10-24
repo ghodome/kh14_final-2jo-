@@ -57,6 +57,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		delete auction_schedule where auction_schedule_no = #{auction_schedule_no}
 	</delete>
 	
+	
+	<!-- 이미지 연결 -->
+	<insert id="connect">
+		insert into auction_schedule_image(auction, attachment
+		) 
+		vlaues(
+			#{auctionScheduleNo}, 
+			#{attachmentNo}
+		)
+	</insert>
+	
 
 	
 </mapper>
