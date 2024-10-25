@@ -48,7 +48,7 @@ public class AttachmentService {
 		attach.transferTo(target);
 		//[3] DB저장
 		AttachmentDto attachmentDto = new AttachmentDto();
-		attachmentDto.setAttachmentNo(attachmentNo);
+		attachmentDto.setAttachmentNo(attachmentNo); 
 		attachmentDto.setAttachmentName(attach.getOriginalFilename());
 		attachmentDto.setAttachmentType(attach.getContentType());
 		attachmentDto.setAttachmentSize(attach.getSize());
