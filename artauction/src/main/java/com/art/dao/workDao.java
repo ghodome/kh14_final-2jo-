@@ -1,6 +1,8 @@
 package com.art.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +37,18 @@ public class workDao {
 	public boolean update(WorkArtistVO workArtistVO) {
 		return sqlSession.update("work.update", workArtistVO) > 0;
 	}
+	
+	//연결기능
+	public void connect(int work, int attachment) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("work", work);
+        params.put("attachment", attachment);
+        sqlSession.insert("work_image.connect", params);
+	}
+	//이미지 번호 찾기 기능
+//	public Integer findImage(int poketmonNo) {
+//		String sql = "select attachment from poketmon_image where poketmon=?";
+//		Object[] data = {poketmonNo};
+//	}
 	
 }
