@@ -22,7 +22,7 @@ public class AttachmentDao {
 		return sqlSession.delete("attachment.delete",attachmentNo)>0;
 	}
 	public AttachmentDto selectOne(int attachmentNo) {
-		return sqlSession.selectOne("attachment.selectOne", attachmentNo);
+		return sqlSession.selectOne("attachment.detail", attachmentNo);
 	}
 	
 
