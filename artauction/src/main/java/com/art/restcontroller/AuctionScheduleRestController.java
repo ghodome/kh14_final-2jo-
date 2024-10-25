@@ -1,6 +1,7 @@
 package com.art.restcontroller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,22 +90,41 @@ public class AuctionScheduleRestController {
 		
 		return listResponseVO;
 	}
-
 	
-	//상세
+
+//	//상세
+//	@GetMapping("/{auctionScheduleNo}")
+//	public AuctionScheduleDto detail(@PathVariable int auctionScheduleNo) {
+//		AuctionScheduleDto auctionScheduleDto = auctionScheduleDao.selectOne(auctionScheduleNo);
+//		if(auctionScheduleDto == null) {
+//			throw new TargetNotFoundException();
+//		}
+//		return auctionScheduleDto;
+//	}
+	
+	//상세 - 이미지 포함
 	@GetMapping("/{auctionScheduleNo}")
-	public AuctionScheduleDto detail(@PathVariable int auctionScheduleNo) {
-		AuctionScheduleDto auctionScheduleDto = auctionScheduleDao.selectOne(auctionScheduleNo);
+	public AuctionScheduleDto detailall(@PathVariable int auctionScheduleNo) {
+		AuctionScheduleDto auctionScheduleDto = auctionScheduleDao.selectOneImage(auctionScheduleNo);
 		if(auctionScheduleDto == null) {
 			throw new TargetNotFoundException();
 		}
 		return auctionScheduleDto;
 	}
 	
-	//수정
+//	//수정
+//	@PutMapping("/")
+//	public void update(@RequestBody AuctionScheduleDto auctionScheduleDto) {
+//		boolean result =  auctionScheduleDao.update(auctionScheduleDto);
+//		if(result == false) {
+//			throw new TargetNotFoundException();
+//		}
+//	}
+	
+	//수정 (이미지 포함)
 	@PutMapping("/")
 	public void update(@RequestBody AuctionScheduleDto auctionScheduleDto) {
-		boolean result =  auctionScheduleDao.update(auctionScheduleDto);
+		boolean result =  auctionScheduleDao.updateall(auctionScheduleDto);
 		if(result == false) {
 			throw new TargetNotFoundException();
 		}
@@ -114,12 +133,20 @@ public class AuctionScheduleRestController {
 	//삭제
 	@DeleteMapping("/{auctionScheduleNo}")
 	public void delete(@PathVariable int auctionScheduleNo) {
-		boolean result = auctionScheduleDao.delete(auctionScheduleNo);
-		if(result == false) {	//삭제하지 못했다면 200이 아니라 404로 처리
+		AuctionScheduleDto auctionScheduleDto =  auctionScheduleDao.selectOne(auctionScheduleNo);
+		
+		if(auctionScheduleDto == null) {	//삭제하지 못했다면 200이 아니라 404로 처리
 			throw new TargetNotFoundException();
 		}
+		
+		List<Integer> list = auctionScheduleDao.findImages(auctionScheduleNo);
+		for(int i=0; i<list.size(); i++) {
+			attachmentService.delete(list.get(i));			
+		}
+		
+//		auctionScheduleDao.deleteImage(auctionScheduleNo);
+		auctionScheduleDao.delete(auctionScheduleNo);
 	}
-	
 	
 
 }
