@@ -29,6 +29,7 @@ public class MemberComplexRequestVO {
 //	@JsonDeserialize(using = JsonEmptyStringToNullDeserializer.class)
 	private String basicKeyword; 
 	private String SearchColumn;
+	private Boolean isBlocked;
 	private Integer beginRow, endRow;
 	private List<String> memberRankList;
 	private List<String> orderList;

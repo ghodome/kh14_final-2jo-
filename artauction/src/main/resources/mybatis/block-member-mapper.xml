@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0
+//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="blockMember">
+
+	<insert id="insertBlockMember">
+		INSERT INTO blocked_member (blocked_no,
+		blocked_member_id, blocked_time, blocked_reason, blocked_type)
+		VALUES
+		(blocked_member_seq.NEXTVAL, #{blockMemberId}, #{blockTime},
+		#{blockReason}, #{blockType})
+	</insert>
+
+	<delete id="deleteBlockMember">
+		DELETE FROM blocked_member WHERE blocked_member_id =
+		#{blockMemberId}
+	</delete>
+
+	<select id="isBlocked" resultType="boolean">
+		SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+    FROM blocked_member
+    WHERE blocked_member_id = #{memberId}
+	</select>
+
+
+</mapper>
