@@ -19,7 +19,7 @@ public class AttachmentDao {
 		sqlSession.insert("attachment.insert", attachmentDto);
 	}
 	public boolean delete(int attachmentNo) {
-		return sqlSession.delete("attachment.delete",attachmentNo)>0;
+		return sqlSession.delete("attachment.delete", attachmentNo)>0;
 	}
 	public AttachmentDto selectOne(int attachmentNo) {
 		return sqlSession.selectOne("attachment.detail", attachmentNo);

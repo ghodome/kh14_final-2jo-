@@ -30,7 +30,6 @@ public class MemberDao {
 	public int searchCount(MemberComplexRequestVO vo) {
 		return sqlSession.selectOne("member.searchCount", vo);
 	}
-
 	public MemberDto selectOne(String memberId) {
 		return sqlSession.selectOne("member.find", memberId);
 	}

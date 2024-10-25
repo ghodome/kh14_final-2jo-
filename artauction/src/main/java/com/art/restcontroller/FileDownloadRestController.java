@@ -7,10 +7,11 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+//import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.art.dao.AttachmentDao;
+//import com.art.dao.AttachmentDao;
 import com.art.service.AttachmentService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/attach")
 public class FileDownloadRestController {
 	
-	@Autowired
-	private AttachmentDao attachmentDao;
+//	@Autowired
+//	private AttachmentDao attachmentDao;
 	
-	@Autowired 
-	private AttachmentService attachmentService;
+	@Autowired AttachmentService attachmentService;
 	
 	@GetMapping("/download/{attachmentNo}")
 	public ResponseEntity<ByteArrayResource> download(
