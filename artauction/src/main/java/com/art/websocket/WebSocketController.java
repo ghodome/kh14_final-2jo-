@@ -50,10 +50,8 @@ public class WebSocketController {
 	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
 			@RequestBody WebsocketBidRequestVO request,
 			@RequestHeader("Authorization") String token) {
-		log.info("bid ={}",request.getBid());
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
 		WebsocketBidResponseVO response = auctionService.AuctionProccess(request, auctionNo, memberId);
-		
 		return response;
 	}
 	
