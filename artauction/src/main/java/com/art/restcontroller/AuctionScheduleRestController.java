@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,9 @@ import com.art.dao.AuctionScheduleDao;
 import com.art.dto.AuctionScheduleDto;
 import com.art.error.TargetNotFoundException;
 import com.art.service.AttachmentService;
+import com.art.service.TokenService;
 import com.art.vo.AuctionScheduleInsertVO;
+import com.art.vo.MemberClaimVO;
 
 @CrossOrigin
 @RestController
@@ -33,16 +36,22 @@ public class AuctionScheduleRestController {
 	private AuctionScheduleDao auctionScheduleDao;
 	
 	@Autowired
+	private TokenService tokenService;
+	
+	@Autowired
 	private AttachmentService attachmentService;
 	
 	//등록
 	@Transactional
 	@PostMapping(value="/", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
-	public void insert(@ModelAttribute AuctionScheduleInsertVO insertVO) throws IllegalStateException, IOException {
+	public void insert(
+				@ModelAttribute AuctionScheduleInsertVO insertVO) throws IllegalStateException, IOException {
+		
 		
 		int auctionScheduleNo=auctionScheduleDao.sequence();
 		
 		AuctionScheduleDto auctionScheduleDto = new AuctionScheduleDto();
+		auctionScheduleDto.setAuctionScheduleNo(auctionScheduleNo);
 		auctionScheduleDto.setAuctionScheduleTitle(insertVO.getAuctionScheduleTitle());
 		auctionScheduleDto.setAuctionScheduleStartDate(insertVO.getAuctionScheduleStartDate());
 		auctionScheduleDto.setAuctionScheduleEndDate(insertVO.getAuctionScheduleEndDate());
@@ -51,11 +60,11 @@ public class AuctionScheduleRestController {
 		auctionScheduleDao.insert(auctionScheduleDto);
 		
 		for(MultipartFile attach : insertVO.getAttachList()) {
-			if(attach.isEmpty()) continue;
+			if(attach == null || attach.isEmpty()) continue;
 			int attachmentNo = attachmentService.save(attach);
 			auctionScheduleDao.connect(auctionScheduleNo, attachmentNo);			
 		}
-		
+	   
 	}
 	
 	
@@ -64,6 +73,15 @@ public class AuctionScheduleRestController {
 	public List<AuctionScheduleDto> list() {
 		return auctionScheduleDao.selectList();
 	}
+	
+//	//이미지목록
+//	@GetMapping("/image")
+//	public List<AuctionScheduleInsertVO> imageList() throws IllegalStateException, IOException {
+//		
+//		int auctionScheduleNo=auctionScheduleDao.sequence();
+//	
+//		return auctionScheduleDao.findImage(auctionScheduleNo);
+//	}
 	
 	//상세
 	@GetMapping("/{auctionScheduleNo}")

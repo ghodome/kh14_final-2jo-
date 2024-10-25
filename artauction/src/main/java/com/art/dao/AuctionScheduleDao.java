@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.art.dto.AuctionScheduleDto;
+import com.art.vo.AuctionScheduleInsertVO;
 
 
 
@@ -50,9 +51,14 @@ public class AuctionScheduleDao {
 	//이미지 연결기능
 	public void connect(int auctionScheduleNo, int attachmentNo) {
 		Map<String, Object> params = new HashMap<>();
-		params.put("auctionScheduleNo", auctionScheduleNo);
-		params.put("attachmentNo", attachmentNo);
+		params.put("auction", auctionScheduleNo);
+		params.put("attachment", attachmentNo);
 		sqlSession.insert("auctionSchedule.connect", params);
+	}
+	
+	//이미지 번호 찾기 기능
+	public List<AuctionScheduleInsertVO> findImage(int auctionScheduleNo) {	
+		return sqlSession.selectList("auctionSchedule.findImage");
 	}
 
 	

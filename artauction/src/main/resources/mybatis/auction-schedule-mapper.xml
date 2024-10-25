@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="sequence" resultType="int">
 		select auction_schedule_seq.nextval from dual
 	</select>
-	<insert id="insert">
+	<insert id="insert" parameterType="AuctionScheduleDto">
 		insert into auction_schedule(
 			auction_schedule_no, 
 			auction_schedule_title, 
@@ -47,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from auction_schedule order by auction_schedule_no desc
 	</select>
 	
+	
 	<!-- 상세 -->
 	<select id="detail" resultType="AuctionScheduleDto">
 		select * from auction_schedule where auction_schedule_no = #{auction_schedule_no}
@@ -60,14 +61,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 이미지 연결 -->
 	<insert id="connect">
-		insert into auction_schedule_image(auction, attachment
+		insert into auction_schedule_image(
+			auction, 
+			attachment
 		) 
-		vlaues(
-			#{auctionScheduleNo}, 
-			#{attachmentNo}
+		values(
+			#{auction}, 
+			#{attachment}
 		)
 	</insert>
 	
+	<!-- 이미지 조회 -->
+	<select id="findImage" resultType="AuctionScheduleInsertVO">
+		select attachment from auction_schedule_Image where auction=?
+	</select>
+	
+	<!-- 이미지 조회 -->
+	<!-- <select id="findImage" resultType="AuctionScheduleInsertVO">
+		select * from auction_schedule_Image where auction_schedule_no = #{auctionScheduleNo}
+	</select> -->
 
 	
 </mapper>

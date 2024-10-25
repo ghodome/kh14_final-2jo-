@@ -13,19 +13,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<insert id="insert">
 		insert into attachment (
 			attachment_no, attachment_name, attachment_type, attachment_size
-		)values (
-			#{attachmentNo}, #{attachmentName}, #{attachmentType}, #{attachmentSize}
+		)
+		values (
+			#{attachmentNo}, 
+			#{attachmentName}, 
+			#{attachmentType}, 
+			#{attachmentSize}
 		)
 	</insert>
 
 	<delete id="delete">
-		delete attachment
+		delete attachment 
 		where attachment_no = #{attachmentNo}
 	</delete>
 	
 	<select id="selectOne" resultType="attachmentDto">
-		select * from attachment
-		where attachment_no = #{attachmentNo}
+		select * from attachment 
+		where 
+		attachment_no = #{attachmentNo}
 	</select>
 	
 </mapper>
