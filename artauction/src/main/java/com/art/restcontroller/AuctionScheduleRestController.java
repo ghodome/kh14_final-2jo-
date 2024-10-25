@@ -23,9 +23,9 @@ import com.art.dao.AuctionScheduleDao;
 import com.art.dto.AuctionScheduleDto;
 import com.art.error.TargetNotFoundException;
 import com.art.service.AttachmentService;
-import com.art.service.TokenService;
+//import com.art.service.TokenService;
 import com.art.vo.AuctionScheduleInsertVO;
-import com.art.vo.MemberClaimVO;
+//import com.art.vo.MemberClaimVO;
 
 @CrossOrigin
 @RestController
@@ -35,8 +35,8 @@ public class AuctionScheduleRestController {
 	@Autowired
 	private AuctionScheduleDao auctionScheduleDao;
 	
-	@Autowired
-	private TokenService tokenService;
+//	@Autowired
+//	private TokenService tokenService;
 	
 	@Autowired
 	private AttachmentService attachmentService;
