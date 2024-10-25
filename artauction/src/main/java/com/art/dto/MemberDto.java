@@ -20,4 +20,5 @@ public class MemberDto {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private Date memberJoinDate;
 	private int memberPoint;
+	private boolean isBlocked;
 }
