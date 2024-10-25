@@ -10,4 +10,5 @@ public class WebSocketSaveVO {
 	private String level;
 	private String content;
 	private LocalDateTime time;
+	private String receiverId;
 }
