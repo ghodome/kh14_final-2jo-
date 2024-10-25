@@ -9,4 +9,5 @@ public class WebsocketBidResponseVO {
 	private String senderMemberRank;
 	private AuctionContentVO content;
 	private String time;
+	private boolean success;
 }
