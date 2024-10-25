@@ -9,7 +9,10 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.art.dao.ChatDao;
+import com.art.dto.ChatDto;
 import com.art.service.TimeService;
 import com.art.service.TokenService;
 import com.art.vo.AuctionContentVO;
@@ -36,6 +39,9 @@ public class WebSocketController {
 	
 	@Autowired
 	private TimeService timeService;
+	
+	@Autowired
+	private ChatDao chatDao;
 	
 	@MessageMapping("/auction/{auctionNo}")
 	public void chat(@DestinationVariable int auctionNo,
@@ -78,6 +84,7 @@ public class WebSocketController {
 		
 
 	@MessageMapping("/chat")
+	@Transactional
 	public void chat(Message<WebSocketSendVO> message) {
 		//헤더 추출
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
@@ -103,5 +110,13 @@ public class WebSocketController {
 		save.setLevel(claimVO.getMemberRank());
 		
 		messagingTemplate.convertAndSend("/public/chat", save);
+		
+		int chatNo = chatDao.sequence();
+		ChatDto chatDto = new ChatDto();
+		chatDto.setChatNo(chatNo);
+		chatDto.setChatSender(claimVO.getMemberId());
+		chatDto.setChatReceiver(null);
+		chatDto.setChatContent(send.getContent());
+		chatDao.insert(chatDto);
 	}
 }

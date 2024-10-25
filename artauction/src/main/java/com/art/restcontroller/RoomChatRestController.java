@@ -3,7 +3,6 @@ package com.art.restcontroller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,32 +19,38 @@ import com.art.vo.MemberClaimVO;
 @RestController
 @RequestMapping("/roomchat")
 public class RoomChatRestController {
-    
-    @Autowired
-    private RoomChatDao roomChatDao;
-    
-    @Autowired
-    private TokenService tokenService;
 
-    // 방 생성 API
-    @PostMapping("/create")
-    public ResponseEntity<RoomChatDto> createRoom(@RequestHeader("Authorization") String token) {
-        MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
-        String memberId = claimVO.getMemberId(); // 토큰에서 멤버 ID 추출
+	@Autowired
+	private RoomChatDao roomChatDao;
 
-        RoomChatDto roomChatDto = new RoomChatDto();
-        roomChatDto.setRoomChatMemberId(memberId);
-        
-        // 방 생성 메서드 호출
-        roomChatDao.insert(roomChatDto);
-        
-        // 생성된 방 반환
-        return ResponseEntity.status(201).body(roomChatDto); // 201 Created
-    }
+	@Autowired
+	private TokenService tokenService;
 
-  //목록
-  	@GetMapping("/list")
-  	public List<RoomChatDto> list() {
-  		return roomChatDao.selectList();
-  	}
+	// 방생성 API
+	@PostMapping("/create")
+	public RoomChatDto createRoom(@RequestHeader("Authorization") String token) {
+		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
+		String memberId = claimVO.getMemberId();
+
+		// 방이 존재하는지 확인
+		List<RoomChatDto> sameRoom = roomChatDao.selectListByMemberId(memberId);
+
+		if (!sameRoom.isEmpty()) {
+			return sameRoom.get(0);
+		}
+
+		// 새 방 생성
+		RoomChatDto roomChatDto = new RoomChatDto();
+		roomChatDto.setRoomChatMemberId(memberId);
+
+		roomChatDao.insert(roomChatDto);
+
+		return roomChatDto;
+	}
+
+	// 목록
+	@GetMapping("/list")
+	public List<RoomChatDto> list() {
+		return roomChatDao.selectList();
+	}
 }
