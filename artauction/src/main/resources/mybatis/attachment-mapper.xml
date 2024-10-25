@@ -31,11 +31,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from attachment
 		where attachment_no = #{attachmentNo}
 	</select>
-	<!-- 
-	<select id="findAttachmentNo" resultType="int">
-		select attachment
-		where work=#{workNo}
-	</select>
-	 -->
+  
 	
 </mapper>

@@ -29,6 +29,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		)
 	</insert>
 	
+	<!-- 이미지 연결 -->
+	<insert id="connect" parameterType="map">
+		insert into auction_schedule_image(
+			auction, 
+			attachment
+		) 
+		values(
+			#{auction}, 
+			#{attachment}
+		)
+	</insert>
+	
 	<!-- 수정 -->
 	<update id="update">
 		update auction_schedule
@@ -42,12 +54,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_schedule_no = #{auctionScheduleNo}
 	</update>
 	
-	<!-- 조회 -->
-	<select id="list" resultType="AuctionScheduleDto">
-		select * from auction_schedule order by auction_schedule_no desc
-	</select>
-	
-	
+	<!-- 목록 -->
+    <select id="list" resultType="AuctionScheduleDto">
+    	select * from auction_schedule AC 
+			inner join AUCTION_SCHEDULE_IMAGE ASI 
+				on AC.auction_schedule_no = ASI.auction
+    </select>
+    
+    <!-- 카운트 -->
+    <select id="count" resultType="int">
+        select count(*)
+        from auction_schedule AC 
+           inner join AUCTION_SCHEDULE_IMAGE ASI 
+				on AC.auction_schedule_no = ASI.auction
+    </select>
+    
+    
 	<!-- 상세 -->
 	<select id="detail" resultType="AuctionScheduleDto">
 		select * from auction_schedule where auction_schedule_no = #{auction_schedule_no}
@@ -58,28 +80,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		delete auction_schedule where auction_schedule_no = #{auction_schedule_no}
 	</delete>
 	
+	<!-- 이미지 삭제 -->
+	<delete id="deleteImage">
+		delete auction_schedule_image where auction_schedule_no = #{auction_schedule_no}
+	</delete>
 	
-	<!-- 이미지 연결 -->
-	<insert id="connect">
-		insert into auction_schedule_image(
-			auction, 
-			attachment
-		) 
-		values(
-			#{auction}, 
-			#{attachment}
-		)
-	</insert>
 	
-	<!-- 이미지 조회 -->
-	<select id="findImage" resultType="AuctionScheduleInsertVO">
-		select attachment from auction_schedule_Image where auction=?
+	<!-- 이미지 1개 조회 -->
+	<select id="findImage" resultType="Integer">
+		select min(attachment) from auction_schedule_image where auction = #{auction}
 	</select>
 	
-	<!-- 이미지 조회 -->
-	<!-- <select id="findImage" resultType="AuctionScheduleInsertVO">
-		select * from auction_schedule_Image where auction_schedule_no = #{auctionScheduleNo}
-	</select> -->
+	
+	<!-- 이미지 번호 목록 조회 -->
+	<select id="findImages" resultType="int">
+	    select attachment from auction_schedule_image where auction = #{auction}
+	</select>
 
 	
 </mapper>

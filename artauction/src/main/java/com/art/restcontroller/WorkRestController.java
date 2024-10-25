@@ -45,10 +45,6 @@ public class WorkRestController {
 	@Autowired
 	private AttachmentDao attachmentDao;
 	
-//	@PostMapping("/")
-//	public void insert(@RequestBody WorkArtistVO workArtistVO) {
-//		workDao.insert(workArtistVO);
-//	}
 	
 	@Transactional
 	@PostMapping(value="/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -78,6 +74,7 @@ public class WorkRestController {
 	        int attachmentNo = attachmentService.save(attach); // 파일 저장
 	        workDao.connect(workNo, attachmentNo); // 작품과 첨부 파일 연결
 	    }
+
 	}
 	
 //	@GetMapping("/")

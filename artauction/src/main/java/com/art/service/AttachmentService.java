@@ -54,6 +54,7 @@ public class AttachmentService {
 		attachmentDto.setAttachmentSize(attach.getSize());
 		attachmentDao.insert(attachmentDto);
 		
+//		return "/uploads/"+attachmentNo;
 		return attachmentNo;
 	}
 	

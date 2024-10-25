@@ -24,7 +24,8 @@ public class FileDownloadRestController {
 //	@Autowired
 //	private AttachmentDao attachmentDao;
 	
-	@Autowired AttachmentService attachmentService;
+	@Autowired 
+	private AttachmentService attachmentService;
 	
 	@GetMapping("/download/{attachmentNo}")
 	public ResponseEntity<ByteArrayResource> download(

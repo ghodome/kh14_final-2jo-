@@ -1,6 +1,5 @@
 package com.art.dto;
 
-//import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import lombok.Data;
@@ -13,4 +12,6 @@ public class AuctionScheduleDto {
 	private LocalDateTime auctionScheduleEndDate;
 	private String auctionScheduleState;
 	private String auctionScheduleNotice;
+	
+	private Integer attachment;
 }
