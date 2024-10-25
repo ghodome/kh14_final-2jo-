@@ -38,10 +38,20 @@ public class AuctionScheduleDao {
 		return sqlSession.selectOne("auctionSchedule.detail", auctionScheduleNo);
 	}
 	
+	//일정상세(이미지포함)
+		public AuctionScheduleDto selectOneImage(int auctionScheduleNo) {
+			return sqlSession.selectOne("auctionSchedule.detailall", auctionScheduleNo);
+	}
+	
 	//일정수정
 	public boolean update(AuctionScheduleDto auctionScheduleDto) {
 		return sqlSession.update("auctionSchedule.update", auctionScheduleDto) > 0;
 	}
+	
+	//일정수정(이미지포함)
+		public boolean updateall(AuctionScheduleDto auctionScheduleDto) {
+			return sqlSession.update("auctionSchedule.updateall", auctionScheduleDto) > 0;
+		}
 	
 	//일정삭제
 	public boolean delete(int auctionScheduleNo) {
