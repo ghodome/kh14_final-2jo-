@@ -27,10 +27,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where attachment_no = #{attachmentNo}
 	</delete>
 	
-	<select id="selectOne" resultType="attachmentDto">
-		select * from attachment 
-		where 
-		attachment_no = #{attachmentNo}
+	<select id="detail" resultType="attachmentDto">
+		select * from attachment
+		where attachment_no = #{attachmentNo}
 	</select>
+	<!-- 
+	<select id="findAttachmentNo" resultType="int">
+		select attachment
+		where work=#{workNo}
+	</select>
+	 -->
 	
 </mapper>
