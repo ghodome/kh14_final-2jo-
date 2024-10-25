@@ -6,7 +6,7 @@
 		<include refid="top-n-header"></include>
 		select * from chat order by
 		chat_no
-		asc
+		asc	
 		<include refid="top-n-footer"></include>
 	</select>
 

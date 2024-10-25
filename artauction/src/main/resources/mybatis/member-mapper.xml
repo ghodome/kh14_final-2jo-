@@ -277,7 +277,7 @@
 		select * from member_token
 		WHERE token_value = #{tokenValue}
 	</select>
-	<insert id="saveToken">
+	<insert id="saveToken">	
 		INSERT INTO member_token (token_no, token_target,
 		token_value)
 		VALUES (member_token_seq.NEXTVAL, #{tokenTarget},

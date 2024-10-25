@@ -20,7 +20,7 @@ public class ChatDao {
 		return sqlSession.selectOne("chat.sequence");
 	}
 
-	// 목록 조회
+	// 목록 조회	
 	public List<ChatDto> selectList(int beginRow, int endRow) {
 		Map<String, Object> params = Map.of("beginRow", beginRow, "endRow", endRow);
 		return sqlSession.selectList("chat.list", params);

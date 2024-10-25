@@ -45,6 +45,7 @@ public class ChatRestController {
 	        chatDto.setChatSender("관리자"); // 회원인 경우 발신자를 관리자 설정
 	        chatDto.setChatReceiver("관리자"); // 회원인 경우 수신자를 관리자 설정
 	    } else if ("관리자".equals(claimVO.getMemberRank())) {
+	    	
 	        chatDto.setChatSender("회원"); // 관리자인 경우 발신자를 회원 설정
 	        chatDto.setChatReceiver("회원"); // 관리자인 경우 수신자를 회원 설정
 	    } else {

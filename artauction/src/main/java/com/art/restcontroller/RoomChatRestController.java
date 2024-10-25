@@ -26,7 +26,7 @@ public class RoomChatRestController {
 	@Autowired
 	private TokenService tokenService;
 
-	// 방생성 API
+	// 방생성 API	
 	@PostMapping("/create")
 	public RoomChatDto createRoom(@RequestHeader("Authorization") String token) {
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
