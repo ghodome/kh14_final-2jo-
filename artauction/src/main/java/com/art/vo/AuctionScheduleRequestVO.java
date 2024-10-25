@@ -9,8 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 @Data
-public class AuctionScheduleInsertVO {
-//	private int auctionScheduleNo;
+public class AuctionScheduleRequestVO {
+	private int auctionScheduleNo;
 	private String auctionScheduleTitle;
 	private LocalDateTime auctionScheduleStartDate;
 	private LocalDateTime auctionScheduleEndDate;

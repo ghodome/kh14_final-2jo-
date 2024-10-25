@@ -44,8 +44,8 @@ public class WorkRestController {
 		workArtistVO.setWorkNo(workNo);
 		workDao.insert(workArtistVO);
 		if(!attach.isEmpty()) {
-			int attachmentNo = attachmentService.save(attach);
-			workDao.connect(workNo, attachmentNo);
+//			int attachmentNo = attachmentService.save(attach);
+//			workDao.connect(workNo, attachmentNo);
 		}
 	}
 	

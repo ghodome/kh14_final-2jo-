@@ -54,6 +54,7 @@ public class AttachmentService {
 		attachmentDto.setAttachmentSize(attach.getSize());
 		attachmentDao.insert(attachmentDto);
 		
+//		return "/uploads/"+attachmentNo;
 		return attachmentNo;
 	}
 	
@@ -84,9 +85,9 @@ public class AttachmentService {
 		//- 파일을 한 번에 쉽게 불러주는 라이브러리 사용(apache commons io)
 		File target = new File(dir, String.valueOf(attachmentNo));
 		byte[] data = FileUtils.readFileToByteArray(target);
-		ByteArrayResource resource = new ByteArrayResource(data);//포장
 		
 		//(3) 불러온 정보를 사용자에게 전송(헤더 + 바디)
+		ByteArrayResource resource = new ByteArrayResource(data);//포장
 		return ResponseEntity.ok()
 			.contentType(MediaType.APPLICATION_OCTET_STREAM)
 			.contentLength(attachmentDto.getAttachmentSize())
