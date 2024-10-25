@@ -42,7 +42,7 @@ public class WebSocketEvent {
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(accessToken));
 	
 		userList.put(seesisonId, claimVO.getMemberId());
-		log.info("사용자 접속 세션 = {}, 아이디 = {}, 인원수 = {}, 등급 ={}", seesisonId, claimVO.getMemberId(), userList.size(), claimVO.getMemberRank());
+//		log.info("사용자 접속 세션 = {}, 아이디 = {}, 인원수 = {}, 등급 ={}", seesisonId, claimVO.getMemberId(), userList.size(), claimVO.getMemberRank());
 		
 		Set<String> values = new TreeSet<>(userList.values());
 		messagingTemplate.convertAndSend("/public/users", userList);
@@ -53,7 +53,7 @@ public class WebSocketEvent {
 		String seesisonId = accessor.getSessionId();
 		
 		userList.remove(seesisonId);
-		log.info("사용자 종료 세션 = {}, 인원수 = {}", seesisonId, userList.size());				
+//		log.info("사용자 종료 세션 = {}, 인원수 = {}", seesisonId, userList.size());				
 		
 		Set<String> values = new TreeSet<>(userList.values());
 		messagingTemplate.convertAndSend("/public/users", userList);
