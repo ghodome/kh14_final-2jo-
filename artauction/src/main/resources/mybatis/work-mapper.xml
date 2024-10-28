@@ -90,13 +90,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 	
 
-	<insert id="connect">
-		insert into work_image(
-			attachment, work
-		) values (
-			#{attachment}, #{work}
-		)
-	</insert>
 	<select id="detail" resultType="workDto">
 		select * from work where work_no=#{workNo}
 	</select>
@@ -112,10 +105,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   		select attachment from work_image where work = #{workNo}
   	</select>
   	
-  	<!--  상세  -->
-  	<select id="detail" resultType="workArtistVO">
-  		select * from work where work_no = #{workNo}
-  	</select>
+  	
 
 
 	<select id="selectOne" resultType="WorkListVO">

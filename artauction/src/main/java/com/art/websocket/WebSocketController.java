@@ -39,6 +39,8 @@ public class WebSocketController {
 	
 	@Autowired
 	private AuctionService auctionService;
+	@Autowired
+	private ChatDao chatDao;
 	
 	@PostMapping("/{auctionNo}")
 	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
