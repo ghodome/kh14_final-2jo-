@@ -17,6 +17,7 @@ public class AuctionLotDetailVO {
 	private LocalDateTime auctionEndDate;
 	private int auctionHammerPrice;
 	private int auctionPurchasePrice;
+	private int auctionBidPrice;
 	private int auctionBidIncrement;
 	private int auctionStartPrice;
 	private int artistNo;

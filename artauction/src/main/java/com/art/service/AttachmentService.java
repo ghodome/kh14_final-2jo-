@@ -28,10 +28,10 @@ public class AttachmentService {
 	//목표 : application.properties에 작성된 설정을 불러와 업로드 폴더로 지정
 	@Autowired
 	private CustomFileuploadProperties properties;
-	
+
 	private File dir;
-	
-	@PostConstruct//객체 생성 및 등록 후 딱 한번만 실행되는 메소드(초기세팅)
+  
+	@PostConstruct	//객체 생성 및 등록 후 딱 한번만 실행되는 메소드(초기세팅)
 	public void init() {
 		dir = new File(properties.getPath());
 		dir.mkdirs();
@@ -48,12 +48,13 @@ public class AttachmentService {
 		attach.transferTo(target);
 		//[3] DB저장
 		AttachmentDto attachmentDto = new AttachmentDto();
-		attachmentDto.setAttachmentNo(attachmentNo);
+		attachmentDto.setAttachmentNo(attachmentNo); 
 		attachmentDto.setAttachmentName(attach.getOriginalFilename());
 		attachmentDto.setAttachmentType(attach.getContentType());
 		attachmentDto.setAttachmentSize(attach.getSize());
 		attachmentDao.insert(attachmentDto);
 		
+//		return "/uploads/"+attachmentNo;
 		return attachmentNo;
 	}
 	
@@ -84,9 +85,9 @@ public class AttachmentService {
 		//- 파일을 한 번에 쉽게 불러주는 라이브러리 사용(apache commons io)
 		File target = new File(dir, String.valueOf(attachmentNo));
 		byte[] data = FileUtils.readFileToByteArray(target);
-		ByteArrayResource resource = new ByteArrayResource(data);//포장
 		
 		//(3) 불러온 정보를 사용자에게 전송(헤더 + 바디)
+		ByteArrayResource resource = new ByteArrayResource(data);//포장
 		return ResponseEntity.ok()
 			.contentType(MediaType.APPLICATION_OCTET_STREAM)
 			.contentLength(attachmentDto.getAttachmentSize())

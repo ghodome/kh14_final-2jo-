@@ -50,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="auctionConsigner!=null">auction_consigner=#{auctionConsigner},</if>
 			<if test="auctionConsignmentFee!=null">auction_consignment_fee=#{auctionConsignmentFee},</if>
 			<if test="auctionNetProceeds!=null">auction_net_proceeds=#{auctionNetProceeds},</if>
+			<if test="auctionBidPrice!=null">auction_bid_price=#{auctionBidPrice},</if>
 		</set>
 		where auction_no=#{auctionNo}
 	</update>
@@ -94,6 +95,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		inner join artist AR 
 		on W.artist_no = AR.artist_no 
 		where AU.AUCTION_NO =#{auctionNo}
+	</select>
+	<select id="selectOneByBidPrice" resultType="int">
+		select count(*) from auction
+		where auction_no=#{auctionNo} and auction_bid_price=#{auctionBidPrice}
 	</select>
 
 </mapper>

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.art.dto.WorkDto;
 import com.art.vo.WorkArtistVO;
+import com.art.vo.WorkListRequestVO;
+import com.art.vo.WorkListVO;
 
 @Repository
 public class workDao {
@@ -25,9 +27,8 @@ public class workDao {
 		return sqlSession.selectList("work.list");
 	}
 	
-	public void insert(WorkArtistVO workArtistVO) {
-		
-		sqlSession.insert("work.insert",workArtistVO);
+	public void insert(WorkDto workDto) {
+		sqlSession.insert("work.insert",workDto);
 	}
 	
 	public boolean delete(int workNo) {
@@ -38,13 +39,35 @@ public class workDao {
 		return sqlSession.update("work.update", workArtistVO) > 0;
 	}
 	
+	// 이미지 찾기 - 여러 이미지 중 첫 번째만 가져오기
+	public Integer findImage(int workNo) {
+		return sqlSession.selectOne("work.findImage", workNo);
+	}
+	
+	// 이미지 찾기 - 여러 이미지를 가져오기
+	public List<Integer> findImages(int workNo) {
+		return sqlSession.selectList("work.findImages", workNo);
+	}
+	
+	//이미지 지우기
+	public boolean deleteImage(int workNo) {
+		return sqlSession.delete("work.deleteImage", workNo) > 0;
+	}
+
+	
 	//연결기능
-	public void connect(int work, int attachment) {
+	public void connect(int work, int attachment)  {
         Map<String, Object> params = new HashMap<>();
         params.put("work", work);
         params.put("attachment", attachment);
-        sqlSession.insert("work_image.connect", params);
+        sqlSession.insert("work.connect", params);
 	}
+
+	//목록 카운트
+	public int countWithPaging(WorkListRequestVO requestVO) {
+		return sqlSession.selectOne("work.count", requestVO);
+	}
+
 	//상세
 	public WorkDto selectOne(int workNo) {
 		return sqlSession.selectOne("work.detail",workNo);
@@ -54,5 +77,12 @@ public class workDao {
 //		String sql = "select attachment from poketmon_image where poketmon=?";
 //		Object[] data = {poketmonNo};
 //	}
+
+	
+	// 목록 + 페이징 + 검색
+	public List<WorkListVO> selectListByPaging(WorkListRequestVO requestVO){
+		return sqlSession.selectList("work.list", requestVO);
+	}
+
 	
 }

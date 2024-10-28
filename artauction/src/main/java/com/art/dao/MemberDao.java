@@ -37,8 +37,15 @@ public class MemberDao {
 	public boolean pointUpdate(MemberDto dto) {
 		return sqlSession.update("member.pointUpdate",dto)>0;
 	}
+
 	public List<MemberInventoryVO> selectMemberInventory(String memberId) {
 		return sqlSession.selectList("member.findWithInventory",memberId);
 	}
+
+	public boolean isBlocked(String memberId) {
+	    return sqlSession.selectOne("blockMember.isBlocked", memberId);
+	}
+
+
 
 }

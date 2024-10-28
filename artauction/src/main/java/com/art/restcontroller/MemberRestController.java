@@ -6,8 +6,10 @@ import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,9 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.art.dao.BlockMemberDao;
 import com.art.dao.ChargeDao;
 import com.art.dao.MemberDao;
 import com.art.dao.MemberTokenDao;
+import com.art.dto.BlockMemberDto;
 import com.art.dto.ChargeDto;
 import com.art.dto.MemberDto;
 import com.art.dto.MemberTokenDto;
@@ -32,6 +36,7 @@ import com.art.service.KakaoPayService;
 import com.art.service.MemberService;
 import com.art.service.TokenService;
 import com.art.vo.MemberApproveRequestVO;
+import com.art.vo.MemberBlockVO;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.MemberComplexRequestVO;
 import com.art.vo.MemberComplexResponseVO;
@@ -61,7 +66,8 @@ public class MemberRestController {
 	
 	@Autowired
 	private MemberService memberService;
-	
+	@Autowired
+	private BlockMemberDao blockMemberDao;
 	@Autowired
 	private MemberTokenDao memberTokenDao;
 	@Autowired
@@ -74,17 +80,26 @@ public class MemberRestController {
 		memberDao.insert(memberDto);
 	}
 	@PostMapping("search")
-	public MemberComplexResponseVO search(
-			@RequestBody MemberComplexRequestVO vo) {
-		int count = memberDao.searchCount(vo);
-		boolean last = vo.getEndRow() == null || count <= vo.getEndRow();
-		
-		MemberComplexResponseVO response = new MemberComplexResponseVO();
-		response.setMemberList(memberDao.search(vo));
-		response.setCount(count);
-		response.setLast(last);
-		return response;
+	public MemberComplexResponseVO search(@RequestBody MemberComplexRequestVO vo) {
+	    int count = memberDao.searchCount(vo);
+	    boolean last = vo.getEndRow() == null || count <= vo.getEndRow();
+	    
+	    MemberComplexResponseVO response = new MemberComplexResponseVO();
+	    List<MemberDto> memberList = memberDao.search(vo);
+
+	    // 차단 여부에 따라 필터링
+	    if (vo.getIsBlocked()) {
+	        memberList = memberList.stream()
+	            .filter(MemberDto::isBlocked)
+	            .collect(Collectors.toList());
+	    }
+
+	    response.setMemberList(memberList);
+	    response.setCount(count); // 새로운 count
+	    response.setLast(last);
+	    return response;
 	}
+
 	
 	
 	@PostMapping("/login")
@@ -121,6 +136,8 @@ public class MemberRestController {
 		if(memberDto == null) {
 			throw new TargetNotFoundException(memberId);
 		}
+		 boolean isBlocked = memberDao.isBlocked(memberId); // 차단 여부를 조회하는 메서드 호출  
+		 memberDto.setBlocked(isBlocked);
 		return memberDto;
 	}
 	@PatchMapping("/update")
@@ -139,8 +156,21 @@ public class MemberRestController {
 			 
 		}
 	}
-	
-	
+	@PostMapping("/block")
+	public ResponseEntity<Void> blockMember(@RequestBody BlockMemberDto blockMemberDto){
+		blockMemberDao.insertBlockedMember(blockMemberDto);
+		return ResponseEntity.ok().build();
+	}
+	@DeleteMapping("/unblock/{memberId}")
+	public ResponseEntity<Void> unblockMember(@PathVariable String memberId){
+		blockMemberDao.deleteBlockedMember(memberId);
+		return ResponseEntity.ok().build();
+	}
+	@GetMapping("/blocked")
+	public ResponseEntity<List<MemberBlockVO>> BlockedMember(){
+		List<MemberBlockVO> blockMember = blockMemberDao.findBlockedMembers();
+		return ResponseEntity.ok(blockMember);
+	}
 	
 	@PostMapping("/findPw")
 	public String findPw(@RequestBody MemberDto memberDto) {

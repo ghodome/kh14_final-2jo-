@@ -5,28 +5,77 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="work">
+
+	<!-- 시퀀스 생성 -->
 	<select id="sequence" resultType="int">
 		select work_seq.nextval from dual
 	</select>	
+	
+	<!-- 등록 -->
 	<insert id="insert">
 		insert into work(
 			work_no, artist_no, work_title, work_description, 
 			work_materials, work_size, work_category
 		) 
 		values(
-			work_seq.nextval, #{artistNo}, #{workTitle}, #{workDescription}, 
+			#{workNo}, #{artistNo}, #{workTitle}, #{workDescription}, 
 			#{workMaterials}, #{workSize}, #{workCategory}
 		)
 	</insert>
-	<select id="list" resultType="WorkArtistVO">
-		select * from work W left outer join artist A on W.artist_no = A.artist_no
-		order by W.work_no asc
+	
+	<!-- 첨부 테이블과의 연결 -->
+	<insert id="connect" parameterType="map">
+		insert into work_image(
+			attachment, work
+		) values (
+			#{attachment}, #{work}
+		)
+	</insert>
+	
+	<!-- 목록 -->
+	<select id="list" resultType="WorkListVO">
+		select W.*, I.attachment, A.*
+		from work W 
+		    left outer join work_image I on W.work_no = I.work 
+		    left outer join artist A on W.artist_no = A.artist_no
+		where 
+		    I.attachment = (
+		        select min(attachment) 
+		        from work_image 
+		        where work = W.work_no
+		    )
+		order by 
+		    W.work_no desc
 	</select>
 	
+	<!-- 카운트 -->
+	<select id="count" resultType="int">
+		select count(*)
+		from work W 
+		    left outer join work_image I on W.work_no = I.work 
+		    left outer join artist A on W.artist_no = A.artist_no
+		where 
+		    I.attachment = (
+		        select min(attachment) 
+		        from work_image 
+		        where work = W.work_no
+		    )
+		order by 
+		    W.work_no desc
+	</select>
+	
+
+	<!-- 삭제 -->
 	<delete id="delete">
 		delete work where work_no = #{workNo}
 	</delete>
 	
+	<!-- 이미지 삭제 -->
+	<delete id="deleteImage">
+		delete work_image where work = #{workNo}
+	</delete>
+	
+	<!-- 수정 -->
 	<update id="update">
     	update work 
 	    <set>
@@ -40,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    where work_no = #{workNo}
 	</update>
 	
+
 	<insert id="connect">
 		insert into work_image(
 			attachment, work
@@ -51,5 +101,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from work where work_no=#{workNo}
 	</select>
 		
+
+	<!-- 여러 이미지 중 첫 번째만 가져오는 메소드 -->
+  	<select id="findImage" resultType="Integer">
+  		select min(attachment) from work_image where work = #{workNo}
+  	</select>
+  	
+  	<!-- 여러 이미지를 가져오는 메소드 -->
+  	<select id="findImages" resultType="Integer">
+  		select attachment from work_image where work = #{workNo}
+  	</select>
+  	
+  	<!--  상세  -->
+  	<select id="detail" resultType="workArtistVO">
+  		select * from work where work_no = #{workNo}
+  	</select>
+
+
+	
+	
+	
+
 	
 </mapper>
