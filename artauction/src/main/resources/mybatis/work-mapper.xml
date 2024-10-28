@@ -118,7 +118,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   	</select>
 
 
-	
+	<select id="selectOne" resultType="WorkListVO">
+  		select * from work where work_no = #{workNo}
+  	</select>
 	
 	
 

@@ -22,19 +22,19 @@ public class workDao {
 	public int sequence() {
 		return sqlSession.selectOne("work.sequence");
 	}
-	
+	//목록
 	public List<WorkArtistVO> selectList() {
 		return sqlSession.selectList("work.list");
 	}
-	
+	//등록
 	public void insert(WorkDto workDto) {
 		sqlSession.insert("work.insert",workDto);
 	}
-	
+	//삭제
 	public boolean delete(int workNo) {
 		return sqlSession.delete("work.delete", workNo)>0;
 	}
-	
+	//수정
 	public boolean update(WorkArtistVO workArtistVO) {
 		return sqlSession.update("work.update", workArtistVO) > 0;
 	}
@@ -82,6 +82,11 @@ public class workDao {
 	// 목록 + 페이징 + 검색
 	public List<WorkListVO> selectListByPaging(WorkListRequestVO requestVO){
 		return sqlSession.selectList("work.list", requestVO);
+	}
+	
+	// \
+	public WorkListVO selectOne(int workNo) {
+		return sqlSession.selectOne("work.selectOne", workNo);
 	}
 
 	

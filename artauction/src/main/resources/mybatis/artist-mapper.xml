@@ -5,13 +5,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="artist">
+
+	<!-- 목록 -->
 	<select id="selectList" resultType="ArtistDto">
 		select * from artist
 		order by artist_no asc
 	</select>
+	<!-- 목록 -->
+	<select id="list" resultType="ArtistListVO">
+		select * from artist A
+			inner join artist_image I
+				on A.artist_no = I.artist
+	</select>
+	
+	<!-- 카운트 -->
+	<select id="count" resultType="int">
+		select count(*)
+		from artist A
+			inner join artist_image I
+				on A.artist_no = I.artist
+	</select>
+	
+	
 	<select id="sequence" resultType="int">
 		select artist_seq.nextval from dual
 	</select>
+	
+	<!-- 등록 -->
 	<insert id="regist">
 		insert into artist(
 			artist_no, artist_name, artist_description, artist_history,
@@ -21,6 +41,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{artistHistory},#{artistBirth},#{artistDeath}
 		)
 	</insert>
+	
+	<!-- 수정 -->
 	<update id="update">
 		update artist 
 		<set>
@@ -32,8 +54,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</set>
 		where artist_no = #{artistNo}
 	</update>
+	
+	<!-- 삭제 -->
 	<delete id="delete">
 		delete artist
 		where artist_no=#{artistNo}
 	</delete>
+	
+	<!-- 이미지 삭제 -->
+	<delete id="deleteImage">
+		delete artist_image where artist = #{artistNo}
+	</delete>
+	
+	<!-- 첨부 테이블과 연결 -->
+	<insert id="connect" parameterType="map">
+		insert into artist_image(
+			attachment, artist
+		) values (
+			#{attachment},#{artist}
+		)
+	</insert>
+	
+	<select id="findImage" resultType="Integer">
+		select min(attachment) from artist_image where artist = #{artistNo}
+	</select>
+	
+	<select id="findImages" resultType="Integer">
+		select attachment from artist_image where artist = #{artistNo}
+	</select>
+	
+	<select id="selectOne" resultType="ArtistListVO">
+  		select * from work where artist_no = #{artistNo}
+  	</select>
+	
+	
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

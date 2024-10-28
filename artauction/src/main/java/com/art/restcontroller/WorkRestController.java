@@ -1,6 +1,7 @@
 package com.art.restcontroller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import com.art.vo.WorkArtistVO;
 import com.art.vo.WorkInsertRequestVO;
 import com.art.vo.WorkListRequestVO;
 import com.art.vo.WorkListResponseVO;
+import com.art.vo.WorkListVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -98,8 +100,18 @@ public class WorkRestController {
 	}
 	
 	@DeleteMapping("/{workNo}")
-	public void delete(@PathVariable int workNo) {
-		workDao.delete(workNo);
+		public void delete(@PathVariable int workNo) {
+			WorkListVO workListVO = workDao.selectOne(workNo);
+		if(workListVO == null) throw new TargetNotFoundException("존재하지 않는 상품 번호");
+		
+		List<Integer> list = workDao.findImages(workNo);
+		for(int i=0; i<list.size(); i++) {
+			System.out.println("지워지는번호 : "+list.get(i));
+			attachmentService.delete(list.get(i));
+		}
+		
+		workDao.delete(workNo); // 상품 정보 삭제
+		workDao.deleteImage(workNo); // 연결 테이블 정보 삭제
 	}
 
 	@PatchMapping("/")
