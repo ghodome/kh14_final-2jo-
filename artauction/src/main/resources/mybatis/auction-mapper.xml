@@ -18,7 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		auction_state,
 		auction_consigner,
 		auction_consignment_fee,
-		auction_start_price
+		auction_start_price,
+		auction_bid_price
 	)
 	values(
 		#{auctionNo},
@@ -31,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		#{auctionState},
 		#{auctionConsigner},
 		#{auctionConsignmentFee},
+		#{auctionStartPrice},
 		#{auctionStartPrice}
 	)
 	</insert>
@@ -38,19 +40,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="update">
 		update auction 
 		<set>
-			<if test="auctionScheduleNo!=null">auction_schedule_no=#{auctionScheduleNo},</if>
-			<if test="workNo!=null">work_no=#{workNo},</if>
+			<if test="auctionScheduleNo!=null or auctionScheduleNo>0">auction_schedule_no=#{auctionScheduleNo},</if>
+			<if test="workNo!=null or workNo>0">work_no=#{workNo},</if>
 			<if test="auctionSuccessBidder!=null">auction_success_bidder=#{auctionSuccessBidder},</if>
-			<if test="auctionLot!=null">auction_lot=#{auctionLot},</if>
-			<if test="auctionLowPrice!=null">auction_low_price=#{auctionLowPrice},</if>
-			<if test="auctionHighPrice!=null">auction_high_price=#{auctionHighPrice},</if>
+			<if test="auctionLot!=null or auctionLot>0">auction_lot=#{auctionLot},</if>
+			<if test="auctionLowPrice!=null or auctionLowPrice > 0">auction_low_price=#{auctionLowPrice},</if>
+			<if test="auctionHighPrice!=null or auctionHighPrice>0">auction_high_price=#{auctionHighPrice},</if>
 			<if test="auctionStartDate!=null">auction_start_date=#{auctionStartDate},</if>
 			<if test="auctionEndDate!=null">auction_end_date=#{auctionEndDate},</if>
 			<if test="auctionState!=null">auction_state=#{auctionState},</if>
 			<if test="auctionConsigner!=null">auction_consigner=#{auctionConsigner},</if>
-			<if test="auctionConsignmentFee!=null">auction_consignment_fee=#{auctionConsignmentFee},</if>
-			<if test="auctionNetProceeds!=null">auction_net_proceeds=#{auctionNetProceeds},</if>
-			<if test="auctionBidPrice!=null">auction_bid_price=#{auctionBidPrice},</if>
+			<if test="auctionConsignmentFee!=null or auctionConsignmentFee>0">auction_consignment_fee=#{auctionConsignmentFee},</if>
+			<if test="auctionNetProceeds!=null or auctionNetProceeds>0">auction_net_proceeds=#{auctionNetProceeds},</if>
+			<if test="auctionBidPrice!=null or auctionBidPrice>0">auction_bid_price=#{auctionBidPrice},</if>
+			<if test="auctionBidIncrement!=null or auctionBidIncrement>0">auction_bid_increment=#{auctionBidIncrement},</if>
+			<if test="auctionPurchasePrice==null or auctionPurchasePrice==0">auction_purchase_price=1</if>
+			<if test="auctionPurchasePrice>0">auction_purchase_price=auction_purchase_price+1</if>
 		</set>
 		where auction_no=#{auctionNo}
 	</update>
@@ -95,6 +100,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		inner join artist AR 
 		on W.artist_no = AR.artist_no 
 		where AU.AUCTION_NO =#{auctionNo}
+	</select>
+	<select id="selectOneByBidPrice" resultType="int">
+		select count(*) from auction
+		where auction_no=#{auctionNo} and auction_bid_price=#{auctionBidPrice}
 	</select>
 
 </mapper>

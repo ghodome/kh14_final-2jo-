@@ -22,19 +22,19 @@ public class workDao {
 	public int sequence() {
 		return sqlSession.selectOne("work.sequence");
 	}
-	
+	//목록
 	public List<WorkArtistVO> selectList() {
 		return sqlSession.selectList("work.list");
 	}
-	
+	//등록
 	public void insert(WorkDto workDto) {
 		sqlSession.insert("work.insert",workDto);
 	}
-	
+	//삭제
 	public boolean delete(int workNo) {
 		return sqlSession.delete("work.delete", workNo)>0;
 	}
-	
+	//수정
 	public boolean update(WorkArtistVO workArtistVO) {
 		return sqlSession.update("work.update", workArtistVO) > 0;
 	}
@@ -67,10 +67,26 @@ public class workDao {
 	public int countWithPaging(WorkListRequestVO requestVO) {
 		return sqlSession.selectOne("work.count", requestVO);
 	}
+
+//	//상세
+//	public WorkDto selectOne(int workNo) {
+//		return sqlSession.selectOne("work.detail",workNo);
+//	}
+	//이미지 번호 찾기 기능
+//	public Integer findImage(int poketmonNo) {
+//		String sql = "select attachment from poketmon_image where poketmon=?";
+//		Object[] data = {poketmonNo};
+//	}
+
 	
 	// 목록 + 페이징 + 검색
 	public List<WorkListVO> selectListByPaging(WorkListRequestVO requestVO){
 		return sqlSession.selectList("work.list", requestVO);
+	}
+	
+	// \
+	public WorkListVO selectOne(int workNo) {
+		return sqlSession.selectOne("work.selectOne", workNo);
 	}
 
 	

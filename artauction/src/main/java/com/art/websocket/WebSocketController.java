@@ -5,19 +5,22 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Controller;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PatchMapping;
+
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.art.dao.ChatDao;
 import com.art.dto.ChatDto;
-import com.art.service.AuctionService;
+import com.art.service.AuctionService2;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.WebSocketDMResponseVO;
@@ -30,33 +33,32 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class WebSocketController {
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private AuctionService auctionService;
-    
-    @Autowired
-    private ChatDao chatDao;
-    
-    @PostMapping("/{auctionNo}")
-    public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
-            @RequestBody WebsocketBidRequestVO request,
-            @RequestHeader("Authorization") String token) {
-        log.info("bid ={}",request.getBid());
-        String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
-        WebsocketBidResponseVO response = auctionService.AuctionProccess(request, auctionNo, memberId);
-        return response;
-    }
-    
-    @MessageMapping("/auction/{auctionNo}")
-	public void chat(@DestinationVariable int auctionNo,
-			Message<WebsocketBidRequestVO> message) {
-		log.info("메세지 전파 요청 발생");
+	
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
+	
+	@Autowired
+	private TokenService tokenService;
+	
+	@Autowired
+	private AuctionService2 auctionService;
+	
+	@Autowired
+	private ChatDao chatDao;
+	
+	@PatchMapping("/{auctionNo}")
+	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
+			@RequestBody WebsocketBidRequestVO request,
+			@RequestHeader("Authorization") String token) {
+		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
+		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
+//		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
+		messagingTemplate.convertAndSend("/auction/everyone",response);
+		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
+		return response;
+	}
+	
+	
 //		WebsocketBidRequestVO request = message.getPayload();
 //		int bidPrice=request.getBid().getBidPrice();
 //		int hammerPrice=request.getBid().getHammerPrice();
@@ -94,7 +96,6 @@ public class WebSocketController {
 //			messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 //			
 //		}
-	}
 
     @MessageMapping("/chat/{receiverId}")
     public void dm(@DestinationVariable String receiverId, Message<WebSocketRequestVO> message) {

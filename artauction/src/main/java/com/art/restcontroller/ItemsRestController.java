@@ -14,13 +14,22 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.art.dao.AuctionDao;
+import com.art.dao.InventoryDao;
 import com.art.dao.ItemsDao;
 import com.art.dao.MemberDao;
+import com.art.dao.workDao;
+import com.art.dto.AuctionDto;
+import com.art.dto.InventoryDto;
 import com.art.dto.ItemsDto;
 import com.art.dto.MemberDto;
+import com.art.dto.WorkDto;
+import com.art.error.TargetNotFoundException;
 import com.art.service.ItemService;
 import com.art.service.TokenService;
+import com.art.vo.ItemAcutionVO;
 import com.art.vo.MemberClaimVO;
+import com.art.vo.WorkListVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,9 +49,16 @@ public class ItemsRestController {
 	private TokenService tokenService;
 	@Autowired
 	private MemberDao memberDao;
+	@Autowired
+	private AuctionDao auctionDao;
+	@Autowired
+	private workDao workDao;
+	@Autowired
+	private InventoryDao inventoryDao;
 	//상품 조회
 	@GetMapping("/list")
 	public List<ItemsDto> list(){
+		itemService.updateChance();
 		return itemsDao.rarityList();
 	}
 	//아이템뽑기
@@ -60,6 +76,12 @@ public class ItemsRestController {
         if(itemsDto.getIsWin().equals("N"))return itemsDto;
         else {
         	//아이템 정보를 인벤토리에 보내고
+        	InventoryDto inventoryDto = new InventoryDto();
+        	inventoryDto.setMemberId(memberDto.getMemberId());
+        	inventoryDto.setItemId(itemsDto.getItemId());
+        	inventoryDto.setItemName(itemsDto.getItemName());
+        	inventoryDto.setItemValue(itemsDto.getItemValue());
+        	inventoryDao.insert(inventoryDto);
         	//프론트로 아이템 정보를 보낸후
         	return itemsDto;
         }
@@ -70,10 +92,21 @@ public class ItemsRestController {
 			) {
 		itemService.deleteItem(itemId);
 	}
+	//등록
 	@PostMapping("/")
-	public void insert(@RequestBody ItemsDto itemsDto) {
-		int itemSequence = itemsDao.itemSequence();
-		itemsDto.setItemId(itemSequence);
+	public void insert(@RequestBody ItemAcutionVO itemAuctionVO) {
+		ItemsDto itemsDto = new ItemsDto();
+		itemsDto.setAuctionNo(itemAuctionVO.getAuctionNo());
+		itemsDto.setIsWin("Y");
+		AuctionDto auctionDto = auctionDao.selectOne(itemsDto.getAuctionNo());
+		
+		int price = (auctionDto.getAuctionHighPrice()+auctionDto.getAuctionLowPrice())/2;
+		if(price<=0)throw new TargetNotFoundException("가격 측정 x");
+		WorkListVO workDto = workDao.selectOne(auctionDto.getWorkNo());
+		
+		itemsDto.setItemName(workDto.getWorkTitle());
+		itemsDto.setItemValue(price);
+		
 		itemsDao.insert(itemsDto);
 		itemService.updateChance();
 	}
