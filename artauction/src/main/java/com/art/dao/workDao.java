@@ -67,6 +67,17 @@ public class workDao {
 	public int countWithPaging(WorkListRequestVO requestVO) {
 		return sqlSession.selectOne("work.count", requestVO);
 	}
+
+	//상세
+	public WorkDto selectOne(int workNo) {
+		return sqlSession.selectOne("work.detail",workNo);
+	}
+	//이미지 번호 찾기 기능
+//	public Integer findImage(int poketmonNo) {
+//		String sql = "select attachment from poketmon_image where poketmon=?";
+//		Object[] data = {poketmonNo};
+//	}
+
 	
 	// 목록 + 페이징 + 검색
 	public List<WorkListVO> selectListByPaging(WorkListRequestVO requestVO){
