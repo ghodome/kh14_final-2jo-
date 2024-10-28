@@ -30,30 +30,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 public class WebSocketController {
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private AuctionService auctionService;
-    
-    @Autowired
-    private ChatDao chatDao;
-    
-    @PostMapping("/{auctionNo}")
-    public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
-            @RequestBody WebsocketBidRequestVO request,
-            @RequestHeader("Authorization") String token) {
-        log.info("bid ={}",request.getBid());
-        String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
-        WebsocketBidResponseVO response = auctionService.AuctionProccess(request, auctionNo, memberId);
-        return response;
-    }
-    
-    @MessageMapping("/auction/{auctionNo}")
+	
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
+	
+	@Autowired
+	private TokenService tokenService;
+	
+	@Autowired
+	private AuctionService auctionService;
+	
+	@PostMapping("/{auctionNo}")
+	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
+			@RequestBody WebsocketBidRequestVO request,
+			@RequestHeader("Authorization") String token) {
+		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
+		WebsocketBidResponseVO response = auctionService.AuctionProccess(request, auctionNo, memberId);
+		return response;
+	}
+	
+	
+	@MessageMapping("/message/{auctionNo}")
 	public void chat(@DestinationVariable int auctionNo,
 			Message<WebsocketBidRequestVO> message) {
 		log.info("메세지 전파 요청 발생");

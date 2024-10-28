@@ -1,6 +1,7 @@
 package com.art.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,13 @@ public class AuctionDao {
 	}
 	public AuctionLotDetailVO selectAuctionWithWork(int auctionNo) {
 		return sqlSession.selectOne("auction.selectAuctionWithWork",auctionNo);
+	}
+	
+//	public boolean bidAvailable(int auctionNo,int bidPrice) {
+//		Map map=Map.of("auctionNo",auctionNo,"bidPrice",bidPrice);
+//		return sqlSession.selectOne("auction.selectOneByBidPrice",map)==0;
+//	}
+	public void selectBidInfo(int auctionNo) {
+		
 	}
 }

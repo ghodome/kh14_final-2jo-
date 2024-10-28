@@ -23,5 +23,6 @@ public class AuctionDto {
 	private int auctionNetProceeds;//위탁대금 (최종 낙찰 가격 )- (위탁 수수료 )- (기타 비용)
 	private int auctionBidIncrement;//호가단위
 	private int auctionStartPrice;
+	private int auctionBidPrice;
 	
 }
