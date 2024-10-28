@@ -54,12 +54,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_schedule_no = #{auctionScheduleNo}
 	</update>
 	
+	<!-- 이미지 포함 수정 -->
+	<update id="updateall">
+		update auction_schedule, aution_schedule_Image
+		set 
+			auction_schedule_title = #{auctionScheduleTitle},
+			auction_schedule_start_date = #{auctionScheduleStartDate},
+			auction_schedule_end_date = #{auctionScheduleEndDate},
+			auction_schedule_state = #{auctionScheduleState},
+			auction_schedule_notice = #{auctionScheduleNotice}
+			attachment = # {attachment}
+		where
+			auction_schedule_no = #{auctionScheduleNo}
+	</update>
+	
 	<!-- 목록 -->
     <select id="list" resultType="AuctionScheduleDto">
     	select * from auction_schedule AC 
 			inner join AUCTION_SCHEDULE_IMAGE ASI 
 				on AC.auction_schedule_no = ASI.auction
+					order by AC.auction_schedule_end_date desc
     </select>
+    
     
     <!-- 카운트 -->
     <select id="count" resultType="int">
@@ -69,6 +85,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				on AC.auction_schedule_no = ASI.auction
     </select>
     
+    <!-- 이미지 no포함한 상세정보-->
+    <select id="detailall" resultType="AuctionScheduleDto">
+    	select * from auction_schedule AC 
+			inner join AUCTION_SCHEDULE_IMAGE ASI 
+				on AC.auction_schedule_no=ASI.auction 
+				where
+					AC.auction_schedule_no = #{auctionScheduleNo}
+    </select>
     
 	<!-- 상세 -->
 	<select id="detail" resultType="AuctionScheduleDto">

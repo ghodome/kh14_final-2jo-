@@ -15,11 +15,12 @@ public class RoomChatDao {
     @Autowired
     private SqlSession sqlSession;
 
-    // 목록 조회
+    // 목록 조회	
     public List<RoomChatDto> selectList() {
         return sqlSession.selectList("roomchat.list");
     }
 
+    
     // 회원별 목록 조회
     public List<RoomChatDto> selectListByMemberId(@Param("memberId") String memberId) {
         return sqlSession.selectList("roomchat.selectListByMemberId", memberId);
