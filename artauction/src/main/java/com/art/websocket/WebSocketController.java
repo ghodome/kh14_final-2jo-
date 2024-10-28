@@ -1,5 +1,6 @@
 package com.art.websocket;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +20,8 @@ import com.art.dto.ChatDto;
 import com.art.service.AuctionService;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
-import com.art.vo.WebSocketSaveVO;
-import com.art.vo.WebSocketSendVO;
+import com.art.vo.WebSocketDMResponseVO;
+import com.art.vo.WebSocketRequestVO;
 import com.art.vo.WebsocketBidRequestVO;
 import com.art.vo.WebsocketBidResponseVO;
 
@@ -96,33 +96,49 @@ public class WebSocketController {
 //		}
 	}
 
-    @MessageMapping("/chat")
-    @Transactional
-    public void chat(Message<WebSocketSendVO> message) {
+    @MessageMapping("/chat/{receiverId}")
+    public void dm(@DestinationVariable String receiverId, Message<WebSocketRequestVO> message) {
+        log.info("[Chat] receiverId = {}", receiverId);
+        
+        // 헤더 추출
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         String accessToken = accessor.getFirstNativeHeader("accessToken");
-
         if (accessToken == null) {
+            return; // 비회원이 채팅을 보냈으면 종료
+        }
+
+        // 토큰 해석
+        MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(accessToken));
+
+        // 자신에게 보내는 메시지 차단
+        if (claimVO.getMemberId().equals(receiverId)) {
             return;
         }
 
-        MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(accessToken));
-        WebSocketSendVO send = message.getPayload();
+        // 본문 추출
+        WebSocketRequestVO request = message.getPayload();
 
-        WebSocketSaveVO save = new WebSocketSaveVO();
-        save.setContent(send.getContent());
-        save.setTime(LocalDateTime.now());
-        save.setSender(claimVO.getMemberId());
-        save.setLevel(claimVO.getMemberRank());
+        // DM 응답 생성
+        WebSocketDMResponseVO response = new WebSocketDMResponseVO();
+        response.setContent(request.getContent());
+        response.setTime(LocalDateTime.now());
+        response.setSenderMemberId(claimVO.getMemberId());
+        response.setSenderMemberLevel(claimVO.getMemberRank());
+        response.setReceiverMemberId(receiverId);
 
-        messagingTemplate.convertAndSend("/public/chat", save);
+        // DM 전송
+        messagingTemplate.convertAndSend("/private/chat/" + response.getSenderMemberId(), response);
+        messagingTemplate.convertAndSend("/private/chat/" + response.getReceiverMemberId(), response);
 
+        // DB에 등록
         int chatNo = chatDao.sequence();
         ChatDto chatDto = new ChatDto();
         chatDto.setChatNo(chatNo);
-        chatDto.setChatSender(claimVO.getMemberId());
-        chatDto.setChatReceiver(null);
-        chatDto.setChatContent(send.getContent());
+        chatDto.setChatType("chat");
+        chatDto.setChatSender(response.getSenderMemberId());
+        chatDto.setChatReceiver(response.getReceiverMemberId());
+        chatDto.setChatContent(response.getContent());
+        chatDto.setChatTime(Timestamp.valueOf(response.getTime()));
         chatDao.insert(chatDto);
     }
 }

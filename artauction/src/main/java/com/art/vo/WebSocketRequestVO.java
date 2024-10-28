@@ -3,7 +3,6 @@ package com.art.vo;
 import lombok.Data;
 
 @Data
-public class WebSocketSendVO {
+public class WebSocketRequestVO {
 	private String content;
-	
 }

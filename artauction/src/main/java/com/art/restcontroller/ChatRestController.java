@@ -16,7 +16,8 @@ import com.art.dao.ChatDao;
 import com.art.dto.ChatDto;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
-import com.art.vo.WebSocketSaveVO;
+import com.art.vo.WebsocketMessageVO;
+
 
 @CrossOrigin
 @RestController
@@ -33,7 +34,7 @@ public class ChatRestController {
 	@ResponseBody
 	public ChatDto insert(
 	        @RequestHeader("Authorization") String token,
-	        @RequestBody WebSocketSaveVO chatMessage) {
+	        @RequestBody WebsocketMessageVO chatMessage) {
 	    // 회원이 관리자 채팅 보내기
 	    MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 	    
@@ -50,8 +51,8 @@ public class ChatRestController {
 	        chatDto.setChatReceiver("회원"); // 관리자인 경우 수신자를 회원 설정
 	    } else {
 	        // 기본값 설정 (optional)
-	        chatDto.setChatSender(chatMessage.getSender());
-	        chatDto.setChatReceiver(chatMessage.getReceiverId());
+	        chatDto.setChatSender(chatMessage.getSenderMemberId());
+	        chatDto.setChatReceiver(chatMessage.getReceiverMemberId());
 	    }
 
 	    chatDto.setChatTime(Timestamp.valueOf(LocalDateTime.now())); // 현재 시간 설정
