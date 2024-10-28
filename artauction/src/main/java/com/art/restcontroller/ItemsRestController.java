@@ -29,6 +29,7 @@ import com.art.service.ItemService;
 import com.art.service.TokenService;
 import com.art.vo.ItemAcutionVO;
 import com.art.vo.MemberClaimVO;
+import com.art.vo.WorkListVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -101,7 +102,7 @@ public class ItemsRestController {
 		
 		int price = (auctionDto.getAuctionHighPrice()+auctionDto.getAuctionLowPrice())/2;
 		if(price<=0)throw new TargetNotFoundException("가격 측정 x");
-		WorkDto workDto = workDao.selectOne(auctionDto.getWorkNo());
+		WorkListVO workDto = workDao.selectOne(auctionDto.getWorkNo());
 		
 		itemsDto.setItemName(workDto.getWorkTitle());
 		itemsDto.setItemValue(price);
