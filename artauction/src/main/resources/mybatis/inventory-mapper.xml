@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="inventory">
+	<insert id="insert">
+		insert into inventory(
+			inventory_id,member_id,item_id,item_name,item_value
+		) values(
+			inventory_seq.nextval,#{memberId},#{itemId},#{itemName},#{itemValue}
+		)
+	</insert>
+	<select id="detail" resultType="inventoryDto">
+		select * from inventory where member_id=#{memberId}
+	</select>
+	<delete id="delete">
+		delete inventory where inventory_id=#{inventoryId}
+	</delete>
+</mapper>

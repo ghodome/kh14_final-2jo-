@@ -6,21 +6,21 @@
  	<insert id="insert">
  	insert into items(
  		item_id,item_name,is_win,
- 		item_value,chance
+ 		item_value,chance,auction_no
  	) 
  	values(
  		items_seq.nextval,#{itemName},#{isWin},
- 		#{itemValue},#{chance}
+ 		#{itemValue},#{chance},#{auctionNo}
  	)
  	</insert>
  	<insert id="insertWithSequence">
  	insert into items(
  		item_id,item_name,is_win,
- 		item_value,chance
+ 		item_value,chance,auction_no
  	) 
  	values(
  		#{insertId},#{itemName},#{isWin},
- 		#{itemValue},#{chance}
+ 		#{itemValue},#{chance},#{auctionNo}
  	)
  	</insert>
  	<update id="update">

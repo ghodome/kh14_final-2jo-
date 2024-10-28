@@ -292,5 +292,27 @@
 		update member set member_point=#{memberPoint} where
 		member_id=#{memberId}
 	</update>
-
+	<select id="findWithInventory" resultType="MemberInventoryVO">
+	SELECT
+    	m.member_id,
+    	m.member_name,
+    	m.member_Email,
+    	m.member_contact,
+    	m.member_rank,
+    	m.member_point,
+    	m.member_post,
+    	m.member_address1,
+    	m.member_address2,
+    	i.inventory_id,
+    	i.item_id,
+    	i.acquired_date,
+    	i.item_name,
+    	i.item_value
+	FROM
+    	member m
+	LEFT JOIN
+    	inventory i ON m.member_id = i.member_id
+	WHERE 
+		m.member_id=#{memberId}
+	</select>
 </mapper>

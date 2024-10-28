@@ -45,6 +45,10 @@ public class workDao {
         params.put("attachment", attachment);
         sqlSession.insert("work_image.connect", params);
 	}
+	//상세
+	public WorkDto selectOne(int workNo) {
+		return sqlSession.selectOne("work.detail",workNo);
+	}
 	//이미지 번호 찾기 기능
 //	public Integer findImage(int poketmonNo) {
 //		String sql = "select attachment from poketmon_image where poketmon=?";

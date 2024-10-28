@@ -47,6 +47,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{attachment}, #{work}
 		)
 	</insert>
+	<select id="detail" resultType="workDto">
+		select * from work where work_no=#{workNo}
+	</select>
 		
 	
 </mapper>
