@@ -89,6 +89,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    where work_no = #{workNo}
 	</update>
 	
+
+	<select id="detail" resultType="workDto">
+		select * from work where work_no=#{workNo}
+	</select>
+		
+
 	<!-- 여러 이미지 중 첫 번째만 가져오는 메소드 -->
   	<select id="findImage" resultType="Integer">
   		select min(attachment) from work_image where work = #{workNo}
@@ -99,14 +105,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   		select attachment from work_image where work = #{workNo}
   	</select>
   	
-  	<!--  상세  -->
-  	<select id="detail" resultType="workArtistVO">
+  	
+
+
+	<select id="selectOne" resultType="WorkListVO">
   		select * from work where work_no = #{workNo}
   	</select>
+	
+	
 
-
-	
-	
-	
 	
 </mapper>

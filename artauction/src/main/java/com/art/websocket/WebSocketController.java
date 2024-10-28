@@ -39,6 +39,8 @@ public class WebSocketController {
 	
 	@Autowired
 	private AuctionService2 auctionService;
+	@Autowired
+	private ChatDao chatDao;
 	
 	@Autowired
 	private ChatDao chatDao;

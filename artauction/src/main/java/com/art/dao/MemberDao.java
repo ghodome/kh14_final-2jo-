@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.art.dto.MemberDto;
 import com.art.vo.MemberComplexRequestVO;
+import com.art.vo.MemberInventoryVO;
 
 @Repository
 public class MemberDao {
@@ -36,9 +37,15 @@ public class MemberDao {
 	public boolean pointUpdate(MemberDto dto) {
 		return sqlSession.update("member.pointUpdate",dto)>0;
 	}
+
+	public List<MemberInventoryVO> selectMemberInventory(String memberId) {
+		return sqlSession.selectList("member.findWithInventory",memberId);
+	}
+
 	public boolean isBlocked(String memberId) {
 	    return sqlSession.selectOne("blockMember.isBlocked", memberId);
 	}
+
 
 
 }

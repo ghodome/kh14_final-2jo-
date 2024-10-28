@@ -40,6 +40,7 @@ import com.art.vo.MemberBlockVO;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.MemberComplexRequestVO;
 import com.art.vo.MemberComplexResponseVO;
+import com.art.vo.MemberInventoryVO;
 import com.art.vo.MemberLoginRequestVO;
 import com.art.vo.MemberLoginResponseVO;
 import com.art.vo.MemberPurchaseRequestVO;
@@ -208,6 +209,7 @@ public class MemberRestController {
 			memberTokenDto.setTokenTarget(claimVO.getMemberId());
 			memberTokenDto.setTokenValue(tokenService.removeBearer(refreshToken));
 			MemberTokenDto resultDto = memberTokenDao.selectOne(memberTokenDto);
+			
 			if(resultDto == null)//발급내역이 없음 
 				throw new TargetNotFoundException("발급 내역이 없음");
 			
@@ -228,18 +230,16 @@ public class MemberRestController {
 		//회원 본인의 정보를 반환하는 기능
 		//- 아이디를 변경할 수 없도록 Authorization 헤더에서 정보를 읽어 조회한 뒤 반환
 		@GetMapping("/find")
-		public MemberDto find(@RequestHeader(value = "Authorization", required = false) String accessToken) {
+		public List<MemberInventoryVO> find(@RequestHeader(value = "Authorization", required = false) String accessToken) {
 			if(tokenService.isBearerToken(accessToken) == false) 
 				throw new TargetNotFoundException("유효하지 않은 토큰");
 			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(accessToken));
 			
-			MemberDto memberDto = memberDao.selectOne(claimVO.getMemberId());
-			if(memberDto == null)
+			List<MemberInventoryVO> vo = memberDao.selectMemberInventory(claimVO.getMemberId());
+			if(vo == null)
 				throw new TargetNotFoundException("존재하지 않는 회원");
 			
-			memberDto.setMemberPw(null);//비밀번호 제거
-			
-			return memberDto;
+			return vo;
 		}
 	//충전
 		@PostMapping("/charge/purchase")
