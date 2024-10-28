@@ -37,6 +37,10 @@ public class AuctionRestController {
 	public void add(@RequestBody AuctionDto auctionDto) {
 		auctionDto.setAuctionNo(auctionDao.sequence());
 		auctionDto.setAuctionState("예정경매");
+		log.info("start ={}",auctionDto.getAuctionStartDate());
+		log.info("end ={}",auctionDto.getAuctionEndDate());
+		auctionDto.setAuctionStartDate(null);
+		auctionDto.setAuctionEndDate(null);
 		log.info("auctionLot={}",auctionDto.getAuctionLot());
 		auctionDao.insert(auctionDto);
 	}
