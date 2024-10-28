@@ -19,7 +19,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		auction_consigner,
 		auction_consignment_fee,
 		auction_start_price,
-		auction_bid_price
+		auction_bid_price,
+		auction_bid_increment
 	)
 	values(
 		#{auctionNo},
@@ -33,29 +34,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		#{auctionConsigner},
 		#{auctionConsignmentFee},
 		#{auctionStartPrice},
-		#{auctionStartPrice}
+		#{auctionStartPrice},
+		#{auctionBidIncrement}
 	)
 	</insert>
 
 	<update id="update">
 		update auction 
 		<set>
-			<if test="auctionScheduleNo!=null or auctionScheduleNo>0">auction_schedule_no=#{auctionScheduleNo},</if>
-			<if test="workNo!=null or workNo>0">work_no=#{workNo},</if>
+			<if test="auctionScheduleNo>0">auction_schedule_no=#{auctionScheduleNo},</if>
+			<if test="workNo>0">work_no=#{workNo},</if>
 			<if test="auctionSuccessBidder!=null">auction_success_bidder=#{auctionSuccessBidder},</if>
-			<if test="auctionLot!=null or auctionLot>0">auction_lot=#{auctionLot},</if>
-			<if test="auctionLowPrice!=null or auctionLowPrice > 0">auction_low_price=#{auctionLowPrice},</if>
-			<if test="auctionHighPrice!=null or auctionHighPrice>0">auction_high_price=#{auctionHighPrice},</if>
+			<if test="auctionLot>0">auction_lot=#{auctionLot},</if>
+			<if test="auctionLowPrice > 0">auction_low_price=#{auctionLowPrice},</if>
+			<if test="auctionHighPrice>0">auction_high_price=#{auctionHighPrice},</if>
 			<if test="auctionStartDate!=null">auction_start_date=#{auctionStartDate},</if>
 			<if test="auctionEndDate!=null">auction_end_date=#{auctionEndDate},</if>
 			<if test="auctionState!=null">auction_state=#{auctionState},</if>
 			<if test="auctionConsigner!=null">auction_consigner=#{auctionConsigner},</if>
-			<if test="auctionConsignmentFee!=null or auctionConsignmentFee>0">auction_consignment_fee=#{auctionConsignmentFee},</if>
-			<if test="auctionNetProceeds!=null or auctionNetProceeds>0">auction_net_proceeds=#{auctionNetProceeds},</if>
-			<if test="auctionBidPrice!=null or auctionBidPrice>0">auction_bid_price=#{auctionBidPrice},</if>
-			<if test="auctionBidIncrement!=null or auctionBidIncrement>0">auction_bid_increment=#{auctionBidIncrement},</if>
-			<if test="auctionPurchasePrice==null or auctionPurchasePrice==0">auction_purchase_price=1</if>
-			<if test="auctionPurchasePrice>0">auction_purchase_price=auction_purchase_price+1</if>
+			<if test="auctionConsignmentFee>0">auction_consignment_fee=#{auctionConsignmentFee},</if>
+			<if test="auctionNetProceeds>0">auction_net_proceeds=#{auctionNetProceeds},</if>
+			<if test="auctionBidPrice>0">auction_bid_price=#{auctionBidPrice},</if>
+			<if test="auctionBidIncrement>0">auction_bid_increment=#{auctionBidIncrement},</if>
+			<if test="auctionBidCnt==null or auctionBidCnt==0">auction_bid_cnt=1</if>
+			<if test="auctionBidCnt>0">auction_bid_cnt=auction_bid_cnt+1</if>
 		</set>
 		where auction_no=#{auctionNo}
 	</update>

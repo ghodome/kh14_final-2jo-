@@ -37,11 +37,26 @@ public class AuctionRestController {
 	public void add(@RequestBody AuctionDto auctionDto) {
 		auctionDto.setAuctionNo(auctionDao.sequence());
 		auctionDto.setAuctionState("예정경매");
-		log.info("start ={}",auctionDto.getAuctionStartDate());
-		log.info("end ={}",auctionDto.getAuctionEndDate());
-		auctionDto.setAuctionStartDate(null);
-		auctionDto.setAuctionEndDate(null);
-		log.info("auctionLot={}",auctionDto.getAuctionLot());
+		int startPrice=auctionDto.getAuctionStartPrice();
+		int bidIncrement;
+		if (startPrice < 1000000)
+			bidIncrement = 50000;
+		else if (startPrice < 3000000) 
+			bidIncrement = 100000;
+		else if (startPrice < 5000000) 
+			bidIncrement = 200000;
+		else if (startPrice < 10000000) 
+			bidIncrement = 500000;
+		else if (startPrice < 30000000) 
+			bidIncrement = 1000000;
+		else if (startPrice < 50000000) 
+			bidIncrement = 2000000;
+		else if (startPrice < 200000000) 
+			bidIncrement = 5000000;
+		else 
+			bidIncrement = 10000000;
+		auctionDto.setAuctionBidIncrement(bidIncrement);
+		log.info("auctionDto ={}",auctionDto);
 		auctionDao.insert(auctionDto);
 	}
 	@PatchMapping("/")

@@ -26,7 +26,6 @@ public class AuctionService2 {
 			String memberId) {
 		String requestTime=timeService.getTime();
 		int bidPrice=request.getBid().getBidPrice();
-		int hammerPrice=request.getBid().getHammerPrice();
 		int bidIncrement=request.getBid().getBidIncrement();
 		AuctionDto auctionDto = auctionDao.selectOne(auctionNo);
 		if(!(auctionDto.getAuctionBidPrice()==bidPrice)) throw new TargetNotFoundException("응찰가격 불일치");
@@ -52,19 +51,21 @@ public class AuctionService2 {
 		
 		auctionNewDto.setAuctionBidPrice(bidPrice+bidIncrement);
 		auctionNewDto.setAuctionBidIncrement(bidNewIncrement);
-		auctionNewDto.setAuctionPurchasePrice(auctionDto.getAuctionPurchasePrice());
+		auctionNewDto.setAuctionBidCnt(auctionDto.getAuctionBidCnt());
 		auctionNewDto.setAuctionNo(auctionNo);
-		log.info("bidDto={}",auctionNewDto);
+		auctionNewDto.setAuctionSuccessBidder(memberId);
 		if(!auctionDao.update(auctionNewDto)) throw new TargetNotFoundException("응찰 실패");
 		
 		WebsocketBidResponseVO response = new WebsocketBidResponseVO();
 		AuctionContentVO content=new AuctionContentVO();
 		content.setAuctionNo(auctionNo);
-		content.setBidPrice(bidPrice);
+		content.setBidPrice(bidPrice+bidIncrement);
 		content.setBidTime(requestTime);
 		content.setMemberId(memberId.substring(0, 4)+"****");
-		content.setContent(String.valueOf(auctionNo)+"번 경매, 입찰가 : "
-				+hammerPrice+", 입찰자 : "+content.getMemberId());
+		content.setContentForSchedule("LOT "+request.getBid().getAuctionLot()+" ["+request.getBid().getWorkName()+"], 입찰가 : "
+				+content.getBidPrice()+", 입찰자 : "+content.getMemberId());
+		content.setContentForLot("입찰가 : "+content.getBidPrice()+", 입찰자 : "+content.getMemberId());
+		content.setAuctionLot(request.getBid().getAuctionLot());
 		response.setContent(content);
 		response.setSuccess(true);
 		return response;

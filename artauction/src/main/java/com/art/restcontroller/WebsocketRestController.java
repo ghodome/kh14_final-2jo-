@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.art.service.AuctionService2;
 import com.art.service.TokenService;
+import com.art.vo.AuctionContentVO;
 import com.art.vo.WebsocketBidRequestVO;
 import com.art.vo.WebsocketBidResponseVO;
 
@@ -36,7 +37,7 @@ public class WebsocketRestController {
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
 		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
 //		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
-		messagingTemplate.convertAndSend("/auction/everyone",response);
+		messagingTemplate.convertAndSend("/auction/progress",response);
 		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 		return response;
 	}
