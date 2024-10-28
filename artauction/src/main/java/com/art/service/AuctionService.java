@@ -37,25 +37,25 @@ public class AuctionService {
 		auctionNewDto.setAuctionBidPrice(bidPrice+bidIncrement);
 		int bidNewIncrement;
 
-		if (bidPrice < 300000) {
-		    bidNewIncrement = bidPrice + 0; // 300,000 미만은 변경 없음
-		} else if (bidPrice < 1000000) {
-		    bidNewIncrement = bidPrice + 50000; // 300,000 ~ 999,999 : 50,000원
-		} else if (bidPrice < 3000000) {
-		    bidNewIncrement = bidPrice + 100000; // 1,000,000 ~ 2,999,999 : 100,000원
-		} else if (bidPrice < 5000000) {
-		    bidNewIncrement = bidPrice + 200000; // 3,000,000 ~ 4,999,999 : 200,000원
-		} else if (bidPrice < 10000000) {
-		    bidNewIncrement = bidPrice + 500000; // 5,000,000 ~ 9,999,999 : 500,000원
-		} else if (bidPrice < 30000000) {
-		    bidNewIncrement = bidPrice + 1000000; // 10,000,000 ~ 29,999,999 : 1,000,000원
-		} else if (bidPrice < 50000000) {
-		    bidNewIncrement = bidPrice + 2000000; // 30,000,000 ~ 49,999,999 : 2,000,000원
-		} else if (bidPrice < 200000000) {
-		    bidNewIncrement = bidPrice + 5000000; // 50,000,000 ~ 199,999,999 : 5,000,000원
-		} else {
-		    bidNewIncrement = bidPrice + 10000000; // 200,000,000 ~ 499,999,999 : 10,000,000원
-		}
+		if (bidPrice < 300000)
+		    bidNewIncrement = bidPrice + 0; 
+		else if (bidPrice < 1000000)
+		    bidNewIncrement = bidPrice + 50000;
+		else if (bidPrice < 3000000) 
+		    bidNewIncrement = bidPrice + 100000;
+		else if (bidPrice < 5000000) 
+		    bidNewIncrement = bidPrice + 200000;
+		else if (bidPrice < 10000000) 
+		    bidNewIncrement = bidPrice + 500000;
+		else if (bidPrice < 30000000) 
+		    bidNewIncrement = bidPrice + 1000000;
+		else if (bidPrice < 50000000) 
+		    bidNewIncrement = bidPrice + 2000000;
+		else if (bidPrice < 200000000) 
+		    bidNewIncrement = bidPrice + 5000000;
+		else 
+		    bidNewIncrement = bidPrice + 10000000;
+		
 		auctionDao.update(auctionNewDto);
 		
 		if(bidSuccess) {
