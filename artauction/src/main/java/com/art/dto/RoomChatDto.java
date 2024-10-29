@@ -8,6 +8,8 @@ import lombok.Data;
 public class RoomChatDto {
 	private int roomChatNo;
 	private String roomChatMemberId;
+	private String roomChatAdminId;
 	private Timestamp roomChatCreated;
+	private String roomChatStatus;
 	
 }
