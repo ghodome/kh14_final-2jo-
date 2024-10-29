@@ -12,6 +12,7 @@ public class AuctionLotDetailVO {
 	private int auctionLot;
 	private int auctionLowPrice;
 	private int auctionHighPrice;
+	private int auctionBidCnt;
 	private String auctionSuccessBidder;
 	private LocalDateTime auctionStartDate;
 	private LocalDateTime auctionEndDate;

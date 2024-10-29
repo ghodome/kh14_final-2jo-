@@ -1,10 +1,16 @@
 package com.art.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.art.dao.AuctionDao;
+import com.art.dao.BidDao;
 import com.art.dto.AuctionDto;
+import com.art.dto.BidDto;
 import com.art.error.TargetNotFoundException;
 import com.art.vo.AuctionContentVO;
 import com.art.vo.WebsocketBidRequestVO;
@@ -20,13 +26,20 @@ public class AuctionService2 {
 	
 	@Autowired
 	private AuctionDao auctionDao;
-
+	
+	@Autowired
+	private BidDao bidDao;
+	
+	@Transactional
 	public synchronized WebsocketBidResponseVO bidProccess(WebsocketBidRequestVO request,
 			int auctionNo,
-			String memberId) {
+			String memberId) throws ParseException {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		String requestTime=timeService.getTime();
 		int bidPrice=request.getBid().getBidPrice();
 		int bidIncrement=request.getBid().getBidIncrement();
+		int newBidPrice=bidPrice+bidIncrement;
+		
 		AuctionDto auctionDto = auctionDao.selectOne(auctionNo);
 		if(!(auctionDto.getAuctionBidPrice()==bidPrice)) throw new TargetNotFoundException("응찰가격 불일치");
 		AuctionDto auctionNewDto=new AuctionDto();
@@ -49,12 +62,26 @@ public class AuctionService2 {
 		else 
 		    bidNewIncrement = 10000000;
 		
-		auctionNewDto.setAuctionBidPrice(bidPrice+bidIncrement);
+		
+		auctionNewDto.setAuctionBidPrice(newBidPrice);
 		auctionNewDto.setAuctionBidIncrement(bidNewIncrement);
 		auctionNewDto.setAuctionBidCnt(auctionDto.getAuctionBidCnt());
 		auctionNewDto.setAuctionNo(auctionNo);
 		auctionNewDto.setAuctionSuccessBidder(memberId);
 		if(!auctionDao.update(auctionNewDto)) throw new TargetNotFoundException("응찰 실패");
+		String contentForSchedule="LOT "+request.getBid().getAuctionLot()+" ["+request.getBid().getWorkName()+"], 입찰가 : "
+				+newBidPrice+", 입찰자 : "+memberId;
+		String contentForLot="입찰가 : "+newBidPrice+", 입찰자 : "+memberId;
+		
+		//응찰 내역 저장
+		BidDto bidDto=new BidDto();
+		bidDto.setAuctionNo(auctionNo);
+		bidDto.setBidContent(contentForLot);
+		bidDto.setBidPrice(newBidPrice);
+		bidDto.setBidTime(fmt.parse(requestTime));
+		bidDto.setMemberId(memberId);
+		bidDao.insert(bidDto);
+		
 		
 		WebsocketBidResponseVO response = new WebsocketBidResponseVO();
 		AuctionContentVO content=new AuctionContentVO();
@@ -62,9 +89,8 @@ public class AuctionService2 {
 		content.setBidPrice(bidPrice+bidIncrement);
 		content.setBidTime(requestTime);
 		content.setMemberId(memberId.substring(0, 4)+"****");
-		content.setContentForSchedule("LOT "+request.getBid().getAuctionLot()+" ["+request.getBid().getWorkName()+"], 입찰가 : "
-				+content.getBidPrice()+", 입찰자 : "+content.getMemberId());
-		content.setContentForLot("입찰가 : "+content.getBidPrice()+", 입찰자 : "+content.getMemberId());
+		content.setContentForSchedule(contentForSchedule);
+		content.setContentForLot(contentForLot);
 		content.setAuctionLot(request.getBid().getAuctionLot());
 		response.setContent(content);
 		response.setSuccess(true);

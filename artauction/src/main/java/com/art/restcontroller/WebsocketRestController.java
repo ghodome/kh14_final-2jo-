@@ -1,5 +1,7 @@
 package com.art.restcontroller;
 
+import java.text.ParseException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,10 +35,9 @@ public class WebsocketRestController {
 	@PatchMapping("/{auctionNo}")
 	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
 			@RequestBody WebsocketBidRequestVO request,
-			@RequestHeader("Authorization") String token) {
+			@RequestHeader("Authorization") String token) throws ParseException {
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
 		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
-//		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
 		messagingTemplate.convertAndSend("/auction/progress",response);
 		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 		return response;

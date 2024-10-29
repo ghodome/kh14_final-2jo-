@@ -83,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction A 
 		ON 
 			W.work_no = A.work_no
-		WHERE A.AUCTION_SCHEDULE_NO = ${auctionScheduleNo}
+		WHERE A.AUCTION_SCHEDULE_NO = #{auctionScheduleNo}
 		order by A.AUCTION_NO asc
 	</select>
 	<update id="cancelPresent">
