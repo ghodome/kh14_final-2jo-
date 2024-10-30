@@ -17,7 +17,7 @@ import com.art.vo.MemberClaimVO;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/roomchat")
+@RequestMapping("/room")
 public class RoomChatRestController {
 
 	@Autowired
@@ -31,6 +31,8 @@ public class RoomChatRestController {
 	public RoomChatDto createRoom(@RequestHeader("Authorization") String token) {
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 		String memberId = claimVO.getMemberId();
+		
+		
 
 		// 방이 존재하는지 확인
 		List<RoomChatDto> sameRoom = roomChatDao.selectListByMemberId(memberId);
@@ -38,11 +40,12 @@ public class RoomChatRestController {
 		if (!sameRoom.isEmpty()) {
 			return sameRoom.get(0);
 		}
+		
 
 		// 새 방 생성
 		RoomChatDto roomChatDto = new RoomChatDto();
 		roomChatDto.setRoomChatMemberId(memberId);
-
+		
 		roomChatDao.insert(roomChatDto);
 
 		return roomChatDto;
