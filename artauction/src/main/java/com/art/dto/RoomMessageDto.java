@@ -3,6 +3,7 @@ package com.art.dto;
 import java.sql.Timestamp;
 
 import lombok.Data;
+
 @Data
 public class RoomMessageDto {
 	private int roomMessageNo;

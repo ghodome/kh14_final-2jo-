@@ -8,4 +8,4 @@ import lombok.Data;
 public class WebSocketMessageMoreVO {
 	private boolean last;
 	private List<WebsocketMessageVO> messageList;
-}	
+}
