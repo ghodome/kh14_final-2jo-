@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -72,11 +73,14 @@ public class MemberRestController {
 	private MemberTokenDao memberTokenDao;
 	@Autowired
 	private ChargeDao chargeDao;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private KakaoPayService kakaoPayService;
 	@PostMapping("/join")
 	public void insert(@RequestBody MemberDto memberDto) {
+		memberDto.setMemberPw(passwordEncoder.encode(memberDto.getMemberPw()));
 		memberDao.insert(memberDto);
 	}
 	@PostMapping("search")
@@ -111,8 +115,8 @@ public class MemberRestController {
 		}
 		
 		
-		boolean isValid = vo.getMemberPw().equals(memberDto.getMemberPw());
-//		boolean isValid = encoder.matches(vo.getMemberPw(), memberDto.memberPw());
+//		boolean isValid = vo.getMemberPw().equals(memberDto.getMemberPw());
+		boolean isValid = passwordEncoder.matches(vo.getMemberPw(), memberDto.getMemberPw());
 		
 		if(isValid) {			
 			MemberLoginResponseVO response = new MemberLoginResponseVO();
@@ -142,6 +146,9 @@ public class MemberRestController {
 	}
 	@PatchMapping("/update")
 	public void update(@RequestBody MemberDto memberDto) {
+		 if (memberDto.getMemberPw() != null) {
+		        memberDto.setMemberPw(passwordEncoder.encode(memberDto.getMemberPw())); // 비밀번호 해시화
+		    }
 		boolean result = memberDao.update(memberDto);
 		if(result == false) {
 			throw new TargetNotFoundException();
@@ -192,8 +199,8 @@ public class MemberRestController {
             throw new TargetNotFoundException("회원이 존재하지 않습니다.");
         }
 
-        // 비밀번호 일치 여부 확인 (해시화 없이 직접 비교)
-        boolean isValid = memberPw.equals(memberDto.getMemberPw());
+        // 해시된 비밀번호와 비교
+        boolean isValid = passwordEncoder.matches(memberPw, memberDto.getMemberPw());
         return ResponseEntity.ok(isValid);
     }
 	
