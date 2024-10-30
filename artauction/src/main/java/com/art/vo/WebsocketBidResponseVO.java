@@ -1,5 +1,7 @@
 package com.art.vo;
 
+import java.util.Date;
+
 import lombok.Data;
 
 @Data
@@ -8,6 +10,6 @@ public class WebsocketBidResponseVO {
 	private String senderMemberId;
 	private String senderMemberRank;
 	private AuctionContentVO content;
-	private String time;
+	private Date time;
 	private boolean success;
 }

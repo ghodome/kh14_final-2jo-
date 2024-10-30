@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.art.dao.AuctionDao;
 import com.art.dao.BidDao;
+import com.art.dao.DealDao;
 import com.art.dto.AuctionDto;
 import com.art.dto.BidDto;
+import com.art.dto.DealDto;
 import com.art.error.TargetNotFoundException;
 import com.art.vo.AuctionContentVO;
 import com.art.vo.WebsocketBidRequestVO;
@@ -26,6 +28,9 @@ public class AuctionService2 {
 	
 	@Autowired
 	private AuctionDao auctionDao;
+	
+	@Autowired
+	private DealDao dealDao;
 	
 	@Autowired
 	private BidDao bidDao;
@@ -95,5 +100,15 @@ public class AuctionService2 {
 		response.setContent(content);
 		response.setSuccess(true);
 		return response;
+	}
+	
+	public void bidToDeal(BidDto bidDto) {
+		DealDto dealDto = new DealDto();
+		dealDto.setDealBuyer(bidDto.getMemberId());
+		dealDto.setBidNo(bidDto.getBidNo());
+		dealDto.setDealPrice(bidDto.getBidPrice());
+		dealDto.setDealStatus("결제대기");
+		dealDto.setDealTime(bidDto.getBidTime());
+		dealDao.insert(dealDto);
 	}
 }

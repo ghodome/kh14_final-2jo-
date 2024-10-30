@@ -17,4 +17,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			#{bidTime}, #{bidContent}
 		)
 	</insert>
+	<select id="getList" resultType="BidDto">
+		select * from bid
+	</select>
+	<select id="getListByAuctionNo" resultType="BidDto">
+		select * from bid  where auction_no = #{auctionNo}
+	</select>
+	<select id="getListByBidNo" resultType="BidDto">
+		select * from bid where bid_no=#{bidNo}
+	</select>
 </mapper>
