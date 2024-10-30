@@ -182,6 +182,34 @@ public class MemberRestController {
 	    boolean success = memberService.resetPassword(memberDto.getMemberId(), memberDto.getMemberEmail(), token);
 	    return success ? "비밀번호가 성공적으로 재설정되었습니다." : "비밀번호 재설정에 실패했습니다.";
 	}
+	
+	@PostMapping("/verfiyPw")
+    public ResponseEntity<Boolean> verifyPw(
+            @RequestParam String memberId, 
+            @RequestParam String memberPw) {
+        MemberDto memberDto = memberDao.selectOne(memberId);
+        if (memberDto == null) {
+            throw new TargetNotFoundException("회원이 존재하지 않습니다.");
+        }
+
+        // 비밀번호 일치 여부 확인 (해시화 없이 직접 비교)
+        boolean isValid = memberPw.equals(memberDto.getMemberPw());
+        return ResponseEntity.ok(isValid);
+    }
+	
+	@GetMapping("/checkId")
+	public ResponseEntity<Boolean> checkId(@RequestParam String memberId) {
+	    boolean available = memberDao.isIdAvailable(memberId);
+	    return ResponseEntity.ok(available);
+	}
+
+	@GetMapping("/checkName")
+	public ResponseEntity<Boolean> checkName(@RequestParam String memberName) {
+	    boolean available = memberDao.isNameAvailable(memberName);
+	    return ResponseEntity.ok(available);
+	}
+
+	
 	//- Refresh Token으로 로그인 하는 기능
 		//- 보안이 매우 취약한 기능이므로 보안을 올리기 위해 각종 장치를 추가
 		//- DB검증 등...

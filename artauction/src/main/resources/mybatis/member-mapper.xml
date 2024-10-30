@@ -43,9 +43,11 @@
 
 		SELECT m.*,
 		(SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
-		FROM blocked_member
+		FROM
+		blocked_member
 		WHERE blocked_member_id = m.member_id) AS isBlocked
-		FROM member m
+		FROM
+		member m
 
 		<where>
 			<if test="basicKeyword != null">
@@ -128,6 +130,10 @@
 				</foreach>
 			</if>
 
+			<if test="true">
+				AND member_rank != '관리자'
+			</if>
+
 			<if test="memberAddress != null">
 				and (
 				instr(member_post, #{memberAddress}) > 0
@@ -140,11 +146,14 @@
 				)
 			</if>
 			<if test="isBlocked">
-            AND EXISTS (
-                SELECT 1 FROM blocked_member
-                WHERE blocked_member_id = m.member_id
-            )
-        </if>
+				AND EXISTS (
+				SELECT 1 FROM blocked_member
+				WHERE
+				blocked_member_id = m.member_id
+				)
+			</if>
+
+
 		</where>
 		<choose>
 			<when test="orderList != null and orderList.size() > 0">
@@ -165,16 +174,15 @@
 
 	<sql id="top-n-header">
 		<if test="beginRow != null and endRow != null">
-			select * from (
-			select rownum rn, TMP.* from (
-		</if>
+		select * from (
+  			select rownum rn, TMP.* from(
+  		</if>
 	</sql>
-
 	<sql id="top-n-footer">
 		<if test="beginRow != null and endRow != null">
-			) TMP
-			)
-			where rn between #{beginRow} and #{endRow}
+		 	)TMP
+		)
+		where rn between #{beginRow} and #{endRow}
 		</if>
 	</sql>
 
@@ -260,6 +268,10 @@
 					#{memberRank}
 				</foreach>
 			</if>
+			<if test="true">
+				AND member_rank != '관리자'
+			</if>
+
 			<if test="memberAddress != null">
 				and (
 				instr(member_post, #{memberAddress}) > 0
@@ -271,12 +283,13 @@
 				#{memberAddress}) > 0
 				)
 			</if>
-			 <if test="isBlocked">
-            AND EXISTS (
-                SELECT 1 FROM blocked_member
-                WHERE blocked_member_id = member.member_id
-            )
-        </if>
+			<if test="isBlocked">
+				AND EXISTS (
+				SELECT 1 FROM blocked_member
+				WHERE
+				blocked_member_id = member.member_id
+				)
+			</if>
 		</where>
 	</select>
 
@@ -332,4 +345,12 @@
 		WHERE
 		m.member_id=#{memberId}
 	</select>
+	<select id="isIdAvailable" resultType="int">
+		SELECT COUNT(*) FROM member WHERE member_id = #{memberId}
+	</select>
+
+	<select id="isNameAvailable" resultType="int">
+		SELECT COUNT(*) FROM member WHERE member_name = #{memberName}
+	</select>
+
 </mapper>
