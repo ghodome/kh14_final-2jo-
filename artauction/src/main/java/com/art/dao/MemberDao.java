@@ -46,6 +46,16 @@ public class MemberDao {
 	    return sqlSession.selectOne("blockMember.isBlocked", memberId);
 	}
 
+	public boolean isIdAvailable(String memberId) {
+	    Integer count = sqlSession.selectOne("member.isIdAvailable", memberId);
+	    return count != null && count == 0; 
+	}
+
+	public boolean isNameAvailable(String memberName) {
+	    Integer count = sqlSession.selectOne("member.isNameAvailable", memberName);
+	    return count != null && count == 0;
+	}
+
 
 
 }
