@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import com.art.dao.ChatDao;
 import com.art.dao.WebsocketMessageDao;
 import com.art.dto.WebsocketMessageDto;
 import com.art.service.AuctionService2;

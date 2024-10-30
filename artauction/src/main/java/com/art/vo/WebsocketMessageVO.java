@@ -14,3 +14,4 @@ public class WebsocketMessageVO {
 	private String content;//보낸 내용
 	private LocalDateTime time;//보낸 시각
 }
+

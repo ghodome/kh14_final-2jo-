@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class ChatDto {
     private int chatNo;
+    private String chatType;
     private String chatSender; 	
     private String chatReceiver; 
     private String chatContent; 
