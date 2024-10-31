@@ -109,6 +109,6 @@ public class AuctionService2 {
 		dealDto.setDealPrice(bidDto.getBidPrice());
 		dealDto.setDealStatus("결제대기");
 		dealDto.setDealTime(bidDto.getBidTime());
-		dealDao.insert(dealDto);
+		dealDao.insert(dealDto); 
 	}
 }

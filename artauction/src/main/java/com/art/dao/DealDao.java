@@ -31,5 +31,7 @@ public class DealDao {
 	public void updateStatusSuccess(int dealNo) {
 		sqlSession.update("deal.updateStatusSuccess",dealNo);
 	}
-
+	public void insert(DealDto dealDto) {
+		sqlSession.insert("deal.insert",dealDto);
+	}
 }
