@@ -33,7 +33,17 @@
   		)
   	</insert>
   	<select id="list" resultType="chargeDto">
-  		select * from charge where member_id=#{memberId} order by charge_no desc
+  			SELECT * 
+    FROM (
+        SELECT * 
+        FROM charge 
+        WHERE member_id = #{memberId} 
+        ORDER BY charge_no DESC
+    ) 
+    WHERE ROWNUM 
+     <![CDATA[
+    <= 10
+    ]]>
   	</select>
   	<select id="find" resultType="chargeDto">
   		select * from charge where charge_no = #{chargeNo} 
@@ -101,4 +111,9 @@
 	 <select id="selectDetailOne" resultType="chargeDetailDto">
 	 	select * from charge_detail where charge_detail_no=#{chargeDetailNo}
 	 </select>
+	 <update id="updateCancelAmount">
+	 	 UPDATE charge
+    	 SET charge_remain = charge_remain - #{cancelAmount}
+    	 WHERE charge_no = #{chargeNo}
+	 </update>
   </mapper>

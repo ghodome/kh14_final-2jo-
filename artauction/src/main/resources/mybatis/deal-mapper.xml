@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DTD 선언-->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="deal">
+	<select id="list" resultType="dealWorkVO">
+	SELECT d.*, w.work_title, ar.artist_name
+	FROM deal d
+	JOIN bid b ON d.bid_no = b.bid_no
+	JOIN auction a ON b.auction_no = a.auction_no
+	JOIN work w ON a.work_no = w.work_no
+	JOIN artist ar ON w.artist_no = ar.artist_no
+	where deal_buyer=#{memberId} and d.deal_status='결제대기'
+	</select>
+	<select id="detail" resultType="dealDto">
+		select * from deal where deal_no=#{dealNo}
+	</select>
+	<select id="detailVO" resultType="dealWorkVO">
+		SELECT d.*, w.work_title, ar.artist_name
+FROM deal d
+JOIN bid b ON d.bid_no = b.bid_no
+JOIN auction a ON b.auction_no = a.auction_no
+JOIN work w ON a.work_no = w.work_no
+JOIN artist ar ON w.artist_no = ar.artist_no
+WHERE deal_no=#{dealNo}
+	</select>
+	<update id="updateStatus">
+	update deal set deal_status = '낙찰포기' where deal_no=#{dealNo}
+	</update>
+	<update id="updateStatusSuccess">
+	update deal set deal_status = '결제완료' where deal_no=#{dealNo}
+	</update>
+</mapper>
