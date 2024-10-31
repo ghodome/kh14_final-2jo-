@@ -20,7 +20,6 @@ public class RoomMessageDao {
 	public int sequence() {
 		return sqlSession.selectOne("roomMessage.sequence");
 	}
-
 	public void insert(RoomMessageDto roomMessageDto) {
 		sqlSession.insert("roomMessage.add", roomMessageDto);
 	}
@@ -44,12 +43,5 @@ public class RoomMessageDao {
 		params.put("firstMessageNo", firstMessageNo);
 		params.put("roomNo", roomNo);
 		return sqlSession.selectList("roomMessage.listMemberComplete", params);
-  }
-	// 1:1 채팅 메시지 조회
-	public List<WebsocketMessageVO> selectListDirectMessage(String senderId, String receiverId) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("senderId", senderId);
-		params.put("receiverId", receiverId);
-		return sqlSession.selectList("roomMessage.listDirectMessage", params);
 	}
 }

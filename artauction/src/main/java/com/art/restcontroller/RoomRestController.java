@@ -30,63 +30,62 @@ public class RoomRestController {
 	private RoomDao roomDao;
 	@Autowired
 	private TokenService tokenService;
-	
+
 	@PostMapping("/")
 	public RoomDto insert(@RequestBody RoomDto roomDto) {
 		int roomNo = roomDao.sequence();
 		roomDto.setRoomNo(roomNo);
 		roomDao.insert(roomDto);
-		//return roomDto;//DB에서 만든 정보가 들어있지 않음
-		return roomDao.selectOne(roomNo);//DB에서 만든 정보까지 포함해서 반환
+		// return roomDto;//DB에서 만든 정보가 들어있지 않음
+		return roomDao.selectOne(roomNo);// DB에서 만든 정보까지 포함해서 반환
 	}
-	
+
 	@GetMapping("/")
 	public List<RoomVO> list(@RequestHeader("Authorization") String token) {
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 		return roomDao.selectList(claimVO.getMemberId());
 	}
-	
+
 	@DeleteMapping("/{roomNo}")
 	public void delete(@PathVariable int roomNo) {
 		roomDao.delete(roomNo);
 	}
-	
+
 	@PostMapping("/enter")
-	public void enter(@RequestBody RoomMemberDto roomMemberDto,
-								@RequestHeader("Authorization") String token) {
-		//방이 없는 경우를 사전 차단
+	public void enter(@RequestBody RoomMemberDto roomMemberDto, @RequestHeader("Authorization") String token) {
+		// 방이 없는 경우를 사전 차단
 		RoomDto roomDto = roomDao.selectOne(roomMemberDto.getRoomNo());
-		if(roomDto == null) throw new TargetNotFoundException("존재하지 않는 방");
-		
+		if (roomDto == null)
+			throw new TargetNotFoundException("존재하지 않는 방");
+
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
-		roomMemberDto.setMemberId(claimVO.getMemberId());//아이디 설정
-		roomDao.enter(roomMemberDto);//등록
+		roomMemberDto.setMemberId(claimVO.getMemberId());// 아이디 설정
+		roomDao.enter(roomMemberDto);// 등록
 	}
-	
+
 	@PostMapping("/leave")
-	public void leave(@RequestBody RoomMemberDto roomMemberDto,
-			@RequestHeader("Authorization") String token) {
-		//방이 없는 경우를 사전 차단
+	public void leave(@RequestBody RoomMemberDto roomMemberDto, @RequestHeader("Authorization") String token) {
+		// 방이 없는 경우를 사전 차단
 		RoomDto roomDto = roomDao.selectOne(roomMemberDto.getRoomNo());
-		if(roomDto == null) throw new TargetNotFoundException("존재하지 않는 방");
-		
+		if (roomDto == null)
+			throw new TargetNotFoundException("존재하지 않는 방");
+
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
-		roomMemberDto.setMemberId(claimVO.getMemberId());//아이디 설정
-		roomDao.leave(roomMemberDto);//삭제
+		roomMemberDto.setMemberId(claimVO.getMemberId());// 아이디 설정
+		roomDao.leave(roomMemberDto);// 삭제
 	}
 
 	@GetMapping("/check/{roomNo}")
-	public boolean check(@PathVariable int roomNo,
-							@RequestHeader("Authorization") String token) {
-		//토큰 해석
+	public boolean check(@PathVariable int roomNo, @RequestHeader("Authorization") String token) {
+		// 토큰 해석
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
-		 
-		//DB 검사
+
+		// DB 검사
 		RoomMemberDto roomMemberDto = new RoomMemberDto();
 		roomMemberDto.setMemberId(claimVO.getMemberId());
 		roomMemberDto.setRoomNo(roomNo);
 		boolean canEnter = roomDao.check(roomMemberDto);
-		
+
 		return canEnter;
 	}
 }

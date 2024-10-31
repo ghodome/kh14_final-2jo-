@@ -15,10 +15,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 		registry.enableSimpleBroker("/public","/auction","/private");
 		registry.setApplicationDestinationPrefixes("/app");
 	}
-	 @Override
+	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		 registry.addEndpoint("/ws")
-		 .setAllowedOriginPatterns("*")
-		 	.withSockJS();
-	 }
+		registry.addEndpoint("/ws")
+					.setAllowedOriginPatterns("*")
+					.withSockJS();
+	}
 }

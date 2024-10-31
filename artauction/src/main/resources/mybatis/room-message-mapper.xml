@@ -30,7 +30,7 @@
 			RM.room_message_no "no",
 			RM.room_message_type "type",
 			RM.room_message_sender "sender_member_id",
-			M.member_rank "sender_member_rank",
+			M.member_level "sender_member_level",
 			RM.room_message_receiver "receiver_member_id",
 			RM.room_message_content "content",
 			RM.room_message_time "time"
