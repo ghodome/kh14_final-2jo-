@@ -5,25 +5,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="deal">
-	<select id="sequence" resultType="int">
-		select deal_seq.nextval from dual
+	<select id="list" resultType="dealWorkVO">
+	SELECT d.*, w.work_title, ar.artist_name
+	FROM deal d
+	JOIN bid b ON d.bid_no = b.bid_no
+	JOIN auction a ON b.auction_no = a.auction_no
+	JOIN work w ON a.work_no = w.work_no
+	JOIN artist ar ON w.artist_no = ar.artist_no
+	where deal_buyer=#{memberId} and d.deal_status='결제대기'
 	</select>
-	<insert id="insert">
-		insert into deal (
-			deal_no, bid_no, deal_buyer, deal_time, deal_price,
-			deal_status
-		) values(
-			deal_seq.nextval, #{bidNo}, #{dealBuyer}, #{dealTime},
-			#{dealPrice}, #{dealStatus}
-		)
-	</insert>
-	<select id="getList" resultType="DealDto">
-		select * from deal
+	<select id="detail" resultType="dealDto">
+		select * from deal where deal_no=#{dealNo}
 	</select>
-	<select id="getListByBidNo" resultType="DealDto">
-		select * from deal where bid_no=#{bidNo}
+	<select id="detailVO" resultType="dealWorkVO">
+		SELECT d.*, w.work_title, ar.artist_name
+FROM deal d
+JOIN bid b ON d.bid_no = b.bid_no
+JOIN auction a ON b.auction_no = a.auction_no
+JOIN work w ON a.work_no = w.work_no
+JOIN artist ar ON w.artist_no = ar.artist_no
+WHERE deal_no=#{dealNo}
 	</select>
-	<select id="getOneByDealNo" resultType="DealDto">
-		select * from deal where deal_no = #{dealNo}
-	</select>
+	<update id="updateStatus">
+	update deal set deal_status = '낙찰포기' where deal_no=#{dealNo}
+	</update>
+	<update id="updateStatusSuccess">
+	update deal set deal_status = '결제완료' where deal_no=#{dealNo}
+	</update>
+
 </mapper>

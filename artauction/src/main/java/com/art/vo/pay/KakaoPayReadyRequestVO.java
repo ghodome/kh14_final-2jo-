@@ -12,4 +12,5 @@ public class KakaoPayReadyRequestVO {
 	private String approvalUrl;
 	private String cancelUrl;
 	private String failUrl;
+	private int quantity;
 }

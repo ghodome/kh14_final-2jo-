@@ -4,6 +4,7 @@ package com.art.restcontroller;
 
 import java.io.Console;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,6 +48,8 @@ import com.art.vo.MemberLoginResponseVO;
 import com.art.vo.MemberPurchaseRequestVO;
 import com.art.vo.pay.KakaoPayApproveRequestVO;
 import com.art.vo.pay.KakaoPayApproveResponseVO;
+import com.art.vo.pay.KakaoPayCancelRequestVO;
+import com.art.vo.pay.KakaoPayCancelResponseVO;
 import com.art.vo.pay.KakaoPayReadyRequestVO;
 import com.art.vo.pay.KakaoPayReadyResponseVO;
 
@@ -340,5 +343,45 @@ public class MemberRestController {
 			
 			return responseVO;
 
+		}
+		@Transactional
+		@PostMapping("/refund/{refund}")
+		public List<KakaoPayCancelResponseVO> cancelAll(
+				@PathVariable int refund,
+				@RequestHeader("Authorization") String token) throws URISyntaxException {
+			MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
+			List<ChargeDto> list = chargeDao.selectList(claimVO.getMemberId());
+			MemberDto memberDto = memberDao.selectOne(claimVO.getMemberId());
+			if(memberDto.getMemberPoint()<refund)throw new TargetNotFoundException("포인트 부족");
+			//remainingRefund = 남은 환불 금액 
+			int remainingRefund = refund;
+			//List = kakaopay 에 보낼 response 가 하나가 아닐 수 있으니까 list 로 만듦 
+		    List<KakaoPayCancelResponseVO> responses = new ArrayList<>();
+		    //반복문으로 남은 환불금액이 0이 될때 까지 계속 responses 안에 객체를 넣음
+		    for (ChargeDto charge : list) {
+		        if (remainingRefund <= 0) break;
+
+		        int chargeRemain = charge.getChargeRemain();
+		        if (chargeRemain <= 0) {
+		            continue; 
+		        }
+		        int cancelAmount = Math.min(remainingRefund, charge.getChargeRemain());
+		        if (cancelAmount <= 0) {
+		            continue; 
+		        }
+		        KakaoPayCancelRequestVO request = new KakaoPayCancelRequestVO();
+		        request.setTid(charge.getChargeTid());
+		        request.setCancelAmount(cancelAmount);
+
+		        KakaoPayCancelResponseVO response = kakaoPayService.cancel(request);
+		        responses.add(response);
+		        
+		        chargeDao.cancelAmount(charge.getChargeNo(), cancelAmount);
+		        remainingRefund -= cancelAmount;
+		    }
+		    
+		    memberDto.setMemberPoint(memberDto.getMemberPoint()-refund);
+		    memberDao.pointUpdate(memberDto);
+		    return responses; // 최종적으로 모든 환불 응답을 반환
 		}
 }

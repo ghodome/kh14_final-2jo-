@@ -59,4 +59,9 @@ public class ChargeDao {
 	public ChargeDetailDto selectDetailOne(int chargeDetailNo) {
 		return sqlSession.selectOne("charge.selectDetailOne",chargeDetailNo);
 	}
+	public boolean cancelAmount(int chargeNo, int cancelAmount) {
+		Map<String,Integer>params = Map.of("chargeNo",chargeNo,"cancelAmount",cancelAmount);
+		return sqlSession.update("charge.updateCancelAmount",params)>0;
+		
+	}
 }
