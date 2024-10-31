@@ -18,7 +18,7 @@
 		#{memberAddress1}, #{memberAddress2}
 		)
 	</insert>
-	<update id="update">
+	<update id="update"> 
 		UPDATE member
 		<set>
 			<if test="memberPw != null">member_pw=#{memberPw},</if>
