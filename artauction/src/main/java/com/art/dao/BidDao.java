@@ -28,4 +28,7 @@ public class BidDao {
 		Map data=Map.of("auctionNo",auctionNo);
 		return sqlSession.selectList("bid.getListByAuctionNo",data);
 	}
+	public void endBidding() {
+		sqlSession.update("bid.endBidding");
+	}
 }
