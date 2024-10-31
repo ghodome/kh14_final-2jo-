@@ -34,4 +34,7 @@ public class DealDao {
 	public void insert(DealDto dealDto) {
 		sqlSession.insert("deal.insert",dealDto);
 	}
+	public List<DealWorkVO> selectGG() {
+		return sqlSession.selectList("deal.detailGG");
+	}
 }

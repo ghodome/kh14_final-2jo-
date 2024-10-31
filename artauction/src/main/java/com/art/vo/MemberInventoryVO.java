@@ -1,8 +1,11 @@
 package com.art.vo;
 
-import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
+import java.util.List;
+
+import com.art.dto.InventoryDto;
+
 
 import lombok.Data;
 @Data
@@ -17,13 +20,17 @@ public class MemberInventoryVO {
 	private String memberAddress1;
 	private String memberAddress2;
 	private int memberPoint;
-	//인벤토리
-	private int inventoryId;
-	private int itemId;
-	private Date acquiredDate;
-	private String itemName;
-	private int itemValue;
-	
+	//낙찰품
+	private int dealNo;
+	private int bidNo;
+	private Date dealTime;
+	private int dealPrice;
+	private String dealStatus;
+	//추가
+	private String workTitle;
+	private String artistName;
+//	private List<InventoryDto> inventoryList;
+//	private List<DealWorkVO> dealWorkList;
 	
 
 }
