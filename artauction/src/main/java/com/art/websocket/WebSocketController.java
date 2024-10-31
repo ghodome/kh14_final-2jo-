@@ -1,6 +1,7 @@
 package com.art.websocket;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class WebSocketController {
 	@PatchMapping("/{auctionNo}")
 	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
 			@RequestBody WebsocketBidRequestVO request,
-			@RequestHeader("Authorization") String token) {
+			@RequestHeader("Authorization") String token) throws ParseException {
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
 		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
 //		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
