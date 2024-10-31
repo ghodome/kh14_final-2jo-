@@ -11,7 +11,7 @@ public class WebConfiguration implements WebMvcConfigurer{
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // "http://localhost:8080/uploads/**" 경로를 "D:/upload/kh14fb" 디렉터리로 매핑
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:///D:/upload/kh14fb/");  // 슬래시 주의
+                .addResourceLocations("file:///D:/upload/kh14fb_test/");  // 슬래시 주의
     }
 
 }

@@ -18,7 +18,7 @@
 		#{memberAddress1}, #{memberAddress2}
 		)
 	</insert>
-	<update id="update">
+	<update id="update"> 
 		UPDATE member
 		<set>
 			<if test="memberPw != null">member_pw=#{memberPw},</if>
@@ -41,8 +41,13 @@
 
 		<include refid="top-n-header" />
 
-
-		select * from member
+		SELECT m.*,
+		(SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+		FROM
+		blocked_member
+		WHERE blocked_member_id = m.member_id) AS isBlocked
+		FROM
+		member m
 
 		<where>
 			<if test="basicKeyword != null">
@@ -125,6 +130,10 @@
 				</foreach>
 			</if>
 
+			<if test="true">
+				AND member_rank != '관리자'
+			</if>
+
 			<if test="memberAddress != null">
 				and (
 				instr(member_post, #{memberAddress}) > 0
@@ -136,6 +145,15 @@
 				#{memberAddress}) > 0
 				)
 			</if>
+			<if test="isBlocked">
+				AND EXISTS (
+				SELECT 1 FROM blocked_member
+				WHERE
+				blocked_member_id = m.member_id
+				)
+			</if>
+
+
 		</where>
 		<choose>
 			<when test="orderList != null and orderList.size() > 0">
@@ -156,16 +174,15 @@
 
 	<sql id="top-n-header">
 		<if test="beginRow != null and endRow != null">
-			select * from (
-			select rownum rn, TMP.* from (
-		</if>
+		select * from (
+  			select rownum rn, TMP.* from(
+  		</if>
 	</sql>
-
 	<sql id="top-n-footer">
 		<if test="beginRow != null and endRow != null">
-			) TMP
-			)
-			where rn between #{beginRow} and #{endRow}
+		 	)TMP
+		)
+		where rn between #{beginRow} and #{endRow}
 		</if>
 	</sql>
 
@@ -251,6 +268,10 @@
 					#{memberRank}
 				</foreach>
 			</if>
+			<if test="true">
+				AND member_rank != '관리자'
+			</if>
+
 			<if test="memberAddress != null">
 				and (
 				instr(member_post, #{memberAddress}) > 0
@@ -258,7 +279,15 @@
 				instr(member_address1,
 				#{memberAddress}) > 0
 				or
-				instr(member_address2, #{memberAddress}) > 0
+				instr(member_address2,
+				#{memberAddress}) > 0
+				)
+			</if>
+			<if test="isBlocked">
+				AND EXISTS (
+				SELECT 1 FROM blocked_member
+				WHERE
+				blocked_member_id = member.member_id
 				)
 			</if>
 		</where>
@@ -277,10 +306,11 @@
 		select * from member_token
 		WHERE token_value = #{tokenValue}
 	</select>
-	<insert id="saveToken">	
+	<insert id="saveToken">
 		INSERT INTO member_token (token_no, token_target,
 		token_value)
-		VALUES (member_token_seq.NEXTVAL, #{tokenTarget},
+		VALUES
+		(member_token_seq.NEXTVAL, #{tokenTarget},
 		#{tokenValue})
 
 	</insert>
@@ -293,26 +323,34 @@
 		member_id=#{memberId}
 	</update>
 	<select id="findWithInventory" resultType="MemberInventoryVO">
-	SELECT
-    	m.member_id,
-    	m.member_name,
-    	m.member_Email,
-    	m.member_contact,
-    	m.member_rank,
-    	m.member_point,
-    	m.member_post,
-    	m.member_address1,
-    	m.member_address2,
-    	i.inventory_id,
-    	i.item_id,
-    	i.acquired_date,
-    	i.item_name,
-    	i.item_value
-	FROM
-    	member m
-	LEFT JOIN
-    	inventory i ON m.member_id = i.member_id
-	WHERE 
+		SELECT
+		m.member_id,
+		m.member_name,
+		m.member_Email,
+		m.member_contact,
+		m.member_rank,
+		m.member_point,
+		m.member_post,
+		m.member_address1,
+		m.member_address2,
+		i.inventory_id,
+		i.item_id,
+		i.acquired_date,
+		i.item_name,
+		i.item_value
+		FROM
+		member m
+		LEFT JOIN
+		inventory i ON m.member_id = i.member_id
+		WHERE
 		m.member_id=#{memberId}
 	</select>
+	<select id="isIdAvailable" resultType="int">
+		SELECT COUNT(*) FROM member WHERE member_id = #{memberId}
+	</select>
+
+	<select id="isNameAvailable" resultType="int">
+		SELECT COUNT(*) FROM member WHERE member_name = #{memberName}
+	</select>
+
 </mapper>

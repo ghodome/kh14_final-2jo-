@@ -14,8 +14,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 목록 -->
 	<select id="list" resultType="ArtistListVO">
 		select * from artist A
-			inner join artist_image I
+			left outer join artist_image I
 				on A.artist_no = I.artist
+					order by A.artist_no asc
 	</select>
 	
 	<!-- 카운트 -->
@@ -84,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectOne" resultType="ArtistListVO">
-  		select * from work where artist_no = #{artistNo}
+  		select * from artist where artist_no = #{artistNo}
   	</select>
 	
 	

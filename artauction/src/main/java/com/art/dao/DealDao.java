@@ -1,5 +1,6 @@
 package com.art.dao;
 
+
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.art.dto.DealDto;
+
 import com.art.vo.DealWorkVO;
 
 @Repository
@@ -29,4 +31,5 @@ public class DealDao {
 	public void updateStatusSuccess(int dealNo) {
 		sqlSession.update("deal.updateStatusSuccess",dealNo);
 	}
+
 }

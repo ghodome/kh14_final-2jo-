@@ -8,54 +8,69 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select auction_seq.nextval from dual
 	</select>
 	<insert id="add">
-	insert into auction(
-		auction_no,
-		auction_schedule_no,
-		work_no,
-		auction_lot,
-		auction_low_price,
-		auction_high_price,
-		auction_state,
-		auction_consigner,
-		auction_consignment_fee,
-		auction_start_price,
-		auction_bid_price
-	)
-	values(
-		#{auctionNo},
-		#{auctionScheduleNo},
-		#{workNo},
-		<if test="auctionLot == null or auctionLot == ''">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
-		<if test="auctionLot != null and auctionLot != ''">#{auctionLot},</if>
-		#{auctionLowPrice},
-		#{auctionHighPrice},
-		#{auctionState},
-		#{auctionConsigner},
-		#{auctionConsignmentFee},
-		#{auctionStartPrice},
-		#{auctionStartPrice}
-	)
-	</insert>
+    insert into auction(
+        auction_no,
+        auction_schedule_no,
+        work_no,
+        auction_lot,
+        auction_low_price,
+        auction_high_price,
+        auction_state,
+        auction_consigner,
+        auction_consignment_fee,
+        auction_start_price,
+        auction_bid_price,
+        auction_bid_increment,
+        auction_start_date,
+        auction_end_date
+    )
+    values(
+        #{auctionNo},
+        #{auctionScheduleNo},
+        #{workNo},
+        <if test="auctionLot == null or auctionLot == ''">
+            (SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),
+        </if>
+        <if test="auctionLot != null and auctionLot != ''">
+            #{auctionLot},
+        </if>
+        #{auctionLowPrice},
+        #{auctionHighPrice},
+        #{auctionState},
+        #{auctionConsigner},
+        #{auctionConsignmentFee},
+        #{auctionStartPrice},
+        #{auctionStartPrice},
+        #{auctionBidIncrement},
+        #{auctionStartDate},
+        <if test="auctionLot == null or auctionLot == ''">
+            #{auctionEndDate} + NUMTODSINTERVAL(ROUND((SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}) / 10,0) * 5, 'MINUTE')
+        </if>
+        <if test="auctionLot != null and auctionLot != ''">
+            #{auctionEndDate} + NUMTODSINTERVAL(ROUND(#{auctionLot} / 10,0) * 5, 'MINUTE')
+        </if>
+    )
+</insert>
 
 	<update id="update">
 		update auction 
 		<set>
-			<if test="auctionScheduleNo!=null or auctionScheduleNo>0">auction_schedule_no=#{auctionScheduleNo},</if>
-			<if test="workNo!=null or workNo>0">work_no=#{workNo},</if>
+			<if test="auctionScheduleNo>0">auction_schedule_no=#{auctionScheduleNo},</if>
+			<if test="workNo>0">work_no=#{workNo},</if>
 			<if test="auctionSuccessBidder!=null">auction_success_bidder=#{auctionSuccessBidder},</if>
-			<if test="auctionLot!=null or auctionLot>0">auction_lot=#{auctionLot},</if>
-			<if test="auctionLowPrice!=null or auctionLowPrice > 0">auction_low_price=#{auctionLowPrice},</if>
-			<if test="auctionHighPrice!=null or auctionHighPrice>0">auction_high_price=#{auctionHighPrice},</if>
+			<if test="auctionLot>0">auction_lot=#{auctionLot},</if>
+			<if test="auctionLowPrice > 0">auction_low_price=#{auctionLowPrice},</if>
+			<if test="auctionHighPrice>0">auction_high_price=#{auctionHighPrice},</if>
 			<if test="auctionStartDate!=null">auction_start_date=#{auctionStartDate},</if>
 			<if test="auctionEndDate!=null">auction_end_date=#{auctionEndDate},</if>
 			<if test="auctionState!=null">auction_state=#{auctionState},</if>
 			<if test="auctionConsigner!=null">auction_consigner=#{auctionConsigner},</if>
-			<if test="auctionConsignmentFee!=null or auctionConsignmentFee>0">auction_consignment_fee=#{auctionConsignmentFee},</if>
-			<if test="auctionNetProceeds!=null or auctionNetProceeds>0">auction_net_proceeds=#{auctionNetProceeds},</if>
-			<if test="auctionBidPrice!=null or auctionBidPrice>0">auction_bid_price=#{auctionBidPrice},</if>
-			<if test="auctionBidIncrement!=null or auctionBidIncrement>0">auction_bid_increment=#{auctionBidIncrement},</if>
-			<if test="auctionPurchasePrice==null or auctionPurchasePrice==0">auction_purchase_price=1</if>
-			<if test="auctionPurchasePrice>0">auction_purchase_price=auction_purchase_price+1</if>
+			<if test="auctionConsignmentFee>0">auction_consignment_fee=#{auctionConsignmentFee},</if>
+			<if test="auctionNetProceeds>0">auction_net_proceeds=#{auctionNetProceeds},</if>
+			<if test="auctionBidPrice>0">auction_bid_price=#{auctionBidPrice},</if>
+			<if test="auctionBidIncrement>0">auction_bid_increment=#{auctionBidIncrement},</if>
+			<if test="auctionBidCnt==null or auctionBidCnt==0">auction_bid_cnt=1</if>
+			<if test="auctionBidCnt>0">auction_bid_cnt=auction_bid_cnt+1</if>
 		</set>
 		where auction_no=#{auctionNo}
 	</update>
@@ -81,8 +96,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction A 
 		ON 
 			W.work_no = A.work_no
-		WHERE A.AUCTION_SCHEDULE_NO = ${auctionScheduleNo}
-		order by A.AUCTION_NO asc
+		WHERE A.AUCTION_SCHEDULE_NO = #{auctionScheduleNo}
+		order by A.AUCTION_LOT asc
 	</select>
 	<update id="cancelPresent">
 		update auction set auction_state='출품취소' where auction_no = #{auctionNo}
