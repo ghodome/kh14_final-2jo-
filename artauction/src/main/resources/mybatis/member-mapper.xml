@@ -297,11 +297,12 @@
 		select * from member where
 		member_id = #{memberId}
 	</select>
-	<insert id="save">
-		insert into member (member_id, member_pw,
-		member_email)
-		values (#{memberId}, #{memberPw}, #{memberEmail})
-	</insert>
+	<update id="save">
+    UPDATE member
+    SET member_pw = #{memberPw}, member_email = #{memberEmail}
+    WHERE member_id = #{memberId}
+</update>
+
 	<select id="findByToken" resultType="MemberTokenDto">
 		select * from member_token
 		WHERE token_value = #{tokenValue}
