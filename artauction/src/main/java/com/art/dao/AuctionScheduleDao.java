@@ -13,7 +13,6 @@ import com.art.vo.AuctionScheduleListRequestVO;
 import com.art.vo.AuctionScheduleRequestVO;
 
 
-
 @Repository
 public class AuctionScheduleDao {
 	
@@ -81,7 +80,6 @@ public class AuctionScheduleDao {
 		sqlSession.insert("auctionSchedule.connect", params);
 	}
 
-	
 	//목록 카운트
 	public int countWithPaging(AuctionScheduleListRequestVO listRequestVO) {
 		return sqlSession.selectOne("auctionSchedule.count", listRequestVO);
@@ -91,6 +89,8 @@ public class AuctionScheduleDao {
 	public List<AuctionScheduleDto> selectListByPaging(AuctionScheduleListRequestVO listRequestVO) {
 		return sqlSession.selectList("auctionSchedule.list", listRequestVO);
 	}
+	
+	
 	
 	
 }

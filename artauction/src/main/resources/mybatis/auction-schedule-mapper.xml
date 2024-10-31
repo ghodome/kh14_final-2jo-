@@ -63,19 +63,43 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_schedule_end_date = #{auctionScheduleEndDate},
 			auction_schedule_state = #{auctionScheduleState},
 			auction_schedule_notice = #{auctionScheduleNotice}
-			attachment = # {attachment}
+			auction = #{auction}
+			attachment = #{attachment}
 		where
 			auction_schedule_no = #{auctionScheduleNo}
 	</update>
 	
-	<!-- 목록 -->
-    <select id="list" resultType="AuctionScheduleDto">
+	<!-- 목록(이미지포함 ) -->
+    <!-- <select id="list" resultType="AuctionScheduleDto" >
     	select * from auction_schedule AC 
-			inner join AUCTION_SCHEDULE_IMAGE ASI 
-				on AC.auction_schedule_no = ASI.auction
-					order by AC.auction_schedule_end_date desc
-    </select>
+	    	inner join auction_schedule_image ASI 
+	    		on AC.auction_schedule_no = ASI.auction 
+	   				order by auction_schedule_end_date DESC
+    </select> -->
     
+    <!-- 목록 페이징 조회(이미지포함) -->
+	<select id="list" resultType="AuctionScheduleDto" parameterType="AuctionScheduleListRequestVO">
+		    <![CDATA[
+		    SELECT *
+		    FROM (
+		        SELECT 
+		            AC.auction_schedule_no,
+		            AC.auction_schedule_title,
+		            AC.auction_schedule_start_date,
+		            AC.auction_schedule_end_date,
+		            AC.auction_schedule_state,
+		            AC.auction_schedule_notice,
+		            ASI.attachment,
+		            ROWNUM rn
+		        FROM auction_schedule AC
+		        INNER JOIN auction_schedule_image ASI 
+		            ON AC.auction_schedule_no = ASI.auction
+		        WHERE ROWNUM <= #{endRow}
+		    )
+		    WHERE rn >= #{beginRow}
+		    ORDER BY auction_schedule_end_date DESC
+		    ]]>
+	</select>
     
     <!-- 카운트 -->
     <select id="count" resultType="int">
@@ -120,6 +144,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="findImages" resultType="int">
 	    select attachment from auction_schedule_image where auction = #{auction}
 	</select>
+	
+	<sql id="top-n-header">
+		<if test="beginRow != null and endRow != null">
+			select * from (
+  				select rownum rn, TMP.* from(
+		</if>
+	</sql>
+	<sql id="top-n-footer">
+		<if test="beginRow != null and endRow != null">
+			)TMP
+		)
+		where rn between #{beginRow} and #{endRow}
+		</if>
+	</sql>
 
 	
 </mapper>
