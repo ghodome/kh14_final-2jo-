@@ -1,6 +1,6 @@
 package com.art.dao;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,12 +90,12 @@ public class AuctionScheduleDao {
 		return sqlSession.selectList("auctionSchedule.list", listRequestVO);
 	}
 	//경매시작시간 해당 리스트 출력 메서드
-	public List<Integer> selectListStarted(Date startTime){
+	public List<Integer> selectListStarted(String startTime){
 		Map model=Map.of("startTime",startTime);
 		return sqlSession.selectList("auctionSchedule.listStarted",model);
 	}
 	//경매종료시간 해당 리스트 검사 메서드
-	public List<Integer> selectListTerminated(Date endTime){
+	public List<Integer> selectListTerminated(String endTime){
 		Map model=Map.of("endTime",endTime);
 		return sqlSession.selectList("auctionSchedule.listTerminated",model);
 	}

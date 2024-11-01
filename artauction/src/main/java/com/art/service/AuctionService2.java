@@ -42,7 +42,6 @@ public class AuctionService2 {
 			int auctionNo,
 			String memberId) throws ParseException {
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		SimpleDateFormat fmt2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.KOREAN);
 		String requestTime=timeService.getTime();
 		int bidPrice=request.getBid().getBidPrice();
 		int bidIncrement=request.getBid().getBidIncrement();
@@ -77,7 +76,7 @@ public class AuctionService2 {
 		auctionNewDto.setAuctionSuccessBidder(memberId);
 		DecimalFormat moneyFmt = new DecimalFormat("###,###");
 		String contentForSchedule="LOT "+request.getBid().getAuctionLot()+" ["+request.getBid().getWorkName()+"], 입찰가 : "
-				+moneyFmt.format(newBidPrice)+", 입찰자 : "+memberId.substring(0,4)+"**** "+fmt2.parse(requestTime);
+				+moneyFmt.format(newBidPrice)+", 입찰자 : "+memberId.substring(0,4)+"**** ";
 		String contentForLot="입찰가 : "+moneyFmt.format(newBidPrice)+", 입찰자 : "+memberId.substring(0,4)+"****";
 		
 		//응찰 내역 저장

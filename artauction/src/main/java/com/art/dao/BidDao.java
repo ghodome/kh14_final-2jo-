@@ -31,4 +31,11 @@ public class BidDao {
 	public void endBidding() {
 		sqlSession.update("bid.endBidding");
 	}
+	public BidDto selectOneByAuctionNo(Integer auctionNo) {
+		Map data=Map.of("auctionNo",auctionNo);
+		List<BidDto> list=sqlSession.selectOne("bid.selectSuccessBid",data);
+		return list.get(0);
+	}
+	
+	
 }
