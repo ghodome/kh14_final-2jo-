@@ -42,4 +42,12 @@ WHERE deal_no=#{dealNo}
 	JOIN artist ar ON w.artist_no = ar.artist_no
 	where d.deal_status='낙찰포기'
 	</select>
+	<insert id="insert">
+		insert into deal(
+			deal_no,bid_no,deal_buyer,deal_time,deal_price,deal_status
+		) 
+		values(
+			deal_seq.nextval,#{bidNo},#{dealBuyer},#{dealTime},#{dealPrice},#{dealStatus}
+		)
+	</insert>
 </mapper>
