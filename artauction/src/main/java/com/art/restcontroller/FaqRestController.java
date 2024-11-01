@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.FaqDao;
 import com.art.dto.FaqDto;
-import com.art.dto.NoticeDto;
+import com.art.error.TargetNotFoundException;
 
 @CrossOrigin
 @RestController
@@ -33,6 +34,8 @@ public class FaqRestController {
 	// 등록
 	@PostMapping("/plus")
 	public void insert(@RequestBody FaqDto faqDto) {
+		int faqNo = faqDao.sequence();
+		faqDto.setFaqNo(faqNo);
 		faqDao.insert(faqDto);
 	}
 
@@ -48,4 +51,9 @@ public class FaqRestController {
 		return faqDao.selectList(column, keyword);
 	}
 	// 수정
+		@PutMapping("/")
+		public void update(@RequestBody FaqDto faqDto) {
+			boolean result = faqDao.update(faqDto);
+			if(result == false) throw new TargetNotFoundException();
+		}
 }

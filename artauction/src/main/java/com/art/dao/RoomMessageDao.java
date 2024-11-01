@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.art.dto.RoomMessageDto;
+import com.art.vo.RoomMessageVO;
 import com.art.vo.WebsocketMessageVO;
 
 @Repository
@@ -44,4 +45,8 @@ public class RoomMessageDao {
 		params.put("roomNo", roomNo);
 		return sqlSession.selectList("roomMessage.listMemberComplete", params);
 	}
+	// 특정 방 목록 띄우기
+	 public List<RoomMessageVO> selectMessagesByRoomNo(int roomNo) {
+	        return sqlSession.selectList("roomMessage.selectByRoomNo", roomNo);
+	    }
 }
