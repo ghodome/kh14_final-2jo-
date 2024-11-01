@@ -7,8 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="sequence" resultType="int">
 		select auction_seq.nextval from dual
 	</select>
-	<insert id="add">
-    insert into auction(
+	<insert id="add" parameterType="AuctionDto">>
+    insert into auction (
         auction_no,
         auction_schedule_no,
         work_no,
@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         #{auctionConsigner},
         #{auctionConsignmentFee},
         #{auctionStartPrice},
-        #{auctionStartPrice},
+        #{auctionBidPrice},
         #{auctionBidIncrement},
         #{auctionStartDate},
         <if test="auctionLot == null or auctionLot == ''">
@@ -49,8 +49,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="auctionLot != null and auctionLot != ''">
             #{auctionEndDate} + NUMTODSINTERVAL(ROUND(#{auctionLot} / 10,0) * 5, 'MINUTE')
         </if>
-    )
+    	)
 </insert>
+
+	<!-- 이미지 연결 -->
+	<insert id="connect" parameterType="map">
+		insert into work_image(
+			work, 
+			attachment
+		) 
+		values(
+			#{work}, 
+			#{attachment}
+		)
+	</insert>
 
 	<update id="update">
 		update auction 
@@ -78,12 +90,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="list" resultType="AuctionDto">
 		select * from auction order by auction_no asc
 	</select>
+	
 	<select id="detail" resultType="AuctionDto">
 		select * from auction where auction_no=#{auctionNo}
 	</select>
+	<!-- 이미지 포함한 상세정보-->
+    <select id="detailall" resultType="AuctionDataCollectionListVO">
+    	select * from auction a
+			inner join work_image wi 
+				on a.work_no = wi.work
+		where
+			a.auction_no = #{auctionNo}
+    </select>
+	
 	<delete id="delete">
-		delete auction where auction_no=#{auctionNo}
+		delete auction where auction_no = #{auctionNo}
 	</delete>
+	<!-- 이미지 삭제 -->
+	<delete id="deleteImage">
+		delete from auction a 
+			where a.auction_no in (
+				select wi.work from work_image wi
+			where a.work_no = wi.work
+		)
+	</delete>
+	
+	<!-- 이미지 목록 조회 -->
+	<select id="findImages" resultType="int">
+	    select attachment from auction a
+			inner join work_image wi 
+				on a.work_no = wi.work
+			where
+				a.auction_no = #{auctionNo}
+	</select>
+	
 	<select id="sceduleList" resultType="AuctionDto">
 		select * from auction where auction_schedule_no = #{auctionScheduleNo} order by auction_no asc
 	</select>

@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class AuctionScheduleListResponseVO {
-	private List<AuctionScheduleDto> auctionScheduleList;
+	private List<AuctionScheduleListVO> auctionScheduleList;
 	private boolean isLast;
 	private int count;
 
