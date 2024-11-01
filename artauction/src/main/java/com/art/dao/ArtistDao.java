@@ -30,8 +30,8 @@ public class ArtistDao {
 		sqlSession.insert("artist.regist",artistDto);
 	}
 	//수정
-	public boolean update(ArtistDto artistDto) {
-		return sqlSession.update("artist.update",artistDto)>0;
+	public boolean update(ArtistListVO artistListVO) {
+		return sqlSession.update("artist.update",artistListVO)>0;
 	}
 	//삭제
 	public boolean delete(int artistNo) {

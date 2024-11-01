@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +46,7 @@ public class WorkRestController {
 	@Autowired
 	private TokenService tokenService;
 	@Autowired
-	private AttachmentService attachmentService;
+	private AttachmentService attachmentService; 
 	@Autowired
 	private AttachmentDao attachmentDao;
 	
@@ -114,12 +115,11 @@ public class WorkRestController {
 		workDao.delete(workNo); // 상품 정보 삭제
 		workDao.deleteImage(workNo); // 연결 테이블 정보 삭제
 	}
-
 	//수정 이미지 포함
 	@Transactional
 	@PostMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public void update(@ModelAttribute WorkEditRequestVO requestVO) throws IllegalStateException, IOException {
-		WorkDto originDto = workDao.selectOne(requestVO.getWorkNo());
+		WorkListVO originDto = workDao.selectOne(requestVO.getWorkNo());
 		if(originDto == null) throw new TargetNotFoundException("존재하지 않는 상품 번호");
 		
 		//수정전
@@ -169,7 +169,6 @@ public class WorkRestController {
 		 
 		workDao.update(workListVO);
 		
-		
 	}
 	
 //	@PatchMapping("/")
@@ -179,5 +178,14 @@ public class WorkRestController {
 //			throw new TargetNotFoundException();
 //		} 
 //	}
+	
+//	@PatchMapping("/")
+//	public void update(@RequestBody WorkArtistVO workArtistVO) {
+//		boolean result = workDao.update(workArtistVO);
+//		if(result == false) {
+//			throw new TargetNotFoundException();
+//		} 
+//	}
+	
 	
 }
