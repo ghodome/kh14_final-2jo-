@@ -324,33 +324,33 @@
 		member_id=#{memberId}
 	</update>
 	<select id="findWithInventory" resultType="MemberInventoryVO">
-		SELECT
-		m.member_id,
-		m.member_name,
-		m.member_Email,
-		m.member_contact,
-		m.member_rank,
-		m.member_point,
-		m.member_post,
-		m.member_address1,
-		m.member_address2,
-		d.*,
-		w.WORK_TITLE,
-		ar.ARTIST_NAME
+		 SELECT
+    	m.member_id,
+   		m.member_name,
+    	m.member_Email,
+    	m.member_contact,
+    	m.member_rank,
+    	m.member_point,
+    	m.member_post,
+    	m.member_address1,
+    	m.member_address2,
+    	d.*,
+    	w.WORK_TITLE,
+    	ar.ARTIST_NAME
 		FROM
-		member m
-		inner JOIN
-   			deal d ON m.member_id = d.deal_buyer
-		inner JOIN 
+    		member m
+		LEFT JOIN
+    		deal d ON m.member_id = d.deal_buyer AND d.deal_status != '낙찰포기' 
+		LEFT JOIN 
     		bid b ON d.bid_no = b.bid_no
-		inner JOIN 
+		LEFT JOIN 
     		auction a ON b.auction_no = a.auction_no
-		inner JOIN 
+		LEFT JOIN 
     		work w ON a.work_no = w.work_no
-		inner JOIN 
+		LEFT JOIN 
     		artist ar ON w.artist_no = ar.artist_no
 		WHERE
-		m.member_id=#{memberId} AND d.deal_status != '낙찰포기'
+    		m.member_id = #{memberId}
 	</select>
 	<select id="isIdAvailable" resultType="int">
 		SELECT COUNT(*) FROM member WHERE member_id = #{memberId}

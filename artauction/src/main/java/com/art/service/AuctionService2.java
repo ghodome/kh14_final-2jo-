@@ -2,6 +2,8 @@ package com.art.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,7 +104,7 @@ public class AuctionService2 {
 		return response;
 	}
 	
-	public void bidToDeal(BidDto bidDto) {
+	public void bidToDeal(BidDto bidDto) {	
 		DealDto dealDto = new DealDto();
 		dealDto.setDealBuyer(bidDto.getMemberId());
 		dealDto.setBidNo(bidDto.getBidNo());
