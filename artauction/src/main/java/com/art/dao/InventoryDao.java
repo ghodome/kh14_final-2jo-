@@ -1,5 +1,7 @@
 package com.art.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,5 +22,8 @@ public class InventoryDao {
 	}
 	public boolean delete(int inventoryId) {
 		return sqlSession.delete("inventory.delete",inventoryId)>0;
+	}
+	public List<InventoryDto> selectList(String memberId){
+		return sqlSession.selectList("inventory.detailList",memberId);
 	}
 }

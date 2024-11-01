@@ -72,11 +72,12 @@ public class PaymentRestController {
 				buffer.append("외 "+(request.getDealList().size()-1)+"건");
 			}
 			
+			int totalSeven = (int)(total* 0.7);
 			KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
 			requestVO.setPartnerOrderId(UUID.randomUUID().toString());
 			requestVO.setPartnerUserId(claimVO.getMemberId());
 			requestVO.setItemName(buffer.toString());
-			requestVO.setTotalAmount(total);
+			requestVO.setTotalAmount(totalSeven);
 			requestVO.setApprovalUrl(request.getApprovalUrl());
 			requestVO.setCancelUrl(request.getCancelUrl());
 			requestVO.setFailUrl(request.getFailUrl());
@@ -131,5 +132,9 @@ public class PaymentRestController {
 			List<PaymentMemberVO> list =paymentDao.selectRankList();
 			return list;
 		}
-		
+		@GetMapping("/giveup")
+		public List<DealWorkVO> giveup(){
+			List<DealWorkVO> list = dealDao.selectGG();
+			return list;
+		}
 }

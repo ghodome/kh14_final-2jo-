@@ -27,10 +27,19 @@ JOIN artist ar ON w.artist_no = ar.artist_no
 WHERE deal_no=#{dealNo}
 	</select>
 	<update id="updateStatus">
-	update deal set deal_status = '낙찰포기' where deal_no=#{dealNo}
+	update deal set deal_status = '낙찰포기', deal_cancel_time = SYSDATE where deal_no=#{dealNo}
 	</update>
 	<update id="updateStatusSuccess">
 	update deal set deal_status = '결제완료' where deal_no=#{dealNo}
 	</update>
-
+	
+	<select id="detailGG" resultType="dealWorkVO">
+		SELECT d.*, w.work_title, ar.artist_name
+	FROM deal d
+	JOIN bid b ON d.bid_no = b.bid_no
+	JOIN auction a ON b.auction_no = a.auction_no
+	JOIN work w ON a.work_no = w.work_no
+	JOIN artist ar ON w.artist_no = ar.artist_no
+	where d.deal_status='낙찰포기'
+	</select>
 </mapper>

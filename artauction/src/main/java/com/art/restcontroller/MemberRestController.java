@@ -279,7 +279,6 @@ public class MemberRestController {
 			List<MemberInventoryVO> vo = memberDao.selectMemberInventory(claimVO.getMemberId());
 			if(vo == null)
 				throw new TargetNotFoundException("존재하지 않는 회원");
-			
 			return vo;
 		}
 	//충전
