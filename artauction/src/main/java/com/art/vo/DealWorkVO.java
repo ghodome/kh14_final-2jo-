@@ -14,4 +14,5 @@ public class DealWorkVO {
     private String dealStatus;
     private String workTitle;
     private String artistName;
+    private String dealCancelTime;
 }

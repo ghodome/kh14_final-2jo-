@@ -297,11 +297,12 @@
 		select * from member where
 		member_id = #{memberId}
 	</select>
-	<insert id="save">
-		insert into member (member_id, member_pw,
-		member_email)
-		values (#{memberId}, #{memberPw}, #{memberEmail})
-	</insert>
+	<update id="save">
+    UPDATE member
+    SET member_pw = #{memberPw}, member_email = #{memberEmail}
+    WHERE member_id = #{memberId}
+</update>
+
 	<select id="findByToken" resultType="MemberTokenDto">
 		select * from member_token
 		WHERE token_value = #{tokenValue}
@@ -333,17 +334,23 @@
 		m.member_post,
 		m.member_address1,
 		m.member_address2,
-		i.inventory_id,
-		i.item_id,
-		i.acquired_date,
-		i.item_name,
-		i.item_value
+		d.*,
+		w.WORK_TITLE,
+		ar.ARTIST_NAME
 		FROM
 		member m
-		LEFT JOIN
-		inventory i ON m.member_id = i.member_id
+		inner JOIN
+   			deal d ON m.member_id = d.deal_buyer
+		inner JOIN 
+    		bid b ON d.bid_no = b.bid_no
+		inner JOIN 
+    		auction a ON b.auction_no = a.auction_no
+		inner JOIN 
+    		work w ON a.work_no = w.work_no
+		inner JOIN 
+    		artist ar ON w.artist_no = ar.artist_no
 		WHERE
-		m.member_id=#{memberId}
+		m.member_id=#{memberId} AND d.deal_status != '낙찰포기'
 	</select>
 	<select id="isIdAvailable" resultType="int">
 		SELECT COUNT(*) FROM member WHERE member_id = #{memberId}

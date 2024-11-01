@@ -6,6 +6,7 @@ import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -188,10 +189,12 @@ public class MemberRestController {
 		return "비밀번호 재설정 이메일이 전송돼었습니다";
 	}
 	@PostMapping("/changePw")
-	public String changePw(@RequestBody MemberDto memberDto, @RequestParam String token) {
-	    boolean success = memberService.resetPassword(memberDto.getMemberId(), memberDto.getMemberEmail(), token);
+	public String changePw(@RequestBody Map<String, String> requestBody, @RequestParam String token) {
+	    String newPw = requestBody.get("newPw");
+	    boolean success = memberService.resetPassword(newPw, token);
 	    return success ? "비밀번호가 성공적으로 재설정되었습니다." : "비밀번호 재설정에 실패했습니다.";
 	}
+
 	
 	@PostMapping("/verfiyPw")
     public ResponseEntity<Boolean> verifyPw(
@@ -276,7 +279,6 @@ public class MemberRestController {
 			List<MemberInventoryVO> vo = memberDao.selectMemberInventory(claimVO.getMemberId());
 			if(vo == null)
 				throw new TargetNotFoundException("존재하지 않는 회원");
-			
 			return vo;
 		}
 	//충전
