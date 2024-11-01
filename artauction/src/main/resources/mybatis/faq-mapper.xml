@@ -5,6 +5,11 @@
 
 <mapper namespace="faq">
 
+	<!-- 시퀀스 생성 -->
+	<select id="sequence" resultType="int">
+		select faq_seq.nextval from dual
+	</select>
+
 	<!-- 목록 -->
 	<select id="list" resultType="FaqDto">
 		select * from faq order by
@@ -35,4 +40,13 @@
 	]]>
 	</select>
 
+	<!-- 수정 -->
+	<update id="update">
+		update faq set
+		faq_type = #{faqType},
+		faq_content =
+		#{faqContent}
+		where faq_no
+		= #{faqNo}
+	</update>
 </mapper>

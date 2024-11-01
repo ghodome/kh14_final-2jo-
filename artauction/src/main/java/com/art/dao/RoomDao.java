@@ -56,5 +56,6 @@ public class RoomDao {
 		int result = sqlSession.selectOne("roomMember.check", roomMemberDto);
 		return result > 0;
 	}
+
 	
 }

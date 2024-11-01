@@ -17,10 +17,15 @@ public class NoticeDao {
 	@Autowired
 	private SqlSession sqlSession;
 	
-	//등록
-	public void insert(NoticeDto noticeDto) {
-		sqlSession.insert("notice.registration", noticeDto);
+	//시퀀스 생성
+	public int sequence() {
+		return sqlSession.selectOne("notice.sequence");
 	}
+    // 등록
+    public void insert(NoticeDto noticeDto) {
+        sqlSession.insert("notice.registration", noticeDto);
+    }
+    
 	//목록
 	public List<NoticeDto> selectList() {
 		return sqlSession.selectList("notice.list");
@@ -41,6 +46,12 @@ public class NoticeDao {
 	public boolean delete(int noticeNo) {
 		int result = sqlSession.delete("notice.remove", noticeNo);
 		return result > 0;
+	}
+	
+	//수정
+	public boolean update(NoticeDto noticeDto) {
+		int result = sqlSession.update("notice.update", noticeDto);
+		return result>0;
 	}
 
 }
