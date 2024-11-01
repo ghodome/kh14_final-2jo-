@@ -1,7 +1,9 @@
 package com.art.restcontroller;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ import com.art.error.TargetNotFoundException;
 import com.art.service.AttachmentService;
 import com.art.service.TokenService;
 import com.art.vo.WorkArtistVO;
+import com.art.vo.WorkEditRequestVO;
 import com.art.vo.WorkInsertRequestVO;
 import com.art.vo.WorkListRequestVO;
 import com.art.vo.WorkListResponseVO;
@@ -50,9 +52,8 @@ public class WorkRestController {
 	
 	@Transactional
 	@PostMapping(value="/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public void insert(@RequestHeader ("Authorization") String token,
+	public void insert(
 			@ModelAttribute WorkInsertRequestVO workInsertRequestVO) throws IllegalStateException, IOException {
-		
 
 	    // 작품 정보 생성
 	    int workNo = workDao.sequence();
@@ -101,7 +102,7 @@ public class WorkRestController {
 	
 	@DeleteMapping("/{workNo}")
 		public void delete(@PathVariable int workNo) {
-			WorkListVO workListVO = workDao.selectOne(workNo);
+			WorkListVO workListVO = workDao.selectListOne(workNo); 
 		if(workListVO == null) throw new TargetNotFoundException("존재하지 않는 상품 번호");
 		
 		List<Integer> list = workDao.findImages(workNo);
@@ -114,13 +115,69 @@ public class WorkRestController {
 		workDao.deleteImage(workNo); // 연결 테이블 정보 삭제
 	}
 
-	@PatchMapping("/")
-	public void update(@RequestBody WorkArtistVO workArtistVO) {
-		boolean result = workDao.update(workArtistVO);
-		if(result == false) {
-			throw new TargetNotFoundException();
-		} 
+	//수정 이미지 포함
+	@Transactional
+	@PostMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public void update(@ModelAttribute WorkEditRequestVO requestVO) throws IllegalStateException, IOException {
+		WorkDto originDto = workDao.selectOne(requestVO.getWorkNo());
+		if(originDto == null) throw new TargetNotFoundException("존재하지 않는 상품 번호");
+		
+		//수정전
+		Set<Integer> before =new HashSet<>();
+		List<Integer> beforeList = workDao.findImages(originDto.getWorkNo());
+		for(int i=0; i<beforeList.size(); i++) {
+			before.add(beforeList.get(i));//저장소 추가
+		}
+		
+		//수정후
+		//- originList : 기존 첨부 처리
+		Set<Integer> after = new HashSet<>();
+		workDao.deleteImage(requestVO.getWorkNo());
+		int afterSize = requestVO.getOriginList().size();
+		for(int i=0; i<afterSize; i++) {
+			int attachmentNo = requestVO.getOriginList().get(i);
+			workDao.connect(requestVO.getWorkNo(), attachmentNo);
+			after.add(attachmentNo);//저장소 추가
+		}
+		
+		// 수정전 - 수정후 계산 : 살려야할 번호만 담긴 originList의 번호들과 겹치지 않는 번호들만 남김
+		before.removeAll(after);
+		
+		// before에 남아있는 번호에 해당하는 파일을 모두 삭제 : 겹치짖 않는 번호들 삭제
+		for(int attachmentNo : before) {
+			attachmentService.delete(attachmentNo); // db+파일 삭제
+		}
+		
+		// - attachList : 신규 첨부
+		if( requestVO.getAttachList() != null ) {
+			int attachListSize = requestVO.getAttachList().size();
+			for(int i=0; i<attachListSize; i++) {
+				int attachmentNo = attachmentService.save(requestVO.getAttachList().get(i));
+				workDao.connect(requestVO.getWorkNo(), attachmentNo);
+				after.add(attachmentNo); // 저장소에 추가
+			}
+		}
+		//작품 정보처리
+		WorkListVO workListVO = new WorkListVO();
+		workListVO.setWorkTitle(requestVO.getWorkTitle());
+		workListVO.setArtistNo(requestVO.getArtistNo());
+		workListVO.setWorkDescription(requestVO.getWorkDescription());
+		workListVO.setWorkMaterials(requestVO.getWorkMaterials());
+		workListVO.setWorkSize(requestVO.getWorkSize());
+		workListVO.setWorkCategory(requestVO.getWorkCategory());
+		workListVO.setWorkNo(requestVO.getWorkNo());
+		 
+		workDao.update(workListVO);
+		
+		
 	}
 	
+//	@PatchMapping("/")
+//	public void update(@RequestBody WorkListVO workListVO) {
+//		boolean result = workDao.update(workListVO);
+//		if(result == false) {
+//			throw new TargetNotFoundException();
+//		} 
+//	}
 	
 }
