@@ -19,6 +19,7 @@ import com.art.dto.RoomMemberDto;
 import com.art.error.TargetNotFoundException;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
+import com.art.vo.PaymentMemberVO;
 import com.art.vo.RoomVO;
 
 @CrossOrigin
@@ -32,12 +33,34 @@ public class RoomRestController {
 	private TokenService tokenService;
 
 	@PostMapping("/")
-	public RoomDto insert(@RequestBody RoomDto roomDto) {
-		int roomNo = roomDao.sequence();
-		roomDto.setRoomNo(roomNo);
-		roomDao.insert(roomDto);
-		// return roomDto;//DB에서 만든 정보가 들어있지 않음
-		return roomDao.selectOne(roomNo);// DB에서 만든 정보까지 포함해서 반환
+	public RoomDto insert(@RequestBody RoomDto roomDto,
+	        @RequestHeader("Authorization") String token) {
+	    // 토큰에서 회원 정보 추출
+	    MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
+	    String memberId = claimVO.getMemberId();
+
+	    // 방 목록을 가져와서 같은 이름의 방이 있는지 확인
+	    List<RoomDto> existingRooms = roomDao.selectList();
+	    boolean roomExists = false;
+
+	    for (RoomDto existingRoom : existingRooms) {
+	        if (existingRoom.getRoomName().equals(memberId)) {
+	            roomExists = true;
+	            break;
+	        }
+	    }
+
+	    if (roomExists) {
+	        throw new TargetNotFoundException("이미 존재하는 방입니다.");
+	    }
+
+	    // 방 생성
+	    int roomNo = roomDao.sequence();
+	    roomDto.setRoomNo(roomNo);
+	    roomDto.setRoomName(memberId); // 방 이름을 회원 아이디로 설정
+	    roomDao.insert(roomDto);
+
+	    return roomDao.selectOne(roomNo); // DB에서 만든 정보까지 포함해서 반환
 	}
 
 	@GetMapping("/")

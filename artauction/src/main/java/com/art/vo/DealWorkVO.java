@@ -1,20 +1,18 @@
-package com.art.dto;
+package com.art.vo;
 
-import java.util.Date;
-
+import java.sql.Date;
 
 import lombok.Data;
 
 @Data
-public class DealDto {
+public class DealWorkVO {
 	private int dealNo;
-
     private int bidNo;
     private String dealBuyer; 
     private Date dealTime;
     private int dealPrice;
     private String dealStatus;
-    private Date dealCancelTime;
-    private Date dealEndTime;
-
+    private String workTitle;
+    private String artistName;
+    private String dealCancelTime;
 }

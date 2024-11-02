@@ -35,8 +35,8 @@ public class workDao {
 		return sqlSession.delete("work.delete", workNo)>0;
 	}
 	//수정
-	public boolean update(WorkArtistVO workArtistVO) {
-		return sqlSession.update("work.update", workArtistVO) > 0;
+	public boolean update(WorkListVO workListVO) {
+		return sqlSession.update("work.update", workListVO) > 0;
 	}
 	
 	// 이미지 찾기 - 여러 이미지 중 첫 번째만 가져오기

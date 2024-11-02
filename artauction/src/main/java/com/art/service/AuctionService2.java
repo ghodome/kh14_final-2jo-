@@ -109,13 +109,13 @@ public class AuctionService2 {
 		return response;
 	}
 	
-	public void bidToDeal(BidDto bidDto) {
+	public void bidToDeal(BidDto bidDto) {	
 		DealDto dealDto = new DealDto();
 		dealDto.setDealBuyer(bidDto.getMemberId());
 		dealDto.setBidNo(bidDto.getBidNo());
 		dealDto.setDealPrice(bidDto.getBidPrice());
 		dealDto.setDealStatus("결제대기");
 		dealDto.setDealTime(bidDto.getBidTime());
-		dealDao.insert(dealDto);
+		dealDao.insert(dealDto);   
 	}
 }

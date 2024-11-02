@@ -117,7 +117,6 @@ public class ArtistRestController {
 	public void update(@ModelAttribute ArtistEditRequestVO requestVO) throws IllegalStateException, IOException {
 		ArtistListVO originDto = artistDao.selectOne(requestVO.getArtistNo());
 		if(originDto == null) throw new TargetNotFoundException("존재하지 않는 작가 번호입니다.");
-		
 		//수정전
 		Set<Integer> before = new HashSet<>();
 		List<Integer> beforeList = artistDao.findImages(originDto.getArtistNo());
@@ -134,6 +133,7 @@ public class ArtistRestController {
 			artistDao.connect(requestVO.getArtistNo(), attachmentNo);
 			after.add(attachmentNo);
 		}
+		
 		
 		//수정전 - 수정후 계산 : 살려야 항 번호만 담긴 originList의 번호들과 겹치지 않는 번호들만 남김
 		before.removeAll(after);
@@ -152,15 +152,15 @@ public class ArtistRestController {
 				after.add(attachmentNo); // 저장소에 추가
 			}
 		}
-		ArtistDto artistDto = new ArtistDto();
-		artistDto.setArtistNo(requestVO.getArtistNo());
-		artistDto.setArtistName(requestVO.getArtistName());
-		artistDto.setArtistDescription(requestVO.getArtistDescription());
-		artistDto.setArtistHistory(requestVO.getArtistHistory());
-		artistDto.setArtistBirth(requestVO.getArtistBirth());
-		artistDto.setArtistDeath(requestVO.getArtistDeath());
+		ArtistListVO artistListVO = new ArtistListVO();
+		artistListVO.setArtistNo(requestVO.getArtistNo());
+		artistListVO.setArtistName(requestVO.getArtistName());
+		artistListVO.setArtistDescription(requestVO.getArtistDescription());
+		artistListVO.setArtistHistory(requestVO.getArtistHistory());
+		artistListVO.setArtistBirth(requestVO.getArtistBirth());
+		artistListVO.setArtistDeath(requestVO.getArtistDeath());
 		
-		artistDao.update(artistDto);
+		artistDao.update(artistListVO);
 	}
 	
 }

@@ -17,4 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<delete id="delete">
 		delete inventory where inventory_id=#{inventoryId}
 	</delete>
+	<select id="detailList" resultType="inventoryDto">
+		select * from inventory where member_id=#{memberId}
+	</select>
 </mapper>

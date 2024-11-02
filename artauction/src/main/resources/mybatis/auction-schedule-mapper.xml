@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--DTD 선언-->
+
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="sequence" resultType="int">
 		select auction_schedule_seq.nextval from dual
 	</select>
-	<insert id="insert" parameterType="AuctionScheduleDto">
+	<insert id="insert" parameterType="AuctionScheduleListVO">
 		insert into auction_schedule(
 			auction_schedule_no, 
 			auction_schedule_title, 
@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 	
 	<!-- 이미지 연결 -->
+	<!-- <insert id="connect" parameterType="map"> -->
 	<insert id="connect" parameterType="map">
 		insert into auction_schedule_image(
 			auction, 
@@ -55,18 +56,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 	
 	<!-- 이미지 포함 수정 -->
-	<update id="updateall">
-		update auction_schedule, aution_schedule_Image
+	<!-- <update id="updateall">
+		update auction_schedule
+			inner join auction_schedule_image ASI 
 		set 
 			auction_schedule_title = #{auctionScheduleTitle},
 			auction_schedule_start_date = #{auctionScheduleStartDate},
 			auction_schedule_end_date = #{auctionScheduleEndDate},
 			auction_schedule_state = #{auctionScheduleState},
-			auction_schedule_notice = #{auctionScheduleNotice}
-			auction = #{auction}
+			auction_schedule_notice = #{auctionScheduleNotice},
 			attachment = #{attachment}
 		where
 			auction_schedule_no = #{auctionScheduleNo}
+	</update> -->
+	
+	<update id="updatall">
+	merge into auction_schedule AC
+		using auction_schedule_image ASI
+			on (
+				AC.auction_schedule_no = ASI.auction
+			)
+	when matched then 
+	    update 
+	    	set AC.auction_schedule_title = #{auctionScheduleTitle},
+		        AC.auction_schedule_start_date = #{auctionScheduleStartDate}, 
+		        AC.auction_schedule_end_date = #{auctionScheduleEndDate}, 
+		        AC.auction_schedule_state = #{auctionScheduleState}, 
+		        AC.auction_schedule_notice = #{auctionScheduleNotice},
+		        ASI.attachment = #{attachment}
 	</update>
 	
 	<!-- 목록(이미지포함 ) -->
@@ -78,7 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select> -->
     
     <!-- 목록 페이징 조회(이미지포함) -->
-	<select id="list" resultType="AuctionScheduleDto" parameterType="AuctionScheduleListRequestVO">
+	<select id="list" resultType="AuctionScheduleListVO">
 		    <![CDATA[
 		    SELECT *
 		    FROM (
@@ -110,7 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <!-- 이미지 no포함한 상세정보-->
-    <select id="detailall" resultType="AuctionScheduleDto">
+    <select id="detailall" resultType="AuctionScheduleListVO">
     	select * from auction_schedule AC 
 			inner join AUCTION_SCHEDULE_IMAGE ASI 
 				on AC.auction_schedule_no=ASI.auction 
@@ -119,18 +136,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
 	<!-- 상세 -->
-	<select id="detail" resultType="AuctionScheduleDto">
+	<select id="detail" resultType="AuctionScheduleListVO">
 		select * from auction_schedule where auction_schedule_no = #{auction_schedule_no}
 	</select>
 	
 	<!-- 삭제 -->
 	<delete id="delete">
-		delete auction_schedule where auction_schedule_no = #{auction_schedule_no}
+		delete auction_schedule where auction_schedule_no = #{auctionScheduleNo}
 	</delete>
 	
 	<!-- 이미지 삭제 -->
 	<delete id="deleteImage">
-		delete auction_schedule_image where auction_schedule_no = #{auction_schedule_no}
+		delete auction_schedule_image where auction= #{auctionScheduleNo}
 	</delete>
 	
 	
