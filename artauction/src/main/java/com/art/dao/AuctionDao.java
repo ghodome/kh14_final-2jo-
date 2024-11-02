@@ -63,4 +63,24 @@ public class AuctionDao {
 	public void selectBidInfo(int auctionNo) {
 		
 	}
+	public List<Integer> selectListStarted(String time){
+		Map data=Map.of("time",time);
+		return sqlSession.selectList("auction.selectListStarted",data);
+	}
+	public List<Integer> selectListTerminated(String time){
+		Map data=Map.of("time",time);
+		return sqlSession.selectList("auction.selectListTerminated",data);
+	}
+	public void changeStateProgress(int auctionNo) {
+		Map data=Map.of("auctionNo",auctionNo);
+		sqlSession.update("auction.changeStateProgress",data);
+	}
+	public void changeStateTerminated(int auctionNo) {
+		Map data=Map.of("auctionNo",auctionNo);
+		sqlSession.update("auction.changeStateTerminated",data);
+	}
+	public void statusToProgress(Integer auctionScheduleNo) {
+		Map data=Map.of("auctionScheduleNo",auctionScheduleNo);
+		sqlSession.update("auction.statusToProgress",data);
+	}
 }

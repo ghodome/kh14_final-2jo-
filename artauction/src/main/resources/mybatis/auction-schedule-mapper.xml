@@ -162,6 +162,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    select attachment from auction_schedule_image where auction = #{auction}
 	</select>
 	
+	<!-- 경매상태값별 리스트 출력-->
+	<select id="listStarted" resultType="Integer">
+	<![CDATA[ 
+		select 
+			auction_schedule_no
+		from
+			auction_schedule
+		where
+			auction_schedule_start_date<to_timestamp(
+				#{startTime}, 
+				'yyyy-mm-dd hh24:mi:ss')
+			and 
+			auction_schedule_state='예정경매'
+	]]>
+	</select>
+	<select id="listTerminated" resultType="Integer">
+		<![CDATA[ 
+		select
+			auction_schedule_no
+		from
+			auction_schedule
+		where
+			auction_schedule_end_date<to_timestamp(
+				#{endTime},
+				'yyyy-mm-dd hh24:mi:ss')
+		and
+			auction_schedule_state='진행경매'
+		]]>
+	</select>
+	
+	<!-- 경매 일정 상태 변경 -->
+	<update id="statusToProgress">
+		update 
+			auction_schedule 
+		set 
+			auction_schedule_state ='진행경매' 
+		where 
+			auction_schedule_no = #{auctionScheduleNo}
+	</update>
+	<update id="statusToTermination">
+		update 
+			auction_schedule 
+		set 
+			auction_schedule_state ='종료경매' 
+		where 
+			auction_schedule_no = #{auctionScheduleNo}
+	</update>
+	
 	<sql id="top-n-header">
 		<if test="beginRow != null and endRow != null">
 			select * from (

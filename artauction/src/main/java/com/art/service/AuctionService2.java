@@ -1,9 +1,9 @@
 package com.art.service;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,14 +41,13 @@ public class AuctionService2 {
 	public synchronized WebsocketBidResponseVO bidProccess(WebsocketBidRequestVO request,
 			int auctionNo,
 			String memberId) throws ParseException {
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String requestTime=timeService.getTime();
 		int bidPrice=request.getBid().getBidPrice();
 		int bidIncrement=request.getBid().getBidIncrement();
 		int newBidPrice=bidPrice+bidIncrement;
 		
 		AuctionDto auctionDto = auctionDao.selectOne(auctionNo);
-		if(!(auctionDto.getAuctionBidPrice()==bidPrice)) throw new TargetNotFoundException("응찰가격 불일치");
 		AuctionDto auctionNewDto=new AuctionDto();
 		int bidNewIncrement;
 
@@ -75,10 +74,10 @@ public class AuctionService2 {
 		auctionNewDto.setAuctionBidCnt(auctionDto.getAuctionBidCnt());
 		auctionNewDto.setAuctionNo(auctionNo);
 		auctionNewDto.setAuctionSuccessBidder(memberId);
-		if(!auctionDao.update(auctionNewDto)) throw new TargetNotFoundException("응찰 실패");
+		DecimalFormat moneyFmt = new DecimalFormat("###,###");
 		String contentForSchedule="LOT "+request.getBid().getAuctionLot()+" ["+request.getBid().getWorkName()+"], 입찰가 : "
-				+newBidPrice+", 입찰자 : "+memberId;
-		String contentForLot="입찰가 : "+newBidPrice+", 입찰자 : "+memberId;
+				+moneyFmt.format(newBidPrice)+", 입찰자 : "+memberId.substring(0,4)+"**** ";
+		String contentForLot="입찰가 : "+moneyFmt.format(newBidPrice)+", 입찰자 : "+memberId.substring(0,4)+"****";
 		
 		//응찰 내역 저장
 		BidDto bidDto=new BidDto();
@@ -87,10 +86,17 @@ public class AuctionService2 {
 		bidDto.setBidPrice(newBidPrice);
 		bidDto.setBidTime(fmt.parse(requestTime));
 		bidDto.setMemberId(memberId);
-		bidDao.insert(bidDto);
 		
 		
 		WebsocketBidResponseVO response = new WebsocketBidResponseVO();
+		if(bidPrice==auctionDto.getAuctionBidPrice()) {//
+			auctionDao.update(auctionNewDto);
+			response.setSuccess(true);
+			bidDao.insert(bidDto);
+		}
+		else {
+			response.setSuccess(false);
+		}
 		AuctionContentVO content=new AuctionContentVO();
 		content.setAuctionNo(auctionNo);
 		content.setBidPrice(bidPrice+bidIncrement);
@@ -100,7 +106,6 @@ public class AuctionService2 {
 		content.setContentForLot(contentForLot);
 		content.setAuctionLot(request.getBid().getAuctionLot());
 		response.setContent(content);
-		response.setSuccess(true);
 		return response;
 	}
 	
