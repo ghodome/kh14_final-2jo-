@@ -88,6 +88,4 @@ public class workDao {
 	public WorkListVO selectOne(int workNo) {
 		return sqlSession.selectOne("work.selectOne", workNo);
 	}
-
-	
 }

@@ -172,10 +172,9 @@ public class WorkRestController {
 		workDao.update(workListVO);
 		
 	}
-	
-	
+
 //	@PatchMapping("/")
-//	public void update(@RequestBody WorkArtistVO workArtistVO) {
+//	public void update(@RequestBody  WorkArtistVO workArtistVO) {
 //		boolean result = workDao.update(workArtistVO);
 //		if(result == false) {
 //			throw new TargetNotFoundException();
