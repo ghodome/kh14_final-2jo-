@@ -10,9 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +24,6 @@ import com.art.dto.WorkDto;
 import com.art.error.TargetNotFoundException;
 import com.art.service.AttachmentService;
 import com.art.service.TokenService;
-import com.art.vo.WorkArtistVO;
 import com.art.vo.WorkEditRequestVO;
 import com.art.vo.WorkInsertRequestVO;
 import com.art.vo.WorkListRequestVO;
@@ -44,8 +41,6 @@ public class WorkRestController {
 	@Autowired
 	private workDao workDao;
 	@Autowired
-	private TokenService tokenService;
-	@Autowired
 	private AttachmentService attachmentService; 
 	@Autowired
 	private AttachmentDao attachmentDao;
@@ -53,8 +48,8 @@ public class WorkRestController {
 	
 	@Transactional
 	@PostMapping(value="/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public void insert(
-			@ModelAttribute WorkInsertRequestVO workInsertRequestVO) throws IllegalStateException, IOException {
+	public void insert(@ModelAttribute WorkInsertRequestVO workInsertRequestVO) throws IllegalStateException, IOException {
+		
 
 	    // 작품 정보 생성
 	    int workNo = workDao.sequence();
@@ -81,11 +76,6 @@ public class WorkRestController {
 
 	}
 	
-//	@GetMapping("/")
-//	public List<WorkArtistVO> list() {
-//		return workDao.selectList();
-//	}
-	
 	@PostMapping("/")
 	public WorkListResponseVO list (@RequestBody WorkListRequestVO requestVO) {
 		// 페이징 정보 정리
@@ -103,7 +93,7 @@ public class WorkRestController {
 	
 	@DeleteMapping("/{workNo}")
 		public void delete(@PathVariable int workNo) {
-			WorkListVO workListVO = workDao.selectListOne(workNo); 
+			WorkListVO workListVO = workDao.selectOne(workNo);
 		if(workListVO == null) throw new TargetNotFoundException("존재하지 않는 상품 번호");
 		
 		List<Integer> list = workDao.findImages(workNo);
@@ -115,6 +105,7 @@ public class WorkRestController {
 		workDao.delete(workNo); // 상품 정보 삭제
 		workDao.deleteImage(workNo); // 연결 테이블 정보 삭제
 	}
+ 
 	//수정 이미지 포함
 	@Transactional
 	@PostMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -155,6 +146,7 @@ public class WorkRestController {
 				int attachmentNo = attachmentService.save(requestVO.getAttachList().get(i));
 				workDao.connect(requestVO.getWorkNo(), attachmentNo);
 				after.add(attachmentNo); // 저장소에 추가
+				
 			}
 		}
 		//작품 정보처리
@@ -170,13 +162,5 @@ public class WorkRestController {
 		workDao.update(workListVO);
 		
 	}
-//	@PatchMapping("/")
-//	public void update(@RequestBody  WorkArtistVO workArtistVO) {
-//		boolean result = workDao.update(workArtistVO);
-//		if(result == false) {
-//			throw new TargetNotFoundException();
-//		} 
-//	}
-	
-	
+
 }

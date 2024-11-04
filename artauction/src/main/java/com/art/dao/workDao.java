@@ -68,6 +68,7 @@ public class workDao {
 		return sqlSession.selectOne("work.count", requestVO);
 	}
 
+	
 //	//상세
 //	public WorkDto selectOne(int workNo) {
 //		return sqlSession.selectOne("work.detail",workNo);
