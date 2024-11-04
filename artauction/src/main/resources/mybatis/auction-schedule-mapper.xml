@@ -30,7 +30,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 	
 	<!-- 이미지 연결 -->
-	<!-- <insert id="connect" parameterType="map"> -->
 	<insert id="connect" parameterType="map">
 		insert into auction_schedule_image(
 			auction, 
@@ -62,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        <if test="auctionScheduleStartDate != null">auction_schedule_start_date = #{auctionScheduleStartDate},</if>
 	        <if test="auctionScheduleEndDate != null">auction_schedule_end_date = #{auctionScheduleEndDate},</if>
 	        <if test="auctionScheduleState != null">auction_schedule_state = #{auctionScheduleState},</if>
-	        <if test="auctionScheduleNotice != null">auction_schedule_notice = #{auctionScheduleNotice},</if>
+	        <if test="auctionScheduleNotice != null">auction_schedule_notice = #{auctionScheduleNotice}</if>
 	    </set>
 	    where auction_schedule_no = #{auctionScheduleNo}
 	</update>
@@ -110,7 +109,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         auction_schedule_no = #{auctionScheduleNo}
 	</update>
 	
-	<!-- Update `auction_schedule_image` as a separate statement -->
 	<update id="updateAttachment">
 	    UPDATE auction_schedule_image
 	    SET 
