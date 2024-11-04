@@ -98,6 +98,26 @@ public class AuctionScheduleDao {
 	public List<AuctionScheduleListVO> selectListByPaging(AuctionScheduleListRequestVO listRequestVO) {
 		return sqlSession.selectList("auctionSchedule.list", listRequestVO);
 	}
+	//경매시작시간 해당 리스트 출력 메서드
+	public List<Integer> selectListStarted(String startTime){
+		Map model=Map.of("startTime",startTime);
+		return sqlSession.selectList("auctionSchedule.listStarted",model);
+	}
+	//경매종료시간 해당 리스트 검사 메서드
+	public List<Integer> selectListTerminated(String endTime){
+		Map model=Map.of("endTime",endTime);
+		return sqlSession.selectList("auctionSchedule.listTerminated",model);
+	}
+	//예정경매 -> 진행경매 상태변경
+	public void statusToProgress(int auctionScheduleNo) {
+		Map model=Map.of("auctionScheduleNo",auctionScheduleNo);
+		sqlSession.update("auctionSchedule.statusToProgress",model);
+	}
+	//진행경매 -> 종료경매 상태변경
+	public void statusToTemination(int auctionScheduleNo) {
+		Map model=Map.of("auctionScheduleNo",auctionScheduleNo);
+		sqlSession.update("auctionSchedule.statusToTermination",model);
+	}
 
 	
 }
