@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.art.interceptor.AdminInterceptor;
 import com.art.interceptor.MemberInterceptor;
 
 @Configuration
@@ -12,6 +13,9 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 
 	@Autowired
 	private MemberInterceptor memberInterceptor;
+	
+	@Autowired
+	private AdminInterceptor adminInterceptor;
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -26,6 +30,10 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 							"/member/changePw",
 							"/member/checkId",
 							"/member/checkName"
+							);
+		registry.addInterceptor(adminInterceptor)
+					.addPathPatterns(
+							"/payment/giveup"	
 							);
 	}
 }
