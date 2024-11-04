@@ -4,53 +4,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="auction">
+
 	<select id="sequence" resultType="int">
 		select auction_seq.nextval from dual
 	</select>
 	<insert id="add">
     insert into auction(
         auction_no,
-        auction_schedule_no,
-        work_no,
-        auction_lot,
-        auction_low_price,
-        auction_high_price,
-        auction_state,
-        auction_consigner,
-        auction_consignment_fee,
-        auction_start_price,
-        auction_bid_price,
-        auction_bid_increment,
-        auction_start_date,
-        auction_end_date
+		auction_schedule_no,
+		work_no,
+		auction_lot,
+		auction_low_price,
+		auction_high_price,
+		auction_state,
+		auction_consigner,
+		auction_consignment_fee,
+		auction_start_price,
+		auction_bid_increment
     )
     values(
         #{auctionNo},
-        #{auctionScheduleNo},
-        #{workNo},
-        <if test="auctionLot == null or auctionLot == ''">
-            (SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),
-        </if>
-        <if test="auctionLot != null and auctionLot != ''">
-            #{auctionLot},
-        </if>
-        #{auctionLowPrice},
-        #{auctionHighPrice},
-        #{auctionState},
-        #{auctionConsigner},
-        #{auctionConsignmentFee},
-        #{auctionStartPrice},
-        #{auctionStartPrice},
-        #{auctionBidIncrement},
-        #{auctionStartDate},
-        <if test="auctionLot == null or auctionLot == ''">
-            #{auctionEndDate} + NUMTODSINTERVAL(ROUND((SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}) / 10,0) * 5, 'MINUTE')
-        </if>
-        <if test="auctionLot != null and auctionLot != ''">
-            #{auctionEndDate} + NUMTODSINTERVAL(ROUND(#{auctionLot} / 10,0) * 5, 'MINUTE')
-        </if>
+		#{auctionScheduleNo},
+		#{workNo},
+        <if test="auctionLot == null or auctionLot == ''">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
+		<if test="auctionLot != null and auctionLot != ''">#{auctionLot},</if>
+		#{auctionLowPrice},
+		#{auctionHighPrice},
+		#{auctionState},
+		#{auctionConsigner},
+		#{auctionConsignmentFee},
+		#{auctionStartPrice},
+		#{auctionBidIncrement}
     )
-</insert>
+	</insert>
 
 	<!-- 이미지 연결 -->
 	<insert id="connect" parameterType="map">
@@ -99,18 +85,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="sceduleList" resultType="AuctionDto">
 		select * from auction where auction_schedule_no = #{auctionScheduleNo} order by auction_no asc
 	</select>
-	<!-- <select id="scheduleListOrderByLot" resultType="AuctionLotVO">
-		SELECT 
-			A.AUCTION_NO,A.AUCTION_LOT,A.AUCTION_STATE,W.work_title,W.WORK_MATERIALS ,W.WORK_CATEGORY 
-		FROM 
-			work W
-		INNER JOIN 
-			auction A 
-		ON 
-			W.work_no = A.work_no
-		WHERE A.AUCTION_SCHEDULE_NO = #{auctionScheduleNo}
-		order by A.AUCTION_LOT asc
-	</select> -->
 	
 	<!-- 출품목록 불러오기(이미지x)-->
 	<select id="auctionListOrderByLot" resultType="AuctionLotVO">
@@ -161,8 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where 
 			auction_schedule_no = #{auctionScheduleNo}
 	</select>
-	
-	
+
 	
 	<update id="cancelPresent">
 		update auction set auction_state='출품취소' where auction_no = #{auctionNo}
@@ -185,58 +158,5 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select count(*) from auction
 		where auction_no=#{auctionNo} and auction_bid_price=#{auctionBidPrice}
 	</select>
-	<update id="changeStateProgress">
-		update 
-			auction
-		set
-			auction_state='진행경매'
-		where
-			auction_no=#{auctionNo}
-	</update>
-	<update id="changeStateTerminated">
-		update 
-			auction
-		set
-			auction_state='종료경매'
-		where
-			auction_no=#{auctionNo}
-	</update>
-	<select id="selectListStarted" resultType="Integer">
-		<![CDATA[ 
-			select
-				auction_no
-			from
-				auction
-			where 
-				auction_start_date<to_timestamp(
-					#{time},
-					'yyyy-mm-dd hh24:mi:ss'
-				)
-				and
-				auction_state='예정경매'
-		]]>
-	</select>
-	<select id="selectListTerminated" resultType="Integer">
-		<![CDATA[ 
-			select
-				auction_no
-			from
-				auction
-			where
-				auction_end_date<to_timestamp(
-					#{time},
-					'yyyy-mm-dd hh24:mi:ss'
-				)
-				and
-				auction_state='진행경매'
-		]]>
-	</select>
-	<update id="statusToProgress">
-		update
-			auction
-		set 
-			auction_state='진행경매'
-		where
-			auction_schedule_no=#{auctionScheduleNo}
-	</update>
+
 </mapper>

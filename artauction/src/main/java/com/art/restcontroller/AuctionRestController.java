@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.AuctionDao;
 import com.art.dto.AuctionDto;
+import com.art.service.AttachmentService;
 import com.art.vo.AuctionLotDetailVO;
 import com.art.vo.AuctionLotListVO;
 import com.art.vo.AuctionLotVO;
@@ -27,13 +28,19 @@ import lombok.extern.slf4j.Slf4j;
 @CrossOrigin
 @RequestMapping("/auction")
 public class AuctionRestController {
+	
 	@Autowired
 	private AuctionDao auctionDao;
+	
+	@Autowired
+	private AttachmentService attachmentService;
 	
 	@GetMapping("/")
 	public List<AuctionDto> list(){
 		return auctionDao.selectList();
 	}
+	
+	//출품등록
 	@PostMapping("/")
 	public void add(@RequestBody AuctionDto auctionDto) {
 		auctionDto.setAuctionNo(auctionDao.sequence());
@@ -60,14 +67,19 @@ public class AuctionRestController {
 		
 		auctionDao.insert(auctionDto);
 	}
+
+	
 	@PatchMapping("/")
 	public void update(@RequestBody AuctionDto auctionDto) {
 		auctionDao.update(auctionDto);
 	}
+	
 	@GetMapping("/detail/{auctionNo}")
 	public AuctionDto detail(@PathVariable int auctionNo) {
 		return auctionDao.selectOne(auctionNo);
 	}
+	
+	//출품작삭제
 	@DeleteMapping("/{auctionNo}")
 	public void delete(@PathVariable int auctionNo) {
 		auctionDao.delete(auctionNo);
@@ -92,23 +104,19 @@ public class AuctionRestController {
 			@PathVariable int auctionScheduleNo){
 		return auctionDao.selectAuctionScheduleInfo(auctionScheduleNo);
 	}
-//	@GetMapping("/{auctionScheduleNo}")
-//	public List<AuctionDataCollectionDto> collectionList(@PathVariable int auctionScheduleNo ) {
-//		return auctionDao.selectDataCollectionList(auctionScheduleNo);
-//	}
-//	@GetMapping("/auctionList/{auctionScheduleNo}")
-//	public List<AuctionLotVO> auctionListWithJoin(@PathVariable int auctionScheduleNo){
-//		return auctionDao.selectAuctionListWithJoin(auctionScheduleNo);
-//		
-//	}
+	
+	//출품취소
 	@GetMapping("/cancelPresent/{auctionNo}")
 	public void cancelPresent(@PathVariable int auctionNo) {
 		auctionDao.cancelPresent(auctionNo);
 	}
+	
+	//출품재등록
 	@GetMapping("/uncancelPresent/{auctionNo}")
 	public void uncancelPresent(@PathVariable int auctionNo) {
 		auctionDao.uncancelPresent(auctionNo);
 	}
+	
 	@GetMapping("/work/{auctionNo}")
 	public AuctionLotDetailVO selectAuctionWithWork(@PathVariable int auctionNo) {
 		return auctionDao.selectAuctionWithWork(auctionNo);
