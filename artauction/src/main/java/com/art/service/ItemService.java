@@ -5,9 +5,14 @@ import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.art.dao.InventoryDao;
 import com.art.dao.ItemsDao;
+import com.art.dao.MemberDao;
+import com.art.dto.InventoryDto;
 import com.art.dto.ItemsDto;
+import com.art.dto.MemberDto;
 import com.art.error.TargetNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +23,10 @@ public class ItemService {
 	
 	@Autowired
 	private ItemsDao itemsDao;
+	@Autowired
+	private MemberDao memberDao;
+	@Autowired
+	private InventoryDao inventoryDao;
 	
 	// 확률 업데이트 메서드
 	public void updateChance() {
@@ -92,5 +101,26 @@ public class ItemService {
 		}
 		// 소수점 둘째 자리까지 확률 계산
 		return Math.round((10000.0 / price) * 10000) / 100.0;
+	}
+	//아이템 동시성 제어
+	@Transactional
+	public synchronized ItemsDto randomRun(MemberDto memberDto) {
+		if(memberDto.getMemberPoint()<10000)return null;
+		memberDto.setMemberPoint(memberDto.getMemberPoint()-10000);
+		memberDao.pointUpdate(memberDto);
+		
+        ItemsDto itemsDto =  getRandomItem(); // 랜덤 아이템 반환
+        if(itemsDto.getIsWin().equals("N"))return itemsDto;
+        else {
+        	//아이템 정보를 인벤토리에 보내고
+        	InventoryDto inventoryDto = new InventoryDto();
+        	inventoryDto.setMemberId(memberDto.getMemberId());
+        	inventoryDto.setItemId(itemsDto.getItemId());
+        	inventoryDto.setItemName(itemsDto.getItemName());
+        	inventoryDto.setItemValue(itemsDto.getItemValue());
+        	inventoryDao.insert(inventoryDto);
+        	//프론트로 아이템 정보를 보낸후
+        	return itemsDto;
+        }
 	}
 }
