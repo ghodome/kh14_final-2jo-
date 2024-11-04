@@ -146,6 +146,7 @@ public class WorkRestController {
 				int attachmentNo = attachmentService.save(requestVO.getAttachList().get(i));
 				workDao.connect(requestVO.getWorkNo(), attachmentNo);
 				after.add(attachmentNo); // 저장소에 추가
+				
 			}
 		}
 		//작품 정보처리
