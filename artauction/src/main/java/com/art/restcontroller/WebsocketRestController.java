@@ -20,7 +20,8 @@ import com.art.vo.WebsocketBidResponseVO;
 
 @RestController
 @RequestMapping("/auctionchat")
-@CrossOrigin(origins="http://localhost:3000")
+//@CrossOrigin(origins="http://localhost:3000")
+@CrossOrigin
 public class WebsocketRestController {
 
 	@Autowired
