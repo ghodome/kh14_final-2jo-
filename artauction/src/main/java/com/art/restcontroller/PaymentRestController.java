@@ -109,6 +109,7 @@ public class PaymentRestController {
 			paymentDto.setPaymentTotal(responseVO.getAmount().getTotal());//거래금액
 			paymentDto.setPaymentRemain(paymentDto.getPaymentTotal());//취소가능금액
 			paymentDto.setMemberId(claimVO.getMemberId());//구매자ID
+			paymentDto.setDealNo(request.getDealList().get(0).getDealNo());
 			paymentDao.paymentInsert(paymentDto);
 			//[2] 결제 상세 정보 등록
 				for(DealWorkVO vo : request.getDealList()) {

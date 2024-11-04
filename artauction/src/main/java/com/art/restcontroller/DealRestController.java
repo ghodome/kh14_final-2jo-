@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.DealDao;
+import com.art.dto.DealDto;
 import com.art.service.TokenService;
 import com.art.vo.DealWorkVO;
 import com.art.vo.MemberClaimVO;
@@ -36,5 +37,9 @@ public class DealRestController {
 	@PostMapping("/giveup/{dealNo}")
 	public void giveup(@PathVariable int dealNo) {
 		dealDao.updateStatus(dealNo);
+	}
+	@GetMapping("/list")
+	public List<DealWorkVO> dealList(){
+		return dealDao.dealList();
 	}
 }

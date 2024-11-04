@@ -37,4 +37,7 @@ public class DealDao {
 	public List<DealWorkVO> selectGG() {
 		return sqlSession.selectList("deal.detailGG");
 	}
+	public List<DealWorkVO> dealList() {
+		return sqlSession.selectList("deal.dealList");
+	}
 }

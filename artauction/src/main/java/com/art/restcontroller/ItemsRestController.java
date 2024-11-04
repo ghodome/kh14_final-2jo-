@@ -62,29 +62,14 @@ public class ItemsRestController {
 		return itemsDao.rarityList();
 	}
 	//아이템뽑기
-	@Transactional
 	@GetMapping("/randomBox")
     public ItemsDto openRandomBox(
     		@RequestHeader("Authorization")String token) {
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 		MemberDto memberDto = memberDao.selectOne(claimVO.getMemberId());
-		if(memberDto.getMemberPoint()<10000)return null;
-		memberDto.setMemberPoint(memberDto.getMemberPoint()-10000);
-		memberDao.pointUpdate(memberDto);
-		
-        ItemsDto itemsDto =  itemService.getRandomItem(); // 랜덤 아이템 반환
-        if(itemsDto.getIsWin().equals("N"))return itemsDto;
-        else {
-        	//아이템 정보를 인벤토리에 보내고
-        	InventoryDto inventoryDto = new InventoryDto();
-        	inventoryDto.setMemberId(memberDto.getMemberId());
-        	inventoryDto.setItemId(itemsDto.getItemId());
-        	inventoryDto.setItemName(itemsDto.getItemName());
-        	inventoryDto.setItemValue(itemsDto.getItemValue());
-        	inventoryDao.insert(inventoryDto);
-        	//프론트로 아이템 정보를 보낸후
-        	return itemsDto;
-        }
+		ItemsDto itemsDto =  itemService.randomRun(memberDto);
+		if(itemsDto==null)throw new TargetNotFoundException("포인트 부족");
+        return itemsDto;
 	}
 	@DeleteMapping("/{itemId}")
 	public void deleteItem(
