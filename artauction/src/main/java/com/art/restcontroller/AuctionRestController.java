@@ -98,7 +98,7 @@ public class AuctionRestController {
 	public List<AuctionLotListVO> selectAuctionWithImage(
 			@PathVariable int auctionNo){
 		return auctionDao.selectAuctionWithImage(auctionNo);
-	}
+	} 
 	
 	
 //	@GetMapping("/{auctionScheduleNo}")

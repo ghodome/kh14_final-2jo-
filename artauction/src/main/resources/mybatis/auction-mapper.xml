@@ -172,7 +172,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				inner join work_image WI 
 					on A.work_no = WI.work 
 			)
-		where auction_no = #{workNO}
+		where auction_no = #{workNo}
 	</select>
 	
 	
