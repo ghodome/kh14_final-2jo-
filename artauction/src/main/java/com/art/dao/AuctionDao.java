@@ -56,6 +56,11 @@ public class AuctionDao {
 	public List<AuctionScheduleInfoVO> selectAuctionScheduleInfo(int auctionScheduleNo) {
 		return sqlSession.selectList("auction.ScheduleInfo",auctionScheduleNo);
 	}
+	//출품작 상세 이미지 불러오기
+	public List<AuctionLotListVO> selectAuctionWithImage(int auctionNo) {
+		return sqlSession.selectList("auction.workImage",auctionNo);
+	}
+	
 	public void cancelPresent(int auctionNo) {
 		sqlSession.update("auction.cancelPresent",auctionNo);
 	}
@@ -94,4 +99,5 @@ public class AuctionDao {
 		Map data=Map.of("auctionScheduleNo",auctionScheduleNo);
 		sqlSession.update("auction.statusToProgress",data);
 	}
+
 }

@@ -162,6 +162,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_schedule_no = #{auctionScheduleNo}
 	</select>
 	
+	<select id="workImage" resultType="AuctionLotListVO">
+		select * from (
+			select 
+				A.auction_no,
+				A.work_no,
+				WI.attachment
+			From auction A 
+				inner join work_image WI 
+					on A.work_no = WI.work 
+			)
+		where auction_no = #{workNO}
+	</select>
 	
 	
 	<update id="cancelPresent">
