@@ -9,6 +9,6 @@ import lombok.Data;
 public class AuctionScheduleListRequestVO {
 	@JsonDeserialize(using = JsonEmptyStringToNullDeserializer.class)
     private String column, keyword;
-    @JsonDeserialize(using = JsonEmptyStringToNullDeserializer.class)
+//    @JsonDeserialize(using = JsonEmptyStringToNullDeserializer.class)
     private Integer beginRow, endRow;
 }

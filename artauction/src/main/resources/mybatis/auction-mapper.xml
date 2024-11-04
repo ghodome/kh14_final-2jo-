@@ -52,6 +52,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     )
 </insert>
 
+	<!-- 이미지 연결 -->
+	<insert id="connect" parameterType="map">
+		insert into work_image(
+			attachment,
+			work
+		) 
+		values(
+			#{attachment}, 
+			#{work} 
+		)
+	</insert>
+
 	<update id="update">
 		update auction 
 		<set>
@@ -87,7 +99,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="sceduleList" resultType="AuctionDto">
 		select * from auction where auction_schedule_no = #{auctionScheduleNo} order by auction_no asc
 	</select>
-	<select id="scheduleListOrderByLot" resultType="AuctionLotVO">
+	<!-- <select id="scheduleListOrderByLot" resultType="AuctionLotVO">
+		SELECT 
+			A.AUCTION_NO,A.AUCTION_LOT,A.AUCTION_STATE,W.work_title,W.WORK_MATERIALS ,W.WORK_CATEGORY 
+		FROM 
+			work W
+		INNER JOIN 
+			auction A 
+		ON 
+			W.work_no = A.work_no
+		WHERE A.AUCTION_SCHEDULE_NO = #{auctionScheduleNo}
+		order by A.AUCTION_LOT asc
+	</select> -->
+	
+	<!-- 출품목록 불러오기(이미지x)-->
+	<select id="auctionListOrderByLot" resultType="AuctionLotVO">
 		SELECT 
 			A.AUCTION_NO,A.AUCTION_LOT,A.AUCTION_STATE,W.work_title,W.WORK_MATERIALS ,W.WORK_CATEGORY 
 		FROM 
@@ -99,6 +125,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE A.AUCTION_SCHEDULE_NO = #{auctionScheduleNo}
 		order by A.AUCTION_LOT asc
 	</select>
+	
+	<!-- 출품목록 불러오기(이미지포)-->
+	<select id="auctionLotListOrderByLot" resultType="AuctionLotListVO">
+	<![CDATA[
+	    SELECT 
+	        A.auction_no, 
+	        A.auction_lot, 
+	        A.auction_state, 
+	        A.auction_low_price, 
+	        A.auction_high_price, 
+	        A.auction_end_date, 
+	        W.work_title, 
+	        W.work_size, 
+	        W.work_materials, 
+	        W.work_category, 
+	        WI.attachment 
+	    FROM 
+	        auction A 
+	        JOIN work W ON A.work_no = W.work_no 
+	        JOIN work_image WI ON W.work_no = WI.work 
+	    WHERE 
+	        A.auction_schedule_no = #{auctionScheduleNo} 
+	    ORDER BY 
+	        A.auction_lot ASC
+    ]]>
+	</select>
+	
+	<select id="ScheduleInfo" resultType="AuctionScheduleInfoVO">
+		select 
+			auction_schedule_title, 
+			auction_schedule_end_date 
+		from 
+			auction_schedule 
+		where 
+			auction_schedule_no = #{auctionScheduleNo}
+	</select>
+	
+	
+	
 	<update id="cancelPresent">
 		update auction set auction_state='출품취소' where auction_no = #{auctionNo}
 	</update>

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import com.art.dto.AuctionDataCollectionDto;
 import com.art.dto.AuctionDto;
 import com.art.vo.AuctionLotDetailVO;
+import com.art.vo.AuctionLotListVO;
 import com.art.vo.AuctionLotVO;
+import com.art.vo.AuctionScheduleInfoVO;
 
 @Repository
 public class AuctionDao {
@@ -42,8 +44,17 @@ public class AuctionDao {
 	public int sequence() {
 		return sqlSession.selectOne("auction.sequence");
 	}
+	//출품목록(사진x)
 	public List<AuctionLotVO> selectAuctionListWithJoin(int auctionScheduleNo) {
-		return sqlSession.selectList("auction.scheduleListOrderByLot",auctionScheduleNo);
+		return sqlSession.selectList("auction.auctionListOrderByLot",auctionScheduleNo);
+	}
+	//출품목록(사진+페이징)
+	public List<AuctionLotListVO> selectAuctionLotListWithJoin(int auctionScheduleNo) {
+		return sqlSession.selectList("auction.auctionLotListOrderByLot",auctionScheduleNo);
+	}
+	//출품목록 일정 타이틀+종료날짜 불러오기
+	public List<AuctionScheduleInfoVO> selectAuctionScheduleInfo(int auctionScheduleNo) {
+		return sqlSession.selectList("auction.ScheduleInfo",auctionScheduleNo);
 	}
 	public void cancelPresent(int auctionNo) {
 		sqlSession.update("auction.cancelPresent",auctionNo);
