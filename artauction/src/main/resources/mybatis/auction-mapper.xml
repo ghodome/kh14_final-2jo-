@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         #{auctionConsigner},
         #{auctionConsignmentFee},
         #{auctionStartPrice},
-        #{auctionBidPrice},
+        #{auctionStartPrice},
         #{auctionBidIncrement},
         #{auctionStartDate},
         <if test="auctionLot == null or auctionLot == ''">
