@@ -1,7 +1,6 @@
 package com.art.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,14 @@ public class AuctionDao {
 	@Autowired
 	private SqlSession sqlSession;
 	
+	//출품등록
+	public int sequence() {
+		return sqlSession.selectOne("auction.sequence");
+	}
 	public void insert(AuctionDto auctionDto) {
 		sqlSession.insert("auction.add",auctionDto);
-	};
+	}
+	
 	public boolean update(AuctionDto auctionDto) {
 		return sqlSession.update("auction.update",auctionDto)>0;
 	}; 
@@ -38,12 +42,11 @@ public class AuctionDao {
 	public List<AuctionDto> sceduleList(int auctionScheduleNo){
 		return sqlSession.selectList("auction.sceduleList",auctionScheduleNo);
 	};
+	
 	public List<AuctionDataCollectionDto> selectDataCollectionList(int auctionScheduleNo){
 		return sqlSession.selectList("auctionData.list",auctionScheduleNo);
 	};
-	public int sequence() {
-		return sqlSession.selectOne("auction.sequence");
-	}
+	
 	//출품목록(사진x)
 	public List<AuctionLotVO> selectAuctionListWithJoin(int auctionScheduleNo) {
 		return sqlSession.selectList("auction.auctionListOrderByLot",auctionScheduleNo);
@@ -71,27 +74,5 @@ public class AuctionDao {
 //		Map map=Map.of("auctionNo",auctionNo,"bidPrice",bidPrice);
 //		return sqlSession.selectOne("auction.selectOneByBidPrice",map)==0;
 //	}
-	public void selectBidInfo(int auctionNo) {
-		
-	}
-	public List<Integer> selectListStarted(String time){
-		Map data=Map.of("time",time);
-		return sqlSession.selectList("auction.selectListStarted",data);
-	}
-	public List<Integer> selectListTerminated(String time){
-		Map data=Map.of("time",time);
-		return sqlSession.selectList("auction.selectListTerminated",data);
-	}
-	public void changeStateProgress(int auctionNo) {
-		Map data=Map.of("auctionNo",auctionNo);
-		sqlSession.update("auction.changeStateProgress",data);
-	}
-	public void changeStateTerminated(int auctionNo) {
-		Map data=Map.of("auctionNo",auctionNo);
-		sqlSession.update("auction.changeStateTerminated",data);
-	}
-	public void statusToProgress(Integer auctionScheduleNo) {
-		Map data=Map.of("auctionScheduleNo",auctionScheduleNo);
-		sqlSession.update("auction.statusToProgress",data);
-	}
+	
 }
