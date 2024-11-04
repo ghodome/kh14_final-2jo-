@@ -2,6 +2,7 @@ package com.art.restcontroller;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -10,12 +11,15 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.art.dao.RoomDao;
 import com.art.dao.RoomMessageDao;
 import com.art.dto.RoomMessageDto;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
+import com.art.vo.RoomMessageVO;
 import com.art.vo.WebSocketRequestVO;
 import com.art.vo.WebSocketResponseVO;
 
@@ -70,5 +74,11 @@ public class RoomMessageController {
 		roomMessageDto.setRoomNo(roomNo);//전체 채팅과 다른점
 		roomMessageDao.insert(roomMessageDto);
 	}
+	//채팅 내용 목록 띠유기
+	 @GetMapping("/messages/{roomNo}")
+	    public List<RoomMessageVO> messageVO(@PathVariable int roomNo) {
+	        return roomMessageDao.selectMessagesByRoomNo(roomNo);
+	    }
+	
 	
 }

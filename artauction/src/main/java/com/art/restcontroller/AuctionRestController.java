@@ -1,6 +1,5 @@
 package com.art.restcontroller;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +57,6 @@ public class AuctionRestController {
 			bidIncrement = 10000000;
 		auctionDto.setAuctionBidIncrement(bidIncrement);
 		
-//		종료 시간을 (lot/10)*5분씩 더해주기
-		Calendar cal = Calendar.getInstance();
-		log.info("auctionDto ={}",auctionDto);
 		auctionDao.insert(auctionDto);
 	}
 	@PatchMapping("/")

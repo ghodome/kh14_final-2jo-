@@ -14,5 +14,7 @@ public class DealDto {
     private Date dealTime;
     private int dealPrice;
     private String dealStatus;
+    private Date dealCancelTime;
+    private Date dealEndTime;
 
 }

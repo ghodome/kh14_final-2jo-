@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.art.dto.MemberDto;
@@ -14,6 +15,9 @@ public class MemberService {
 
 	@Autowired
 	private SqlSession sqlSession;
+	
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@Autowired
 	private EmailService emailService;
@@ -44,12 +48,13 @@ public class MemberService {
 	}
 
 
-	public boolean resetPassword(String memberId, String newPassword, String token) {
+	public boolean resetPassword(String newPw, String token) {
 		MemberTokenDto tokenDto = sqlSession.selectOne("member.findByToken", token);
 
-		if (tokenDto != null && tokenDto.getTokenTarget().equals(memberId)) {
+		if (tokenDto != null) {
+			String memberId = tokenDto.getTokenTarget();
 			MemberDto memberDto = sqlSession.selectOne("member.find", memberId);
-			memberDto.setMemberPw(newPassword);
+			memberDto.setMemberPw(encoder.encode(newPw));
 			sqlSession.update("member.save", memberDto);
 			sqlSession.delete("member.deleteToken", token);
 			return true;

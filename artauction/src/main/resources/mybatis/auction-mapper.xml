@@ -120,5 +120,58 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select count(*) from auction
 		where auction_no=#{auctionNo} and auction_bid_price=#{auctionBidPrice}
 	</select>
-
+	<update id="changeStateProgress">
+		update 
+			auction
+		set
+			auction_state='진행경매'
+		where
+			auction_no=#{auctionNo}
+	</update>
+	<update id="changeStateTerminated">
+		update 
+			auction
+		set
+			auction_state='종료경매'
+		where
+			auction_no=#{auctionNo}
+	</update>
+	<select id="selectListStarted" resultType="Integer">
+		<![CDATA[ 
+			select
+				auction_no
+			from
+				auction
+			where 
+				auction_start_date<to_timestamp(
+					#{time},
+					'yyyy-mm-dd hh24:mi:ss'
+				)
+				and
+				auction_state='예정경매'
+		]]>
+	</select>
+	<select id="selectListTerminated" resultType="Integer">
+		<![CDATA[ 
+			select
+				auction_no
+			from
+				auction
+			where
+				auction_end_date<to_timestamp(
+					#{time},
+					'yyyy-mm-dd hh24:mi:ss'
+				)
+				and
+				auction_state='진행경매'
+		]]>
+	</select>
+	<update id="statusToProgress">
+		update
+			auction
+		set 
+			auction_state='진행경매'
+		where
+			auction_schedule_no=#{auctionScheduleNo}
+	</update>
 </mapper>

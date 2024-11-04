@@ -22,6 +22,11 @@ public class FaqDao {
 		return sqlSession.selectList("faq.list");
 	}
 
+	// 시퀀스 생성
+	public int sequence() {
+		return sqlSession.selectOne("faq.sequence");
+	}
+
 	// 등록
 	public void insert(FaqDto faqDto) {
 		sqlSession.insert("faq.registration", faqDto);
@@ -39,6 +44,12 @@ public class FaqDao {
 		params.put("column", column);
 		params.put("keyword", keyword);
 		return sqlSession.selectList("faq.search", params);
+	}
+
+	// 수정
+	public boolean update(FaqDto faqDto) {
+		int result = sqlSession.update("faq.update", faqDto);
+		return result > 0;
 	}
 
 }

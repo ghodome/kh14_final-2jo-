@@ -26,4 +26,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getListByBidNo" resultType="BidDto">
 		select * from bid where bid_no=#{bidNo}
 	</select>
+	<select id="selectSuccessBid" resultType="BidDto">
+		select 
+			* 
+		from 
+			bid
+		where 
+			auction_no=#{auctionNo} 
+		order by
+			bid_no asc;
+	</select>
+	
 </mapper>

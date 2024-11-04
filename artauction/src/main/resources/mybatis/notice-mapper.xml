@@ -6,37 +6,37 @@
 
 	<!-- 시퀀스 생성 -->
 	<select id="sequence" resultType="int">
-		select notice_seq.nextval from dual
+		select notice_seq.nextval from
+		dual
 	</select>
 
 	<!-- 등록 -->
 	<insert id="registration">
-		insert into notice
-		(
-		notice_no, notice_member_id,
+		insert into notice (
+		notice_no,
+<!-- 		notice_member_id, -->
 		notice_type, notice_title,
-		notice_content, notice_wtime,
-		notice_views
-		)
-		values
-		(
-		#{noticeNo}, #{noticeMemberId},
+		notice_content
+		) values (
+		#{noticeNo},
+<!-- 		 #{noticeMemberId}, -->
 		#{noticeType}, #{noticeTitle},
-		#{noticeContent}, #{noticeWtime},
-		#{noticeViews}
+		#{noticeContent}
 		)
 	</insert>
 
 	<!-- 목록 -->
 	<select id="list" resultType="NoticeDto">
-		select * from notice order by notice_no asc
+		select * from notice order by
+		notice_no asc
 	</select>
 
 	<!-- 상세 -->
 	<select id="detail" resultType="NoticeDto">
-		select * from notice where notice_no = #{noticeNo}
+		select * from notice where
+		notice_no = #{noticeNo}
 	</select>
-	
+
 	<!-- 검색 -->
 	<select id="search" resultType="NoticeDto">
 	<![CDATA[
@@ -45,9 +45,19 @@
 	order by ${column} asc
 	]]>
 	</select>
-	
+
 	<!-- 삭제 -->
 	<delete id="remove">
-	delete notice where notice_no = #{noticeNo}
+		delete notice where notice_no = #{noticeNo}
 	</delete>
+	
+	<!-- 수정 -->
+	<update id="update">
+	update notice set
+	notice_type = #{noticeType},
+	notice_title = #{noticeTitle},
+	notice_content = #{noticeContent}
+	where notice_no = #{noticeNo}
+	</update>
+	
 </mapper>

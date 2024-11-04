@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,8 +53,8 @@ public class WorkRestController {
 	
 	@Transactional
 	@PostMapping(value="/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public void insert(@ModelAttribute WorkInsertRequestVO workInsertRequestVO) throws IllegalStateException, IOException {
-		
+	public void insert(
+			@ModelAttribute WorkInsertRequestVO workInsertRequestVO) throws IllegalStateException, IOException {
 
 	    // 작품 정보 생성
 	    int workNo = workDao.sequence();
@@ -104,7 +103,7 @@ public class WorkRestController {
 	
 	@DeleteMapping("/{workNo}")
 		public void delete(@PathVariable int workNo) {
-			WorkListVO workListVO = workDao.selectOne(workNo);
+			WorkListVO workListVO = workDao.selectListOne(workNo); 
 		if(workListVO == null) throw new TargetNotFoundException("존재하지 않는 상품 번호");
 		
 		List<Integer> list = workDao.findImages(workNo);
@@ -116,7 +115,6 @@ public class WorkRestController {
 		workDao.delete(workNo); // 상품 정보 삭제
 		workDao.deleteImage(workNo); // 연결 테이블 정보 삭제
 	}
- 
 	//수정 이미지 포함
 	@Transactional
 	@PostMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -172,7 +170,6 @@ public class WorkRestController {
 		workDao.update(workListVO);
 		
 	}
-
 //	@PatchMapping("/")
 //	public void update(@RequestBody  WorkArtistVO workArtistVO) {
 //		boolean result = workDao.update(workArtistVO);

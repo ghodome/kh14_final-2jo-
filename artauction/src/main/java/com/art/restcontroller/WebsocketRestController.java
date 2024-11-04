@@ -38,8 +38,10 @@ public class WebsocketRestController {
 			@RequestHeader("Authorization") String token) throws ParseException {
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
 		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
-		messagingTemplate.convertAndSend("/auction/progress",response);
-		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
+		if(response.isSuccess()) {
+			messagingTemplate.convertAndSend("/auction/progress",response);
+			messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
+		}
 		return response;
 	}
 }

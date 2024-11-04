@@ -1,5 +1,6 @@
 package com.art.dao;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.art.dto.AuctionScheduleDto;
+import com.art.vo.AuctionDataCollectionListVO;
 import com.art.vo.AuctionScheduleListRequestVO;
-import com.art.vo.AuctionScheduleRequestVO;
 
 
 @Repository
@@ -23,22 +24,22 @@ public class AuctionScheduleDao {
 	public int sequence() {
 		return sqlSession.selectOne("auctionSchedule.sequence");
 	}
-	public void insert(AuctionScheduleDto auctionScheduleDto) {
-		sqlSession.insert("auctionSchedule.insert", auctionScheduleDto);
+	public void insert(AuctionScheduleListVO auctionScheduleListVO) {
+		sqlSession.insert("auctionSchedule.insert", auctionScheduleListVO);
 	}
 	
 	//일정목록
-	public List<AuctionScheduleDto> selectList(){
-		return sqlSession.selectList("auctionSchedule.list");
-	}
+//	public List<AuctionScheduleDto> selectList(){
+//		return sqlSession.selectList("auctionSchedule.list");
+//	}
 	
 	//일정상세
-	public AuctionScheduleDto selectOne(int auctionScheduleNo) {
+	public AuctionScheduleListVO selectOne(int auctionScheduleNo) {
 		return sqlSession.selectOne("auctionSchedule.detail", auctionScheduleNo);
 	}
 	
 	//일정상세(이미지포함)
-		public AuctionScheduleDto selectOneImage(int auctionScheduleNo) {
+		public AuctionScheduleListVO selectOneImage(int auctionScheduleNo) {
 			return sqlSession.selectOne("auctionSchedule.detailall", auctionScheduleNo);
 	}
 	
@@ -48,8 +49,8 @@ public class AuctionScheduleDao {
 	}
 	
 	//일정수정(이미지포함)
-		public boolean updateall(AuctionScheduleDto auctionScheduleDto) {
-			return sqlSession.update("auctionSchedule.updateall", auctionScheduleDto) > 0;
+		public boolean updateAll(AuctionScheduleListVO auctionScheduleListVO) {
+			return sqlSession.update("auctionSchedule.updateall", auctionScheduleListVO) > 0;
 		}
 	
 	//일정삭제
@@ -73,10 +74,10 @@ public class AuctionScheduleDao {
 	}
 	
 	//이미지 연결기능
-	public void connect(int auction, int attachment) {
+	public void connect(int auctionScheduleNo, int attachmentNo) {
 		Map<String, Object> params = new HashMap<>();
-		params.put("auction", auction);
-		params.put("attachment", attachment);
+		params.put("auction", auctionScheduleNo);
+		params.put("attachment", attachmentNo);
 		sqlSession.insert("auctionSchedule.connect", params);
 	}
 
@@ -86,8 +87,28 @@ public class AuctionScheduleDao {
 	}
 	
 	// 목록 페이징+검색 
-	public List<AuctionScheduleDto> selectListByPaging(AuctionScheduleListRequestVO listRequestVO) {
+	public List<AuctionScheduleListVO> selectListByPaging(AuctionScheduleListRequestVO listRequestVO) {
 		return sqlSession.selectList("auctionSchedule.list", listRequestVO);
+	}
+	//경매시작시간 해당 리스트 출력 메서드
+	public List<Integer> selectListStarted(String startTime){
+		Map model=Map.of("startTime",startTime);
+		return sqlSession.selectList("auctionSchedule.listStarted",model);
+	}
+	//경매종료시간 해당 리스트 검사 메서드
+	public List<Integer> selectListTerminated(String endTime){
+		Map model=Map.of("endTime",endTime);
+		return sqlSession.selectList("auctionSchedule.listTerminated",model);
+	}
+	//예정경매 -> 진행경매 상태변경
+	public void statusToProgress(int auctionScheduleNo) {
+		Map model=Map.of("auctionScheduleNo",auctionScheduleNo);
+		sqlSession.update("auctionSchedule.statusToProgress",model);
+	}
+	//진행경매 -> 종료경매 상태변경
+	public void statusToTemination(int auctionScheduleNo) {
+		Map model=Map.of("auctionScheduleNo",auctionScheduleNo);
+		sqlSession.update("auctionSchedule.statusToTermination",model);
 	}
 	
 	
