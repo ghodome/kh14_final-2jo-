@@ -18,6 +18,7 @@ import com.art.dao.NoticeDao;
 import com.art.dto.NoticeDto;
 import com.art.error.TargetNotFoundException;
 
+
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @CrossOrigin
@@ -80,4 +81,5 @@ public class NoticeRestController {
 		boolean result = noticeDao.update(noticeDto);
 		if(result == false) throw new TargetNotFoundException();
 	}
+	
 }
