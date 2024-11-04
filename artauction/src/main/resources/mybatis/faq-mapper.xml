@@ -20,9 +20,9 @@
 	<!-- 등록 -->
 	<insert id="registration">
 		insert into faq(
-		faq_no, faq_type, faq_content
+		faq_no, faq_type, faq_title, faq_content
 		)values(
-		#{faqNo}, #{faqType}, #{faqContent}
+		#{faqNo}, #{faqType}, #{faqTitle}, #{faqContent}
 		)
 	</insert>
 
