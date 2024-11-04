@@ -16,7 +16,7 @@ import com.art.vo.AuctionContentVO;
 import com.art.vo.WebsocketBidResponseVO;
 
 @RestController
-@CrossOrigin(origins="http://localhost:3000")
+@CrossOrigin
 @RequestMapping("/bid")
 public class BidRestController {
 	

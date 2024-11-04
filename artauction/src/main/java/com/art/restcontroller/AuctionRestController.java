@@ -93,6 +93,15 @@ public class AuctionRestController {
 			@PathVariable int auctionScheduleNo){
 		return auctionDao.selectAuctionScheduleInfo(auctionScheduleNo);
 	}
+	
+	//출품작 상세 이미지 불러오기
+	@GetMapping("/workImage/{auctionNo}")
+	public List<AuctionLotListVO> selectAuctionWithImage(
+			@PathVariable int auctionNo){
+		return auctionDao.selectAuctionWithImage(auctionNo);
+	} 
+	
+	
 //	@GetMapping("/{auctionScheduleNo}")
 //	public List<AuctionDataCollectionDto> collectionList(@PathVariable int auctionScheduleNo ) {
 //		return auctionDao.selectDataCollectionList(auctionScheduleNo);
