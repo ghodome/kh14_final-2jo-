@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.art.dao.AuctionDao;
-import com.art.dto.AuctionDataCollectionDto;
 import com.art.dto.AuctionDto;
 import com.art.vo.AuctionLotDetailVO;
+import com.art.vo.AuctionLotListVO;
 import com.art.vo.AuctionLotVO;
+import com.art.vo.AuctionScheduleInfoVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,15 +72,35 @@ public class AuctionRestController {
 	public void delete(@PathVariable int auctionNo) {
 		auctionDao.delete(auctionNo);
 	}
+	
+	//출품작불러오기(일정상세페이지)
 	@GetMapping("/{auctionScheduleNo}")
-	public List<AuctionDataCollectionDto> collectionList(@PathVariable int auctionScheduleNo ) {
-		return auctionDao.selectDataCollectionList(auctionScheduleNo);
-	}
-	@GetMapping("/auctionList/{auctionScheduleNo}")
 	public List<AuctionLotVO> auctionListWithJoin(@PathVariable int auctionScheduleNo){
 		return auctionDao.selectAuctionListWithJoin(auctionScheduleNo);
-		
 	}
+	
+	//출품작불러오기(경매목록)
+	@GetMapping("/auctionLotList/{auctionScheduleNo}")
+	public List<AuctionLotListVO> auctionCollectionListWithJoin(
+			@PathVariable int auctionScheduleNo){
+		return auctionDao.selectAuctionLotListWithJoin(auctionScheduleNo);
+	}
+	
+	//경매일정 정보 불러오기
+	@GetMapping("/auctionScheduleInfo/{auctionScheduleNo}")
+	public List<AuctionScheduleInfoVO> auctionScheduleInfo(
+			@PathVariable int auctionScheduleNo){
+		return auctionDao.selectAuctionScheduleInfo(auctionScheduleNo);
+	}
+//	@GetMapping("/{auctionScheduleNo}")
+//	public List<AuctionDataCollectionDto> collectionList(@PathVariable int auctionScheduleNo ) {
+//		return auctionDao.selectDataCollectionList(auctionScheduleNo);
+//	}
+//	@GetMapping("/auctionList/{auctionScheduleNo}")
+//	public List<AuctionLotVO> auctionListWithJoin(@PathVariable int auctionScheduleNo){
+//		return auctionDao.selectAuctionListWithJoin(auctionScheduleNo);
+//		
+//	}
 	@GetMapping("/cancelPresent/{auctionNo}")
 	public void cancelPresent(@PathVariable int auctionNo) {
 		auctionDao.cancelPresent(auctionNo);
