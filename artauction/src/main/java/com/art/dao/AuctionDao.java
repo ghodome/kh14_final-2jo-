@@ -43,6 +43,7 @@ public class AuctionDao {
 	};
 	public int sequence() {
 		return sqlSession.selectOne("auction.sequence");
+		
 	}
 	//출품목록(사진x)
 	public List<AuctionLotVO> selectAuctionListWithJoin(int auctionScheduleNo) {
