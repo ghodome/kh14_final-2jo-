@@ -43,6 +43,7 @@ public class ItemService {
 	            item.setChance(chanceForLoss);
 	        }
 	      
+	       
 	        itemsDao.update(item);
 	    }
 	}
@@ -53,22 +54,21 @@ public class ItemService {
 		updateChance();
 	}
 	
-	// 랜덤 아이템 반환 메서드 (게임 진행)
 	public ItemsDto getRandomItem() {
 	    List<ItemsDto> items = itemsDao.list();
-	    int totalChance = 0;
+	    double totalChance = 0; // double형으로 수정
 
 	    // 각 아이템의 총 확률 계산
 	    for (ItemsDto item : items) {
 	        totalChance += item.getChance();
 	    }
 
-	    // 랜덤 값 생성
+	    // 랜덤 값 생성 (0.00 ~ 100.00)
 	    Random random = new Random();
-	    int randomValue = random.nextInt(totalChance); // 0 ~ totalChance - 1
+	    double randomValue = random.nextDouble() * 100; // 0.0 ~ 100.0
 
 	    // 아이템 선택
-	    int cumulativeChance = 0;
+	    double cumulativeChance = 0; // double형으로 수정
 	    for (ItemsDto item : items) {
 	        cumulativeChance += item.getChance();
 	        if (randomValue < cumulativeChance) {
