@@ -1,5 +1,6 @@
 package com.art.service;
 
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ import com.art.dao.BidDao;
 import com.art.dao.DealDao;
 import com.art.dto.BidDto;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class DealService {
 	@Autowired
@@ -32,10 +36,13 @@ public class DealService {
 		Timestamp time=new Timestamp(System.currentTimeMillis());
 		String fmtTime=dateFormat.format(time);
 		List<Integer> auctionNoList=auctionDao.selectListTerminated(fmtTime);
-		List<BidDto> bidList=new ArrayList<BidDto>();
-		for(Integer auctionNo:auctionNoList) {
-			auctionDao.changeStateTerminated(auctionNo);
-			bidList.add(bidDao.selectOneByAuctionNo(auctionNo));
+		if(auctionNoList.size()>0) {
+			List<BidDto> bidList=new ArrayList<BidDto>();
+			for(Integer auctionNo:auctionNoList) {
+				auctionDao.changeStateTerminated(auctionNo);
+				bidList.add(bidDao.selectOneByAuctionNo(auctionNo));
+			}
+			log.info("bidList={}",bidList);
 		}
 	}
 	
