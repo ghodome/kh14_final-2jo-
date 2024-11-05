@@ -19,12 +19,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<select id="detailVO" resultType="dealWorkVO">
 		SELECT d.*, w.work_title, ar.artist_name
-FROM deal d
-JOIN bid b ON d.bid_no = b.bid_no
-JOIN auction a ON b.auction_no = a.auction_no
-JOIN work w ON a.work_no = w.work_no
-JOIN artist ar ON w.artist_no = ar.artist_no
-WHERE deal_no=#{dealNo}
+		FROM deal d
+		JOIN bid b ON d.bid_no = b.bid_no
+		JOIN auction a ON b.auction_no = a.auction_no
+		JOIN work w ON a.work_no = w.work_no
+		JOIN artist ar ON w.artist_no = ar.artist_no
+		WHERE deal_no=#{dealNo}
 	</select>
 	<update id="updateStatus">
 	update deal set deal_status = '낙찰포기', deal_cancel_time = SYSDATE where deal_no=#{dealNo}
@@ -49,5 +49,26 @@ WHERE deal_no=#{dealNo}
 		values(
 			deal_seq.nextval,#{bidNo},#{dealBuyer},#{dealTime},#{dealPrice},#{dealStatus}
 		)
+	</insert>
+	<insert id="insertByAuction">
+		INSERT INTO deal (
+		    deal_no, bid_no, deal_buyer, deal_time, deal_price, deal_status, deal_end_time
+		)
+		SELECT 
+		    deal_seq.nextval, 
+		    bid_no, 
+		    auction_success_bidder, 
+		    auction_end_date,      
+		    auction_bid_price,             
+		    '결제대기', 
+		    SYSDATE + 7
+		FROM (
+		    SELECT * 
+		    FROM auction a 
+		    INNER JOIN bid b ON b.auction_no = a.auction_no 
+		    WHERE a.auction_no = #{auctionNo}
+		    ORDER BY b.bid_no DESC
+		) 
+		WHERE ROWNUM = 1
 	</insert>
 </mapper>

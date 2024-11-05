@@ -31,25 +31,19 @@ public class DealService {
 	
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	@Scheduled(cron="1,31 * * * * *")
+	@Scheduled(cron="2,32 * * * * *")
 	public void manageTerminate() {
 		Timestamp time=new Timestamp(System.currentTimeMillis());
 		String fmtTime=dateFormat.format(time);
 		List<Integer> auctionNoList=auctionDao.selectListTerminated(fmtTime);
+
 		if(auctionNoList.size()>0) {
-			List<BidDto> bidList=new ArrayList<BidDto>();
 			for(Integer auctionNo:auctionNoList) {
-				auctionDao.changeStateTerminated(auctionNo);
-				bidList.add(bidDao.selectOneByAuctionNo(auctionNo));
+				log.info("auctionNo={}",auctionNo);
+//				auctionDao.changeStateTerminated(auctionNo);
+				log.info("result={}",dealDao.insertByAuction(auctionNo));
 			}
-			log.info("bidList={}",bidList);
 		}
 	}
-	
-	@Scheduled(cron="* * * * * *")
-	public void manageDeal() {
-		
-	}
-	
 	
 }

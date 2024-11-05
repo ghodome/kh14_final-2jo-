@@ -56,9 +56,8 @@ public class AuctionRestController {
 			bidIncrement = 5000000;
 		else 
 			bidIncrement = 10000000;
+		log.info("tq");
 		auctionDto.setAuctionBidIncrement(bidIncrement);
-		auctionDto.setAuctionEndDate(null);
-		log.info("auctionDto={}",auctionDto);
 		auctionDao.insert(auctionDto);
 	}
 	@PatchMapping("/")

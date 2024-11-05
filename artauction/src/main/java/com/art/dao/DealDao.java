@@ -2,15 +2,18 @@ package com.art.dao;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.art.dto.DealDto;
-
 import com.art.vo.DealWorkVO;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Repository
 public class DealDao {
 	@Autowired
@@ -36,5 +39,10 @@ public class DealDao {
 	}
 	public List<DealWorkVO> selectGG() {
 		return sqlSession.selectList("deal.detailGG");
+	}
+	public boolean insertByAuction(Integer auctionNo) {
+		Map data = Map.of("auctionNo",auctionNo);
+		log.info("낙찰 작성 중");
+		return sqlSession.insert("deal.insertByAuction",data)>0;
 	}
 }

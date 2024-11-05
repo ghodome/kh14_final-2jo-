@@ -79,8 +79,8 @@ public class AuctionScheduleRestController {
 		int count = auctionScheduleDao.countWithPaging(listRequestVO);
 		boolean last = listRequestVO.getEndRow() == null || count <= listRequestVO.getEndRow();
 		
-		Integer beginRow = listRequestVO.getBeginRow() != null ? listRequestVO.getBeginRow() : 1;
-		Integer endRow = listRequestVO.getEndRow() != null ?  listRequestVO.getEndRow() : count;
+		Integer beginRow = listRequestVO.getBeginRow() != null ? 1 : listRequestVO.getBeginRow();
+		Integer endRow = listRequestVO.getEndRow() != null ?  count : listRequestVO.getEndRow();
 		listRequestVO.setBeginRow(beginRow);
 	    listRequestVO.setEndRow(endRow);
 	    
