@@ -1,5 +1,6 @@
 package com.art.service;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,7 +58,16 @@ public class AuctionService2 {
 		int newBidPrice=bidPrice+bidIncrement;
 		
 		AuctionDto auctionDto = auctionDao.selectOne(auctionNo);
+		Timestamp requestTimestamp = new Timestamp(fmt.parse(requestTime).getTime());
+	    
+	    Timestamp auctionEndTime = auctionDto.getAuctionEndDate();
+	    
+	    long timeDifference = Math.abs(requestTimestamp.getTime() - auctionEndTime.getTime());
+	    
+	    long timeDifferenceInSeconds = timeDifference / 1000;
 		AuctionDto auctionNewDto=new AuctionDto();
+		if(timeDifferenceInSeconds<30) 
+			auctionNewDto.setAuctionEndDate(new Timestamp(auctionEndTime.getTime() + 30 * 1000));
 		int bidNewIncrement;
 
 		if (bidPrice+bidIncrement < 1000000)
@@ -121,11 +131,9 @@ public class AuctionService2 {
 				refundPointDto.setPointStatus("상회입찰");
 				refundPointDto.setMemberId(refunder);
 				pointDao.insert(refundPointDto);
-				log.info("환불받는사람={},환불금액={}",refunder,bidPrice);
 				memberDao.refundPoint(bidPrice, refunder);
 			}
 			pointDao.insert(reducePointDto);
-			log.info("응찰자={},응찰금액={}",memberId,newBidPrice);
 			memberDao.reducePoint(newBidPrice,memberId);
 		}
 		else {
