@@ -81,6 +81,36 @@ public class AuctionScheduleRestController {
 		
 		Integer beginRow = listRequestVO.getBeginRow() != null ? 1 : listRequestVO.getBeginRow();
 		Integer endRow = listRequestVO.getEndRow() != null ?  count : listRequestVO.getEndRow();
+		
+//		Integer beginRow = listRequestVO.getBeginRow() != null ? listRequestVO.getBeginRow() : 1;
+//		Integer endRow = listRequestVO.getEndRow() != null ?  listRequestVO.getEndRow() : count;
+		
+		listRequestVO.setBeginRow(beginRow);
+	    listRequestVO.setEndRow(endRow);
+	    
+		
+		AuctionScheduleListResponseVO listResponseVO = new AuctionScheduleListResponseVO();
+		listResponseVO.setAuctionScheduleList(auctionScheduleDao.selectListByPaging(listRequestVO));
+		listResponseVO.setCount(count);
+		listResponseVO.setLast(last);
+
+		return listResponseVO;
+	}
+	
+	//홈에서 불러내는 목록 조회
+	@PostMapping("/home")
+	public AuctionScheduleListResponseVO homeList(@RequestBody AuctionScheduleListRequestVO listRequestVO) {
+
+		//페이징 정보 정리
+		int count = auctionScheduleDao.countWithPaging(listRequestVO);
+		boolean last = listRequestVO.getEndRow() == null || count <= listRequestVO.getEndRow();
+		
+//		Integer beginRow = listRequestVO.getBeginRow() != null ? 1 : listRequestVO.getBeginRow();
+//		Integer endRow = listRequestVO.getEndRow() != null ?  count : listRequestVO.getEndRow();
+		
+		Integer beginRow = listRequestVO.getBeginRow() != null ? listRequestVO.getBeginRow() : 1;
+		Integer endRow = listRequestVO.getEndRow() != null ?  listRequestVO.getEndRow() : count;
+		
 		listRequestVO.setBeginRow(beginRow);
 	    listRequestVO.setEndRow(endRow);
 	    
