@@ -114,4 +114,21 @@
      <= 10
      ]]>
 	</select>
+	<select id="detailId" resultType="PaymentDetailVO">
+		SELECT pd.payment_detail_no,pd.payment_detail_name,pd.payment_detail_price,p.member_id,
+		pd.payment_detail_origin 
+ 		from payment_detail pd
+ 		LEFT JOIN 
+ 		payment p ON p.payment_no = pd.payment_detail_origin
+ 		where pd.payment_detail_status='승인'
+	</select>
+	<select id="findDetailOne" resultType="paymentDetailDto">
+		select * from payment_detail where payment_detail_no=#{paymentDetailNo}
+	</select>
+	<update id="updateDetailStatus">
+		update payment_detail set payment_detail_status = '취소' where payment_detail_no=#{paymentDetailNo}
+	</update>
+	<update id="updatePaymentRemain">
+		update payment set payment_remain = #{paymentRemain} where payment_no = #{paymentNo}
+	</update>
   </mapper>

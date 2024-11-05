@@ -22,6 +22,7 @@ import com.art.dto.PaymentDto;
 import com.art.error.TargetNotFoundException;
 import com.art.service.KakaoPayService;
 import com.art.service.TokenService;
+import com.art.vo.CancelResponseVO;
 import com.art.vo.DealWorkVO;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.PaymentApproveRequestVO;
@@ -29,9 +30,11 @@ import com.art.vo.PaymentMemberVO;
 import com.art.vo.PaymentPurchaseRequestVO;
 import com.art.vo.pay.KakaoPayApproveRequestVO;
 import com.art.vo.pay.KakaoPayApproveResponseVO;
+import com.art.vo.pay.KakaoPayCancelRequestVO;
+import com.art.vo.pay.KakaoPayCancelResponseVO;
 import com.art.vo.pay.KakaoPayReadyRequestVO;
 import com.art.vo.pay.KakaoPayReadyResponseVO;
-
+import com.art.vo.pay.PaymentDetailVO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -128,6 +131,21 @@ public class PaymentRestController {
 				
 			return responseVO;
 		}
+		@Transactional
+		@PostMapping("/cancel")
+		public KakaoPayCancelResponseVO cancel(@RequestBody CancelResponseVO cancelResponseVO ) throws URISyntaxException {
+			KakaoPayCancelRequestVO kakaoPayCancelRequestVO = new KakaoPayCancelRequestVO();
+			kakaoPayCancelRequestVO.setCancelAmount((int)(cancelResponseVO.getPaymentDetailPrice()*0.7));
+			PaymentDto paymentDto =  paymentDao.selectOne(cancelResponseVO.getPaymentDetailOrigin());
+			paymentDto.setPaymentRemain(((int)(paymentDto.getPaymentTotal()*0.7))-kakaoPayCancelRequestVO.getCancelAmount());
+			kakaoPayCancelRequestVO.setTid(paymentDto.getPaymentTid());
+			KakaoPayCancelResponseVO response = kakaoPayService.cancel(kakaoPayCancelRequestVO);
+			paymentDao.updatePaymentRemain(paymentDto);
+			paymentDao.updateDetailStatus(cancelResponseVO.getPaymentDetailNo());
+			 return response;
+		}
+		
+		
 		@GetMapping("/rank")
 		public List<PaymentMemberVO> buyRank(){
 			List<PaymentMemberVO> list =paymentDao.selectRankList();
@@ -137,5 +155,9 @@ public class PaymentRestController {
 		public List<DealWorkVO> giveup(){
 			List<DealWorkVO> list = dealDao.selectGG();
 			return list;
+		}
+		@GetMapping("/detailList")
+		public List<PaymentDetailVO> detailList(){
+			return paymentDao.selectDetailIdList();
 		}
 }
