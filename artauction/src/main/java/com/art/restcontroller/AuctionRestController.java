@@ -57,10 +57,10 @@ public class AuctionRestController {
 		else 
 			bidIncrement = 10000000;
 		auctionDto.setAuctionBidIncrement(bidIncrement);
-		auctionDto.setAuctionEndDate(null);
 		log.info("auctionDto={}",auctionDto);
 		auctionDao.insert(auctionDto);
 	}
+	
 	@PatchMapping("/")
 	public void update(@RequestBody AuctionDto auctionDto) {
 		auctionDao.update(auctionDto);
@@ -99,7 +99,7 @@ public class AuctionRestController {
 	public List<AuctionLotListVO> selectAuctionWithImage(
 			@PathVariable int auctionNo){
 		return auctionDao.selectAuctionWithImage(auctionNo);
-	} 
+	}
 	
 	
 //	@GetMapping("/{auctionScheduleNo}")

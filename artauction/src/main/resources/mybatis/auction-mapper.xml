@@ -51,35 +51,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     )
 </insert>
-<!-- <insert id="add">
-    insert into auction(
-        auction_no,
-		auction_schedule_no,
-		work_no,
-		auction_lot,
-		auction_low_price,
-		auction_high_price,
-		auction_state,
-		auction_consigner,
-		auction_consignment_fee,
-		auction_start_price,
-		auction_bid_increment
-    )
-    values(
-        #{auctionNo},
-		#{auctionScheduleNo},
-		#{workNo},
-        <if test="auctionLot == null or auctionLot == ''">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
-		<if test="auctionLot != null and auctionLot != ''">#{auctionLot},</if>
-		#{auctionLowPrice},
-		#{auctionHighPrice},
-		#{auctionState},
-		#{auctionConsigner},
-		#{auctionConsignmentFee},
-		#{auctionStartPrice},
-		#{auctionBidIncrement}
-    )
-	</insert> -->
 
 	<!-- 이미지 연결 -->
 	<insert id="connect" parameterType="map">
@@ -128,16 +99,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="sceduleList" resultType="AuctionDto">
 		select * from auction where auction_schedule_no = #{auctionScheduleNo} order by auction_no asc
 	</select>
+	<!-- <select id="scheduleListOrderByLot" resultType="AuctionLotVO">
+		SELECT 
+			A.AUCTION_NO,A.AUCTION_LOT,A.AUCTION_STATE,W.work_title,W.WORK_MATERIALS ,W.WORK_CATEGORY 
+		FROM 
+			work W
+		INNER JOIN 
+			auction A 
+		ON 
+			W.work_no = A.work_no
+		WHERE A.AUCTION_SCHEDULE_NO = #{auctionScheduleNo}
+		order by A.AUCTION_LOT asc
+	</select> -->
 	
 	<!-- 출품목록 불러오기(이미지x)-->
 	<select id="auctionListOrderByLot" resultType="AuctionLotVO">
 		SELECT 
-			A.AUCTION_NO,
-			A.AUCTION_LOT,
-			A.AUCTION_STATE,
-			W.work_title,
-			W.WORK_MATERIALS,
-			W.WORK_CATEGORY 
+			A.AUCTION_NO,A.AUCTION_LOT,A.AUCTION_STATE,W.work_title,W.WORK_MATERIALS ,W.WORK_CATEGORY 
 		FROM 
 			work W
 		INNER JOIN 
@@ -148,7 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by A.AUCTION_LOT asc
 	</select>
 	
-	<!-- 출품목록 불러오기(이미지포함)-->
+	<!-- 출품목록 불러오기(이미지포)-->
 	<select id="auctionLotListOrderByLot" resultType="AuctionLotListVO">
 	<![CDATA[
 	    SELECT 
@@ -166,7 +144,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    FROM 
 	        auction A 
 	        JOIN work W ON A.work_no = W.work_no 
-	        left JOIN work_image WI ON W.work_no = WI.work 
+	        JOIN work_image WI ON W.work_no = WI.work 
 	    WHERE 
 	        A.auction_schedule_no = #{auctionScheduleNo} 
 	    ORDER BY 
