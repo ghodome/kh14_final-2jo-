@@ -13,7 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			bid_no, auction_no, member_id, bid_price, bid_time,
 			bid_content
 		) values(
-			bid_seq.nextval, #{auctionNo}, #{memberId}, #{bidPrice},
+			#{bidNo}, #{auctionNo}, #{memberId}, #{bidPrice},
 			#{bidTime}, #{bidContent}
 		)
 	</insert>
@@ -35,6 +35,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			auction_no=#{auctionNo} 
 		order by
 			bid_no asc;
+	</select>
+	<select id="selectRefunder" resultType="String">
+		select member_id from bid where auction_no=#{auctionNo} order by bid_no desc
 	</select>
 	
 </mapper>
