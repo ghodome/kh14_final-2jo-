@@ -19,7 +19,7 @@ public class MemberInventoryVO {
 	private String memberPost;
 	private String memberAddress1;
 	private String memberAddress2;
-	private int memberPoint;
+	private long memberPoint;
 	//낙찰품
 	private int dealNo;
 	private int bidNo;
