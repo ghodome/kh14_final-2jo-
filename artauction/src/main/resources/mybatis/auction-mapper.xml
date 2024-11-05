@@ -51,35 +51,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
     )
 </insert>
-<!-- <insert id="add">
-    insert into auction(
-        auction_no,
-		auction_schedule_no,
-		work_no,
-		auction_lot,
-		auction_low_price,
-		auction_high_price,
-		auction_state,
-		auction_consigner,
-		auction_consignment_fee,
-		auction_start_price,
-		auction_bid_increment
-    )
-    values(
-        #{auctionNo},
-		#{auctionScheduleNo},
-		#{workNo},
-        <if test="auctionLot == null or auctionLot == ''">(SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}),</if>
-		<if test="auctionLot != null and auctionLot != ''">#{auctionLot},</if>
-		#{auctionLowPrice},
-		#{auctionHighPrice},
-		#{auctionState},
-		#{auctionConsigner},
-		#{auctionConsignmentFee},
-		#{auctionStartPrice},
-		#{auctionBidIncrement}
-    )
-	</insert> -->
 
 	<!-- 이미지 연결 -->
 	<insert id="connect" parameterType="map">
