@@ -262,7 +262,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 					'yyyy-mm-dd hh24:mi:ss'
 				)
 				and
-				auction_state='종료경매'
+				auction_state='진행경매'
 		]]>
 	</select>
 	<update id="statusToProgress">
