@@ -68,7 +68,6 @@ public class ItemsRestController {
 		MemberClaimVO claimVO = tokenService.check(tokenService.removeBearer(token));
 		MemberDto memberDto = memberDao.selectOne(claimVO.getMemberId());
 		ItemsDto itemsDto =  itemService.randomRun(memberDto);
-		if(itemsDto==null)throw new TargetNotFoundException("포인트 부족");
         return itemsDto;
 	}
 	@DeleteMapping("/{itemId}")
