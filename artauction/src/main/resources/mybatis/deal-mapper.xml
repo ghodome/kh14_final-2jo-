@@ -71,4 +71,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		) 
 		WHERE ROWNUM = 1
 	</insert>
+	<select id="dealList" resultType="dealWorkVO">
+		SELECT * 
+FROM (
+	select 
+    d.deal_no,
+    d.deal_time,
+    d.deal_price,
+    SUBSTR(d.deal_buyer, 1, 4) || LPAD('*', LENGTH(d.deal_buyer) - 4, '*') AS deal_buyer,
+    w.work_title,
+    ar.artist_name
+	FROM deal d
+	JOIN bid b ON d.bid_no = b.bid_no
+    JOIN auction a ON b.auction_no = a.auction_no
+	JOIN work w ON a.work_no = w.work_no
+	join artist ar on ar.artist_no = w.artist_no
+    WHERE d.deal_time >= SYSDATE -14
+    ORDER BY d.deal_time DESC  
+) 
+WHERE ROWNUM 
+ <![CDATA[
+<= 20
+]]>
+	</select>
 </mapper>

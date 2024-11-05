@@ -13,4 +13,5 @@ public class PaymentDto {
 	private int paymentRemain;
 	private String memberId;
 	private Date paymentTime;
+	private int dealNo;
 }

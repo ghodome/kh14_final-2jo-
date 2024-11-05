@@ -21,7 +21,11 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(memberInterceptor)
 					.addPathPatterns(
-							"/member/**"
+							"/member/**",
+							"/item/**",
+							"/payment/**",
+							"/deal/"
+							
 							)
 					.excludePathPatterns(
 							"/member/join*",

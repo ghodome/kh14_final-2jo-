@@ -44,5 +44,8 @@ public class DealDao {
 		Map data = Map.of("auctionNo",auctionNo);
 		log.info("낙찰 작성 중");
 		return sqlSession.insert("deal.insertByAuction",data)>0;
+  }
+	public List<DealWorkVO> dealList() {
+		return sqlSession.selectList("deal.dealList");
 	}
 }
