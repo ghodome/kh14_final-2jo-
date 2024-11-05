@@ -3,7 +3,6 @@ package com.art.service;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.art.dao.AuctionDao;
 import com.art.dao.BidDao;
 import com.art.dao.DealDao;
+import com.art.dao.MemberDao;
+import com.art.dao.PointDao;
 import com.art.dto.AuctionDto;
 import com.art.dto.BidDto;
 import com.art.dto.DealDto;
-import com.art.error.TargetNotFoundException;
+import com.art.dto.PointDto;
 import com.art.vo.AuctionContentVO;
 import com.art.vo.WebsocketBidRequestVO;
 import com.art.vo.WebsocketBidResponseVO;
@@ -37,12 +38,20 @@ public class AuctionService2 {
 	@Autowired
 	private BidDao bidDao;
 	
+	@Autowired
+	private MemberDao memberDao;
+	
+	@Autowired
+	private PointDao pointDao;
+	
 	@Transactional
 	public synchronized WebsocketBidResponseVO bidProccess(WebsocketBidRequestVO request,
 			int auctionNo,
 			String memberId) throws ParseException {
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String requestTime=timeService.getTime();
+		int pointReduceNo=pointDao.sequence();
+		int bidNo=bidDao.sequence();
 		int bidPrice=request.getBid().getBidPrice();
 		int bidIncrement=request.getBid().getBidIncrement();
 		int newBidPrice=bidPrice+bidIncrement;
@@ -81,6 +90,7 @@ public class AuctionService2 {
 		
 		//응찰 내역 저장
 		BidDto bidDto=new BidDto();
+		bidDto.setBidNo(bidNo);
 		bidDto.setAuctionNo(auctionNo);
 		bidDto.setBidContent(contentForLot);
 		bidDto.setBidPrice(newBidPrice);
@@ -93,6 +103,30 @@ public class AuctionService2 {
 			auctionDao.update(auctionNewDto);
 			response.setSuccess(true);
 			bidDao.insert(bidDto);
+			
+			PointDto reducePointDto=new PointDto();
+			reducePointDto.setBidNo(bidNo);
+			reducePointDto.setPointMove(newBidPrice);
+			reducePointDto.setPointNo(pointReduceNo);
+			reducePointDto.setPointStatus("입찰등록");
+			reducePointDto.setMemberId(memberId);
+			
+			String refunder=bidDao.selectRefunder(auctionNo);
+			if (refunder!=null) {
+				int pointRefundNo=pointDao.sequence();
+				PointDto refundPointDto=new PointDto();
+				refundPointDto.setBidNo(bidNo);
+				refundPointDto.setPointMove(bidPrice);
+				refundPointDto.setPointNo(pointRefundNo);
+				refundPointDto.setPointStatus("상회입찰");
+				refundPointDto.setMemberId(refunder);
+				pointDao.insert(refundPointDto);
+				log.info("환불받는사람={},환불금액={}",refunder,bidPrice);
+				memberDao.refundPoint(bidPrice, refunder);
+			}
+			pointDao.insert(reducePointDto);
+			log.info("응찰자={},응찰금액={}",memberId,newBidPrice);
+			memberDao.reducePoint(newBidPrice,memberId);
 		}
 		else {
 			response.setSuccess(false);

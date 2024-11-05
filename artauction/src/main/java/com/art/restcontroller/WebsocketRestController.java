@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.art.dao.MemberDao;
 import com.art.service.AuctionService2;
 import com.art.service.TokenService;
-import com.art.vo.AuctionContentVO;
 import com.art.vo.WebsocketBidRequestVO;
 import com.art.vo.WebsocketBidResponseVO;
 
@@ -32,11 +32,21 @@ public class WebsocketRestController {
 	@Autowired
 	private AuctionService2 auctionService;
 	
+	@Autowired
+	private MemberDao memberDao;
+	
 	@PatchMapping("/{auctionNo}")
 	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
 			@RequestBody WebsocketBidRequestVO request,
 			@RequestHeader("Authorization") String token) throws ParseException {
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
+		long memberPoint=memberDao.selectPoint(memberId);
+		if(memberPoint<request.getBid().getBidPrice()+request.getBid().getBidIncrement()) {
+			WebsocketBidResponseVO response=new WebsocketBidResponseVO();
+			response.setSuccess(false);
+			return response;
+		}
+		
 		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
 		if(response.isSuccess()) {
 			messagingTemplate.convertAndSend("/auction/progress",response);

@@ -29,7 +29,8 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 							"/member/findPw*",
 							"/member/changePw",
 							"/member/checkId",
-							"/member/checkName"
+							"/member/checkName",
+							"/member/point"
 							);
 		registry.addInterceptor(adminInterceptor)
 					.addPathPatterns(

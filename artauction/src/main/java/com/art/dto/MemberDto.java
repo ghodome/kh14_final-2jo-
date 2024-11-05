@@ -19,6 +19,6 @@ public class MemberDto {
 	private String memberAddress2;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private Date memberJoinDate;
-	private int memberPoint;
+	private long memberPoint;
 	private boolean isBlocked;
 }

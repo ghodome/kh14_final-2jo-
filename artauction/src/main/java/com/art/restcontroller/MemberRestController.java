@@ -257,10 +257,15 @@ public class MemberRestController {
 			//[4] 기존의 리프시 토큰 삭제
 			memberTokenDao.delete(memberTokenDto);
 			
+			//보유포인트 조회
+			long memberPoint = memberDao.selectPoint(claimVO.getMemberId());
+			log.info("point={}",memberPoint);
+			
 			//[5] 로그인 정보 재발급
 			MemberLoginResponseVO response = new MemberLoginResponseVO();
 			response.setMemberId(claimVO.getMemberId());
 			response.setMemberRank(claimVO.getMemberRank());
+			response.setMemberPoint(memberPoint);
 			response.setAccessToken(tokenService.createAccessToken(claimVO));//재발급
 			response.setRefreshToken(tokenService.createRefreshToken(claimVO));//재발급
 			return response;
@@ -385,5 +390,11 @@ public class MemberRestController {
 		    memberDto.setMemberPoint(memberDto.getMemberPoint()-refund);
 		    memberDao.pointUpdate(memberDto);
 		    return responses; // 최종적으로 모든 환불 응답을 반환
+		}
+		@GetMapping("/point")
+		public long point(@RequestHeader("Authorization") String token) {
+			MemberClaimVO claimVO=tokenService.check(tokenService.removeBearer(token));
+			long memberPoint=memberDao.selectPoint(claimVO.getMemberId());
+			return memberPoint;
 		}
 }

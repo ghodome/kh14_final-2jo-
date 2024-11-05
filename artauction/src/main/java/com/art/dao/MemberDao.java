@@ -1,6 +1,7 @@
 package com.art.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,18 @@ public class MemberDao {
 	public boolean isNameAvailable(String memberName) {
 	    Integer count = sqlSession.selectOne("member.isNameAvailable", memberName);
 	    return count != null && count == 0;
+	}
+	public long selectPoint(String memberId) {
+		return sqlSession.selectOne("member.selectPoint",memberId);
+		
+	}
+	public void reducePoint(int point,String memberId) {
+		Map data=Map.of("point",point,"memberId",memberId);
+		sqlSession.update("member.reducePoint",data);
+	}
+	public void refundPoint(int point, String memberId) {
+		Map data=Map.of("point",point,"memberId",memberId);
+		sqlSession.update("member.refundPoint",data);
 	}
 
 

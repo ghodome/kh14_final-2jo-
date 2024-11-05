@@ -32,6 +32,16 @@
 		</set>
 		WHERE member_id = #{memberId}
 	</update>
+	<update id="reducePoint">
+		update member 
+		set member_point=member_point -#{point} 
+		where member_id=#{memberId}
+	</update>
+	<update id="refundPoint">
+		update member
+		set member_point=member_point+#{point}
+		where member_id=#{memberId}
+	</update>
 
 	<delete id="delete">
 		delete member where member_id = #{memberId}
@@ -358,6 +368,9 @@
 
 	<select id="isNameAvailable" resultType="int">
 		SELECT COUNT(*) FROM member WHERE member_name = #{memberName}
+	</select>
+	<select id="selectPoint" resultType="long">
+		select member_point from member where member_id=#{memberId}
 	</select>
 
 </mapper>

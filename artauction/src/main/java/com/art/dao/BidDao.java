@@ -36,6 +36,10 @@ public class BidDao {
 		List<BidDto> list=sqlSession.selectOne("bid.selectSuccessBid",data);
 		return list.get(0);
 	}
+	public String selectRefunder(int auctionNo) {
+		List<String> list=sqlSession.selectList("bid.selectRefunder",auctionNo);
+		return list.size()>1?list.get(1):null;
+	}
 	
 	
 }
