@@ -11,6 +11,7 @@ import com.art.dto.PaymentDetailDto;
 import com.art.dto.PaymentDto;
 import com.art.vo.PaymentMemberVO;
 import com.art.vo.PaymentTotalVO;
+import com.art.vo.pay.PaymentDetailVO;
 
 
 @Repository
@@ -62,5 +63,18 @@ public class PaymentDao {
 	}
 	public List<PaymentMemberVO> selectRankList(){
 		return sqlSession.selectList("payment.rankList");
+	}
+	public List<PaymentDetailVO> selectDetailIdList(){
+		return sqlSession.selectList("payment.detailId");
+	}
+	public PaymentDetailDto findDetailOne(int paymentDetailNo) {
+		return sqlSession.selectOne("payment.findDetailOne",paymentDetailNo);
+	}
+	public void updateDetailStatus(int paymentDetailNo) {
+		sqlSession.update("payment.updateDetailStatus",paymentDetailNo);
+		
+	}
+	public void updatePaymentRemain(PaymentDto paymentDto) {
+		sqlSession.update("payment.updatePaymentRemain",paymentDto);
 	}
 }
