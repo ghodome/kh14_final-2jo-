@@ -48,4 +48,7 @@ public class DealDao {
 	public List<DealWorkVO> dealList() {
 		return sqlSession.selectList("deal.dealList");
 	}
+	public void updateStatusCancel(int dealNo) {
+		sqlSession.update("deal.updateStatusCancel",dealNo);
+	}
 }

@@ -23,7 +23,6 @@ public class InterceptorConfiguration implements WebMvcConfigurer{
 					.addPathPatterns(
 							"/member/**",
 							"/item/**",
-							"/payment/**",
 							"/deal/"
 							
 							)

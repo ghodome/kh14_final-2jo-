@@ -299,7 +299,7 @@ public class MemberRestController {
 			KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
 			requestVO.setPartnerOrderId(UUID.randomUUID().toString());
 			requestVO.setPartnerUserId(claimVO.getMemberId());
-			requestVO.setItemName("K옥션 포인트 충전");
+			requestVO.setItemName("art auction 포인트 충전");
 			requestVO.setTotalAmount(request.getTotalAmount());
 			requestVO.setApprovalUrl(request.getApprovalUrl());
 			requestVO.setCancelUrl(request.getCancelUrl());
