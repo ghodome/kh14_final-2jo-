@@ -33,10 +33,6 @@ import com.art.vo.pay.KakaoPayOrderResponseVO;
 import com.art.vo.pay.KakaoPayReadyRequestVO;
 import com.art.vo.pay.KakaoPayReadyResponseVO;
 
-
-
-
-
 @CrossOrigin
 @RestController
 @RequestMapping("/kakaopay")
