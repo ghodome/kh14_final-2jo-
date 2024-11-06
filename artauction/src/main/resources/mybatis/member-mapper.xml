@@ -350,7 +350,7 @@
 		FROM
     		member m
 		LEFT JOIN
-    		deal d ON m.member_id = d.deal_buyer AND d.deal_status != '낙찰포기' 
+    		deal d ON m.member_id = d.deal_buyer AND d.deal_status != '낙찰포기' and d.deal_status !='결제취소'
 		LEFT JOIN 
     		bid b ON d.bid_no = b.bid_no
 		LEFT JOIN 

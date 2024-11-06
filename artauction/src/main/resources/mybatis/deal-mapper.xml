@@ -94,4 +94,7 @@ WHERE ROWNUM
 <= 20
 ]]>
 	</select>
+	<update id="updateStatusCancel">
+	update deal set deal_status = '결제취소' where deal_no=#{dealNo}
+	</update>
 </mapper>

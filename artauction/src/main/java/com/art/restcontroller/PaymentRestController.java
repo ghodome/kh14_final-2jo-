@@ -137,11 +137,12 @@ public class PaymentRestController {
 			KakaoPayCancelRequestVO kakaoPayCancelRequestVO = new KakaoPayCancelRequestVO();
 			kakaoPayCancelRequestVO.setCancelAmount((int)(cancelResponseVO.getPaymentDetailPrice()*0.7));
 			PaymentDto paymentDto =  paymentDao.selectOne(cancelResponseVO.getPaymentDetailOrigin());
-			paymentDto.setPaymentRemain(((int)(paymentDto.getPaymentTotal()*0.7))-kakaoPayCancelRequestVO.getCancelAmount());
+			paymentDto.setPaymentRemain(paymentDto.getPaymentTotal()-kakaoPayCancelRequestVO.getCancelAmount());
 			kakaoPayCancelRequestVO.setTid(paymentDto.getPaymentTid());
 			KakaoPayCancelResponseVO response = kakaoPayService.cancel(kakaoPayCancelRequestVO);
 			paymentDao.updatePaymentRemain(paymentDto);
 			paymentDao.updateDetailStatus(cancelResponseVO.getPaymentDetailNo());
+			dealDao.updateStatusCancel(paymentDto.getDealNo());
 			 return response;
 		}
 		
