@@ -75,7 +75,7 @@ public class PaymentRestController {
 				buffer.append("외 "+(request.getDealList().size()-1)+"건");
 			}
 			
-			int totalSeven = (int)(total* 0.7);
+			int totalSeven = (total*7)/10;
 			KakaoPayReadyRequestVO requestVO = new KakaoPayReadyRequestVO();
 			requestVO.setPartnerOrderId(UUID.randomUUID().toString());
 			requestVO.setPartnerUserId(claimVO.getMemberId());
@@ -135,7 +135,7 @@ public class PaymentRestController {
 		@PostMapping("/cancel")
 		public KakaoPayCancelResponseVO cancel(@RequestBody CancelResponseVO cancelResponseVO ) throws URISyntaxException {
 			KakaoPayCancelRequestVO kakaoPayCancelRequestVO = new KakaoPayCancelRequestVO();
-			kakaoPayCancelRequestVO.setCancelAmount((int)(cancelResponseVO.getPaymentDetailPrice()*0.7));
+			kakaoPayCancelRequestVO.setCancelAmount((cancelResponseVO.getPaymentDetailPrice()*7/10));
 			PaymentDto paymentDto =  paymentDao.selectOne(cancelResponseVO.getPaymentDetailOrigin());
 			paymentDto.setPaymentRemain(paymentDto.getPaymentTotal()-kakaoPayCancelRequestVO.getCancelAmount());
 			kakaoPayCancelRequestVO.setTid(paymentDto.getPaymentTid());
