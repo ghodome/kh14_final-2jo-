@@ -36,6 +36,7 @@ public class AuctionRestController {
 	}
 	@PostMapping("/")
 	public void add(@RequestBody AuctionDto auctionDto) {
+		
 		auctionDto.setAuctionNo(auctionDao.sequence());
 		auctionDto.setAuctionState("예정경매");
 		int startPrice=auctionDto.getAuctionStartPrice();

@@ -109,32 +109,34 @@ public class AuctionService2 {
 		
 		
 		WebsocketBidResponseVO response = new WebsocketBidResponseVO();
-		if(bidPrice==auctionDto.getAuctionBidPrice()) {//
+		if(bidPrice==auctionDto.getAuctionBidPrice()) {
 			auctionDao.update(auctionNewDto);
 			response.setSuccess(true);
 			bidDao.insert(bidDto);
 			
+			//입찰자 포인트 차감
 			PointDto reducePointDto=new PointDto();
 			reducePointDto.setBidNo(bidNo);
-			reducePointDto.setPointMove(newBidPrice);
+			reducePointDto.setPointMove(newBidPrice*3/10);//30%만, 100원 단위이므로 이상x
 			reducePointDto.setPointNo(pointReduceNo);
 			reducePointDto.setPointStatus("입찰등록");
 			reducePointDto.setMemberId(memberId);
 			
+			
 			String refunder=bidDao.selectRefunder(auctionNo);
-			if (refunder!=null) {
+			if (refunder!=null) {//상회입찰자 포인트 반환
 				int pointRefundNo=pointDao.sequence();
 				PointDto refundPointDto=new PointDto();
 				refundPointDto.setBidNo(bidNo);
-				refundPointDto.setPointMove(bidPrice);
+				refundPointDto.setPointMove(bidPrice*3/10);//30%만, 100원 단위이므로 이상x
 				refundPointDto.setPointNo(pointRefundNo);
 				refundPointDto.setPointStatus("상회입찰");
 				refundPointDto.setMemberId(refunder);
 				pointDao.insert(refundPointDto);
-				memberDao.refundPoint(bidPrice, refunder);
+				memberDao.refundPoint(bidPrice*3/10, refunder);
 			}
 			pointDao.insert(reducePointDto);
-			memberDao.reducePoint(newBidPrice,memberId);
+			memberDao.reducePoint(newBidPrice*3/10,memberId);
 		}
 		else {
 			response.setSuccess(false);
