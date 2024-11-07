@@ -61,6 +61,7 @@ public class WebSocketController {
 		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
 		return response;
 	}
+
 	
 	
 //		WebsocketBidRequestVO request = message.getPayload();
