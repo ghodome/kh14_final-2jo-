@@ -36,12 +36,10 @@ public class DealService {
 		Timestamp time=new Timestamp(System.currentTimeMillis());
 		String fmtTime=dateFormat.format(time);
 		List<Integer> auctionNoList=auctionDao.selectListTerminated(fmtTime);
-		log.info("낙찰 스케쥴러 실행 : "+auctionNoList.size());
 		if(auctionNoList.size()>0) {
 			for(Integer auctionNo:auctionNoList) {
-				log.info("auctionNo={}",auctionNo);
 				auctionDao.changeStateTerminated(auctionNo);
-				log.info("result={}",dealDao.insertByAuction(auctionNo));
+				dealDao.insertByAuction(auctionNo);
 			}
 		}
 	}

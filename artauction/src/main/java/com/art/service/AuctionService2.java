@@ -48,9 +48,9 @@ public class AuctionService2 {
 	@Transactional
 	public synchronized WebsocketBidResponseVO bidProccess(WebsocketBidRequestVO request,
 			int auctionNo,
-			String memberId) throws ParseException {
+			String memberId,
+			String requestTime) throws ParseException {
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String requestTime=timeService.getTime();
 		int pointReduceNo=pointDao.sequence();
 		int bidNo=bidDao.sequence();
 		int bidPrice=request.getBid().getBidPrice();

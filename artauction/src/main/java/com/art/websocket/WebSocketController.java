@@ -45,17 +45,17 @@ public class WebSocketController {
 	@Autowired
 	private WebsocketMessageDao websocketMessageDao;
 	
-	@PatchMapping("/{auctionNo}")
-	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
-			@RequestBody WebsocketBidRequestVO request,
-			@RequestHeader("Authorization") String token) throws ParseException {
-		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
-		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
-//		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
-		messagingTemplate.convertAndSend("/auction/everyone",response);
-		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
-		return response;
-	}
+//	@PatchMapping("/{auctionNo}")
+//	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
+//			@RequestBody WebsocketBidRequestVO request,
+//			@RequestHeader("Authorization") String token) throws ParseException {
+//		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
+//		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
+////		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
+//		messagingTemplate.convertAndSend("/auction/everyone",response);
+//		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);
+//		return response;
+//	}
 	
 	
 //		WebsocketBidRequestVO request = message.getPayload();
