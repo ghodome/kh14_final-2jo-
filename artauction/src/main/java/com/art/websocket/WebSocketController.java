@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import com.art.dao.WebsocketMessageDao;
 import com.art.dto.WebsocketMessageDto;
 import com.art.service.AuctionService2;
+import com.art.service.TimeService;
 import com.art.service.TokenService;
 import com.art.vo.MemberClaimVO;
 import com.art.vo.WebSocketDMResponseVO;
@@ -45,12 +46,16 @@ public class WebSocketController {
 	@Autowired
 	private WebsocketMessageDao websocketMessageDao;
 	
+	@Autowired
+	private TimeService timeService;
+	
 	@PatchMapping("/{auctionNo}")
 	public WebsocketBidResponseVO bid(@PathVariable int auctionNo,
 			@RequestBody WebsocketBidRequestVO request,
 			@RequestHeader("Authorization") String token) throws ParseException {
+		String requestTime=timeService.getTime();
 		String memberId=tokenService.check(tokenService.removeBearer(token)).getMemberId();
-		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId);
+		WebsocketBidResponseVO response = auctionService.bidProccess(request, auctionNo, memberId,requestTime);
 //		Message<WebsocketBidRequestVO> message =MessageBuilder.withPayload(request).build();
 		messagingTemplate.convertAndSend("/auction/everyone",response);
 		messagingTemplate.convertAndSend("/auction/"+auctionNo,response);

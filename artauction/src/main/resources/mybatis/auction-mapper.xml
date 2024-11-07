@@ -44,10 +44,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         #{auctionBidIncrement},
         #{auctionStartDate},
         <if test="auctionLot == null or auctionLot == ''">
-            #{auctionEndDate} + NUMTODSINTERVAL(ROUND((SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}) / 10,0) * 5, 'MINUTE')
+            #{auctionEndDate} + NUMTODSINTERVAL(FLOOR((SELECT COALESCE(MAX(auction_lot), 0) + 1 FROM auction WHERE auction_schedule_no = #{auctionScheduleNo}) / 10) * 5, 'MINUTE')
         </if>
         <if test="auctionLot != null and auctionLot != ''">
-            #{auctionEndDate} + NUMTODSINTERVAL(ROUND(#{auctionLot} / 10,0) * 5, 'MINUTE')
+            #{auctionEndDate} + NUMTODSINTERVAL(FLOOR(#{auctionLot} / 10) * 5, 'MINUTE')
         </if>
     )
 </insert>
